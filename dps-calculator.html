@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPS Calculator - Diablo Calculator</title>
+    <link rel="stylesheet" href="calc-styles.css">
+    <script type="text/javascript" src="js/dps.js"></script>
+</head>
+<body>
+<center>
+<!-- DPS Calculator by GhastMaster -->
+<form name="showdps" onSubmit="return false;">
+<table class="blog">
+    <tr>
+        <td colspan="4"><span class="title">Damage Per Second Calculator </span><i>By: <a href="https://mgpat-gm.github.io">GhastMaster</a></i></td>
+    </tr>
+    <tr>
+        <td colspan="4"><p>This does not take into account character damage modifiers. This is only intended to compare items with different speed suffixes.<br> eg. Lord's bastard sword of Haste vs a King's bastard sword or Warrior's LWB vs Massive Long Bow of Swiftness.<p>Input the average damage from the weapon damage calculator above.</td>
+    </tr>
+    <tr>
+        <td>Average Damage: <input type="text" name="avg" size="6" maxlength="6">
+            <select name="basetype" onchange="avgdps(this.form)">
+            <option value="sword">Swords/Clubs</option>
+            <option value="axe">Axes</option>
+            <option value="staff">Staves</option>
+            <option value="bow">Bows</option></select>
+            <input type="button" name="calcdps" value="Calculate" onclick="avgdps(this.form)"><input type="reset" name="reset" value="Reset"></td>
+    </tr>
+    <tr>
+        <td colspan="4"><br>Results:<br>
+        <textarea name="display" cols="20" rows="4" readonly></textarea>
+        <textarea name="display1" cols="10" rows="4" readonly></textarea>
+        <textarea name="display2" cols="10" rows="4" readonly></textarea>
+        <textarea name="display3" cols="10" rows="4" readonly></textarea>
+        <textarea name="display4" cols="10" rows="4" readonly></textarea>
+        <textarea name="display5" cols="10" rows="4" readonly></textarea>
+        <textarea name="display6" cols="23" rows="4" readonly></textarea></td>
+    </tr>
+</table>
+</form>
+</center>
+</body>
+</html>

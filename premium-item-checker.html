@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Item Checker - Diablo Calculator</title>
+    <link rel="stylesheet" href="calc-styles.css">
+    <script type="text/javascript" src="js/itmchk.js"></script>
+</head>
+<body>
+<center>
+<!-- Premium Item Checker by King aka Red-Wolf -->
+<form name="premium">
+<table class="blog">
+    <tr>
+        <td><span class="title">Premium Item Checker </span><i>By: <a href="https://web.archive.org/web/20120125114431/http://www.red-wolf.sakura.ne.jp/dia/premiumchk.html">King aka Red-Wolf</a></i></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+        <table class="sub">
+            <tr>
+                <td>Prefix:</td>
+                <td>Base Item:</td>
+                <td>Suffix:</td>
+                <td>Price</td>
+                <td>Reset</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="prefixx" size="1" onChange="ChgPrefix(this.form)">
+                    <script type="text/javascript">
+                    with(document){
+                    for(i=0 ;i<=premax;i++){
+                    write("<option>",prefixx[prelst[i]].name,"</option>");}}</script></select></td>
+                <td>
+                    <select name="basee" size="1" onChange="ChgBasee(this.form)">
+                    <script type="text/javascript">
+                    with(document){
+                    for(i=0 ;i<=basmaxx;i++){
+                    write("<option>",basee[baslst[i]].name,"</option>");}}</script></select></td>
+                <td>
+                    <select name="suffixx" size="1" onChange="ChgSuffix(this.form)">
+                    <script type="text/javascript">
+                    with(document){
+                    for(i=0 ;i<=sufmax;i++){
+                    write("<option>",suffixx[suflst[i]].name,"</option>");}}</script></select></td>
+                <td>
+                    <select name="calcprice" size="1" onChange="ChgMode(this.form)">
+                    <option selected>Off</option>
+                    <option>On</option>
+                    </select></td>
+                <td><input type="reset" value="Reset" onClick="Init(this.form)"></td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                <textarea name="display1" cols=80 rows=11>G/A Price = Cost to purchase from Griswold or Adria&#13;&#10;Difficulty "Source Level" indicates the range an item can be found based on the result of formulas from Jarulf's Guide chapter 3.8.&#13;&#10;&#13;&#10;Example:&#13;&#10;Obsidian/zodiac ring has a "Source Level" of 30-34. Sir Gorash is mlvl 30 for items. He can drop items with affixes in the range of qlvl 17-34, so he can drop it. Black Knights are mlvl 24 and can drop affixes in the range of qlvl 12-24. So Black Knight cannot. Blood Knight is mlvl 30 and can drop affixes in the range of qlvl 15-30, so they can drop obs/zod.</textarea><br>
+                <textarea name="display2" cols=80 rows=10>Item types key:&#13;&#10;W = Weapons (Axes, Clubs and Swords)&#13;&#10;B = Bows&#13;&#10;T = Staves&#13;&#10;A = Armor and Helms&#13;&#10;S = Shields&#13;&#10;J = Jewelry</textarea><br>
+                <textarea name="display3" cols=80 rows=11>Turn price on to see detailed breakdown of G/A prices.&#13;&#10;For Wirt and resale prices, scroll down to Item Price Calculator.</textarea></td>
+            </tr>
+        </table></td>
+    </tr>
+</table>
+</form>
+</center>
+</body>
+</html>

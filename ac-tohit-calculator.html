@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AC & To Hit Calculator - Diablo Calculator</title>
+    <link rel="stylesheet" href="calc-styles.css">
+    <script type="text/javascript" src="js/internals.js"></script>
+    <script type="text/javascript" src="js/monster_data.js"></script>
+    <script type="text/javascript" src="js/parse_funcs.js"></script>
+    <script type="text/javascript" src="js/morcalc.js"></script>
+</head>
+<body>
+<center>
+<!-- AC & To Hit Calculator by Arnold van Wakeren aka Moriah -->
+<form name="combat">
+<table class="blog">
+    <tr>
+        <td><span class="title">AC & To Hit Calculator </span><i>By: <a href="https://web.archive.org/web/20091024004748/http://geocities.com/TimesSquare/Maze/4747/maxmelee12.html">Arnold van Wakeren aka Moriah</a></i></td>
+    </tr>
+        <td>
+        <table class="sub">
+            <tr>
+                <td>
+                <table class="sub">
+                    <tr>
+                        <td>Game:
+                            <select name="game" onchange="parseGame()">
+                            <option value="MP" diablo="">MP Diablo
+                            </option><option value="SP" diablo="">SP Diablo
+                            </option><option value="MP" hellfire="">MP Hellfire
+                            </option><option value="SP" hellfire="">SP Hellfire
+                            </option></select></td>
+                        <td>Monster:
+                            <select name="extra" onchange="parseExtra()">
+                            <option value="Zombie">Zombie
+                            </option><option value="Ghoul">Ghoul
+                            </option><option value="Rotting Carcass">Rotting Carcass
+                            </option><option value="Black Death">Black Death
+                            </option><option value="Fallen One (spear)">Fallen One (spear)
+                            </option><option value="Carver (spear)">Carver (spear)
+                            </option><option value="Devil Kin (spear)">Devil Kin (spear)
+                            </option><option value="Dark One (spear)">Dark One (spear)
+                            </option><option value="Fallen One (sword)">Fallen One (sword)
+                            </option><option value="Carver (sword)">Carver (sword)
+                            </option><option value="Devil Kin (sword)">Devil Kin (sword)
+                            </option><option value="Dark One (sword)">Dark One (sword)
+                            </option><option value="Skeleton">Skeleton
+                            </option><option value="Corpse Axe">Corpse Axe
+                            </option><option value="Burning Dead">Burning Dead
+                            </option><option value="Horror">Horror
+                            </option><option value="Skeleton Archer">Skeleton Archer
+                            </option><option value="Corpse Bow">Corpse Bow
+                            </option><option value="Burning Dead Archer">Burning Dead Archer
+                            </option><option value="Horror Archer">Horror Archer
+                            </option><option value="Skeleton Captain">Skeleton Captain
+                            </option><option value="Corpse Captain">Corpse Captain
+                            </option><option value="Burning Dead Captain">Burning Dead Captain
+                            </option><option value="Horror Captain">Horror Captain
+                            </option><option value="Scavenger">Scavenger
+                            </option><option value="Plague Eater">Plague Eater
+                            </option><option value="Shadow Beast">Shadow Beast
+                            </option><option value="Bone Gasher">Bone Gasher
+                            </option><option value="Fiend">Fiend
+                            </option><option value="Blink">Blink
+                            </option><option value="Gloom">Gloom
+                            </option><option value="Familiar">Familiar
+                            </option><option value="Hidden">Hidden
+                            </option><option value="Stalker">Stalker
+                            </option><option value="Unseen">Unseen
+                            </option><option value="Illusion Weaver">Illusion Weaver
+                            </option><option value="Flesh Clan">Flesh Clan
+                            </option><option value="Stone Clan">Stone Clan
+                            </option><option value="Fire Clan">Fire Clan
+                            </option><option value="Night Clan">Night Clan
+                            </option><option value="Flesh Clan Archer">Flesh Clan Archer
+                            </option><option value="Stone Clan Archer">Stone Clan Archer
+                            </option><option value="Fire Clan Archer">Fire Clan Archer
+                            </option><option value="Night Clan Archer">Night Clan Archer
+                            </option><option value="Overlord">Overlord
+                            </option><option value="Mud Man">Mud Man
+                            </option><option value="Toad Demon">Toad Demon
+                            </option><option value="Flayed One">Flayed One
+                            </option><option value="Winged-Demon">Winged-Demon
+                            </option><option value="Gargoyle">Gargoyle
+                            </option><option value="Blood Claw">Blood Claw
+                            </option><option value="Death Wing">Death Wing
+                            </option><option value="Magma Demon">Magma Demon
+                            </option><option value="Blood Stone">Blood Stone
+                            </option><option value="Hell Stone">Hell Stone
+                            </option><option value="Lava Lord">Lava Lord
+                            </option><option value="Horned Demon">Horned Demon
+                            </option><option value="Mud Runner">Mud Runner
+                            </option><option value="Frost Charger">Frost Charger
+                            </option><option value="Obsidian Lord">Obsidian Lord
+                            </option><option value="Acid Beast">Acid Beast
+                            </option><option value="Poison Spitter">Poison Spitter
+                            </option><option value="Pit Beast">Pit Beast
+                            </option><option value="Lava Maw">Lava Maw
+                            </option><option value="Red Storm">Red Storm
+                            </option><option value="Storm Rider">Storm Rider
+                            </option><option value="Storm Lord">Storm Lord
+                            </option><option value="Maelstrom">Maelstrom
+                            </option><option value="Slayer">Slayer
+                            </option><option value="Guardian">Guardian
+                            </option><option value="Vortex Lord">Vortex Lord
+                            </option><option value="Balrog">Balrog
+                            </option><option value="Cave Viper">Cave Viper
+                            </option><option value="Fire Drake">Fire Drake
+                            </option><option value="Gold Viper">Gold Viper
+                            </option><option value="Azure Drake">Azure Drake
+                            </option><option value="Succubus">Succubus
+                            </option><option value="Snow Witch">Snow Witch
+                            </option><option value="Hell Spawn">Hell Spawn
+                            </option><option value="Soul Burner">Soul Burner
+                            </option><option value="Black Knight">Black Knight
+                            </option><option value="Doom Guard">Doom Guard
+                            </option><option value="Steel Lord">Steel Lord
+                            </option><option value="Blood Knight">Blood Knight
+                            </option><option value="Counselor">Counselor
+                            </option><option value="Magistrate">Magistrate
+                            </option><option value="Cabalist">Cabalist
+                            </option><option value="Advocate">Advocate
+                            </option></select></td>
+                        <td>To-Hit%: <input name="tohit_fld" value="" size="6" maxsize="6" onchange="parseTohit()" type="text"></td>
+                    </tr>
+                        <td>Class:
+                            <select name="player" onchange="parsePlayer()">
+                            <option value="Warrior">Warrior
+                            </option><option value="Rogue">Rogue
+                            </option><option value="Sorcerer">Sorcerer
+                            </option><option value="Monk">Monk
+                            </option><option value="Bard">Bard
+                            </option><option value="Barbarian">Barbarian
+                            </option></select></td>
+                        <td>Difficulty:
+                            <select name="difficulty" onchange="parseDifficulty()">
+                            <option value="Normal">Normal
+                            </option><option value="Nightmare">Nightmare
+                            </option><option value="Hell">Hell
+                            </option></select></td>
+                        <td>Dex: <input name="dex_fld" value="" size="6" maxsize="6" onchange="parseDexterity()" type="text"></td>
+                    <tr>
+                        <td>Clvl:
+                            <select name="clvl" onchange="parseClvl()">
+                            <script type="text/javascript">
+                            for(var i=1; i<=50; i++) { document.write('<option value="'+i+'">'+i+'</option>'); }
+                            </script>
+                            </select></td>
+                        <td>Dlvl:
+                            <select name="dlvl" onchange="parseDlvl()">
+                            <script type="text/javascript">
+                            for(var i=1; i<=16; i++) { document.write('<option value="'+i+'">'+i+'</option>'); }
+                            </script>
+                            <option value="Hive 1">Hive 1</option>
+                            <option value="Hive 2">Hive 2</option>
+                            <option value="Hive 3">Hive 3</option>
+                            <option value="Hive 4">Hive 4</option>
+                            <option value="Crypt 1">Crypt 1</option>
+                            <option value="Crypt 2">Crypt 2</option>
+                            <option value="Crypt 3">Crypt 3</option>
+                            <option value="Crypt 4">Crypt 4</option>
+                            </select></td>
+                        <td>AC: <input name="armor_fld" value="" size="6" maxsize="6" onchange="parseArmor()" type="text"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="left"><input value="Calculate" onclick="bothatonce()" type="button"></td>
+                        <td align="right"><input value="Reset" onclick="reset_form()" type="button"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><textarea name="results" rows="12" cols="67" readonly></textarea>
+                        <br>
+                        <textarea name="results2" rows="4" cols="67" readonly></textarea></td>
+                    </tr>
+                </table>
+                </td>
+            </tr>
+            <tr>
+                <table class="hidden">
+                    <tr>
+                        <td>
+                            <select name="weapon" onchange="parseWeapon()">
+                            <option value="Bare">Bare</option>
+                            <option value="Axe">Axe</option>
+                            <option value="Bow">Bow</option>
+                            <option value="Club">Club</option>
+                            <option value="Shield">Shield</option>
+                            <option value="Staff">Staff</option>
+                            <option value="Sword">Sword</option>
+                            </select></td>
+                        <td>
+                            <select name="slvl" onchange="parseSlvl()">
+                            <script type="text/javascript">
+                            for(var i=0; i<=20; i++) { document.write('<option value="'+i+'">'+i+'</option>'); }
+                            </script>
+                            </select></td>
+                        <td><input name="str_fld" value="" size="6" maxsize="6" onchange="parseStrength()" type="text"></td>
+                        <td><input name="mag_fld" value="" size="6" maxsize="6" onchange="parseMagic()" type="text"></td>
+                        <td><input name="vit_fld" value="" size="6" maxsize="6" onchange="parseVitality()" type="text"></td>
+                        <td><input name="resmagic_fld" value="" size="6" maxsize="6" onchange="parseResMagic()" type="text"></td>
+                        <td><input name="resfire_fld" value="" size="6" maxsize="6" onchange="parseResFire()" type="text"></td>
+                        <td><input name="reslightning_fld" value="" size="6" maxsize="6" onchange="parseResLightning()" type="text"></td>
+                        <td><input value="Help" onclick="helpPlayer()" type="button"></td>
+                        <td><input value="Help" onclick="helpGame()" type="button"></td>
+                        <td>
+                            <select name="special" onchange="parseSpecial()">
+                            <option value="Plain Monsters">Plain Monsters</option>
+                            <option value="Boss Monsters">Boss Monsters</option>
+                            <option value="Special Monsters">Special Monsters</option>
+                            <option value="Player vs Player">Player vs Player</option>
+                            <option value="Golem vs Monster">Golem vs Monster</option>
+                            <option value="Trap Encounters">Trap Encounters</option>
+                            <option value="Item Drops">Item Drops</option>
+                            <option value="Assorted Stats">Assorted Stats</option>
+                            </select></td>
+                        <td>
+                            <select name="duelclvl" onchange="parseDuelClvl()">
+                            <script type="text/javascript">
+                            for(var i=1; i<=50; i++) { document.write('<option value="'+i+'">'+i+'</option>'); }
+                            </script>
+                            </select></td>
+                        <td><input value="Help" onclick="helpSpecial()" type="button"></td>
+                        <td><input name="duelstr_fld" value="" size="6" maxsize="6" onchange="parseDuelStrength()" type="text"></td>
+                        <td><input name="duelmag_fld" value="" size="6" maxsize="6" onchange="parseDuelMagic()" type="text"></td>
+                        <td><input name="dueldex_fld" value="" size="6" maxsize="6" onchange="parseDuelDexterity()" type="text"></td>
+                        <td><input name="duelarmor_fld" value="" size="6" maxsize="6" onchange="parseDuelArmor()" type="text"></td>
+                        <td><input name="dueltohit_fld" value="" size="6" maxsize="6" onchange="parseDuelTohit()" type="text"></td>
+                        <td><input name="duelres_fld" value="" size="6" maxsize="6" onchange="parseResDuel()" type="text"></td>
+                        <td><input name="damlow_fld" value="" size="6" maxsize="6" onchange="parseDamageLow()" type="text"></td>
+                        <td><input name="damhigh_fld" value="" size="6" maxsize="6" onchange="parseDamageHigh()" type="text"></td>
+                    </tr>
+                </table>
+                </td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+</form>
+</center>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armor Calculator - Diablo Calculator</title>
+    <link rel="stylesheet" href="calc-styles.css">
+    <script type="text/javascript" src="js/arm.js"></script>
+</head>
+<body>
+<center>
+<!-- Armor Calculator by King aka Red-Wolf -->
+<form name="AcCheck">
+<table class="blog">
+    <tr>
+        <td colspan="7"><span class="title">Armor Calculator </span><i>By: <a href="https://web.archive.org/web/20120125124710/http://www.red-wolf.sakura.ne.jp/dia/eqcalc.html">King aka Red-Wolf</a></i></td>
+    </tr>
+    <tr>
+        <td>Armor</td>
+        <td colspan="3">+% Armor</td>
+        <td colspan="2">Result</td>
+    </tr>
+    <tr>
+        <td><input type="text" name="base" size="3" maxlength="2"></td>
+        <td>+</td>
+        <td><input type="text" name="acrate" size="5" maxlength="4"></td>
+        <td>%</td>
+        <td>=</td>
+        <td><input type="text" name="ac" size="4" maxlength="3" readonly></td>
+        <td><input type="button" name="calc" value="Calculate" onclick="AcCalc(this.form)"><input type="reset" name="reset" value="Reset"></td>
+    </tr>
+</table>
+</form>
+</center>
+</body>
+</html>

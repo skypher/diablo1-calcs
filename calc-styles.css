@@ -1,0 +1,87 @@
+/* Shared styles for Diablo calculators */
+/* Original styling from Ghast's Grotto */
+
+body {
+    background-color: #2d2d2d;
+    font-family: Arial, sans-serif;
+}
+
+a:link {
+    text-decoration: none;
+    color: #ffffff;
+}
+a:visited {
+    text-decoration: none;
+    color: #ffffff;
+}
+a:hover {
+    background: none;
+    color: #ff8000;
+}
+
+table.blog {
+    background-color: #111111;
+    padding: .3em;
+    color: #bca86c;
+}
+table.char {
+    background: url("images/stone.webp") repeat fixed top;
+    color: #ffffff;
+    border-collapse: collapse;
+}
+table.char input {
+    background-color: #111111;
+    color: #ffffff;
+    border-color: #bca86c;
+}
+table.hidden {
+    display: none;
+}
+table.sub {
+    border-collapse: collapse;
+}
+
+.magic {
+    color: #a0a5c8
+}
+.norm {
+    color: #ffffff;
+}
+.fire {
+    color: #e16c6c;
+}
+.title {
+    font-size: 1.5em;
+    text-align: left;
+    color: #ffffff;
+}
+.title2 {
+    color: #a0a5c8;
+    font-size: 1.2em;
+}
+.warn {
+    font-size: .8em;
+    font-style: italic;
+    color: #bca86c;
+}
+
+textarea {
+    background-color: #111111;
+    border-color: #5f5f5f;
+    color: #a0a5c8;
+    border: none;
+    overflow: auto;
+    resize: none;
+}
+input {
+    background-color: #111111;
+    color: #ffffff;
+}
+select {
+    background-color: #111111;
+    color: #a0a5c8;
+}
+button {
+    background-color: #111111;
+    color: #ffffff;
+}

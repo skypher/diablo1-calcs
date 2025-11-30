@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life/Mana Calculator - Diablo Calculator</title>
+    <link rel="stylesheet" href="calc-styles.css">
+    <script type="text/javascript" src="js/tibbs.js"></script>
+</head>
+<body>
+<center>
+<!-- Life/Mana Calculator by Virgil Tibbs -->
+<form name="LifeManaForm">
+<table class="blog">
+    <tr>
+        <td colspan="2"><span class="title">Life/Mana Calculator </span><i>By: <a href="https://web.archive.org/web/20050216223839/http://www.stormpages.com/jc316/diablo/vtlifemana.html">Virgil Tibbs</a></i></td>
+    </tr>
+    <tr>
+        <td>Character Class:</td>
+        <td>
+            <select name="CharClass">
+            <option value="Warrior">Warrior</option>
+            <option value="Rogue">Rogue</option>
+            <option value="Sorcerer">Sorcerer</option>
+            <option value="Monk">Monk</option>
+            <option value="Bard">Bard</option>
+            <option value="Barbarian">Barbarian</option>
+        </select></td>
+        <td style="text-align: right;">Character Level:</td>
+        <td><input type="text" name="CharLevel" size="3" maxlength="4"></td>
+    </tr>
+    <tr>
+        <td>Base Magic:</td>
+        <td><input type="text" name="BaseMagic" size="3" maxlength="3"></td>
+        <td style="text-align: right;">Final Magic:</td>
+        <td><input type="text" name="FinalMagic" size="3" maxlength="3"></td>
+    </tr>
+    <tr>
+        <td>Mana Modifiers:</td>
+        <td colspan="3"><input type="text" name="ManaMods" size="32"></td>
+    </tr>
+    <tr>
+        <td>Base Vitality:</td>
+        <td><input type="text" name="BaseVitality" size="3" maxlength="3"></td>
+        <td style="text-align: right;">Final Vitality:</td>
+        <td><input type="text" name="FinalVitality" size="3" maxlength="3"></td>
+    </tr>
+    <tr>
+        <td>Life Modifiers:</td>
+        <td colspan="3"><input type="text" name="LifeMods" size="32"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="3">
+        <input type="button" value="Set Min" onclick="ResetForm(CharClass)">
+        <input type="button" value="Set Max" onclick="MaxForm(CharClass)">
+        <input type="reset" name="reset" value="Reset">
+        <input type="button" value="Calculate" onclick="GoButton()"></td>
+    </tr>
+    <tr>
+        <td colspan="4">Results:<br><textarea name="lifmantxt" id="lifmantxt" rows=2 cols=39 wrap="soft" readonly>Modifiers are added as such: +1-2+3-4</textarea></td>
+    </tr>
+</table>
+</form>
+</center>
+</body>
+</html>

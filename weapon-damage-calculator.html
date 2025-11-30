@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weapon Damage Calculator - Diablo Calculator</title>
+    <link rel="stylesheet" href="calc-styles.css">
+    <script type="text/javascript" src="js/weapdam.js"></script>
+</head>
+<body>
+<center>
+<!-- Weapon Damage Calculator by King aka Red-Wolf -->
+<form name="DamCheck">
+<table class="blog">
+    <tr>
+        <td><span class="title">Weapon Damage Calculator </span><i>By: <a href="https://web.archive.org/web/20120125124710/http://www.red-wolf.sakura.ne.jp/dia/eqcalc.html">King aka Red-Wolf</a></i></td>
+    </tr>
+    <tr>
+        <td>
+        <table class="sub">
+            <tr>
+                <td>Weapon<br><select name="base" size="1" onChange="ChgBase(this.form)">
+                <script type="text/javascript">
+                    with(document){
+                    for(i=0 ;i<=basmax;i++){
+                    write("<option>",base[i].name,"</option>");
+                    }
+                    }
+                </script></select></td>
+                <td>Base Damage<br><input type="text" name="basemin" size="4" maxlength="3"> - <input type="text" name="basemax" size="4" maxlength="3"></td>
+                <td>+</td>
+                <td>% Prefix<br><input type="text" name="damrate" size="5" maxlength="4">%</td>
+                <td>+</td>
+                <td>Damage Suffix<br><input type="text" name="damadd" size="5" maxlength="3"></td>
+                <td>=</td>
+                <td>Damage Range<br><input type="text" name="min" size="3" maxlength="3" readonly> - <input type="text" name="max" size="3" maxlength="3" readonly></td>
+            </tr>
+            <tr>
+                <td><input type="button" name="calc" value="Calculate" onClick="ChkDam(this.form)"><input type="reset" name="reset" value="Reset"></td>
+            </tr>
+        </table><br>
+        <table class="sub">
+            <tr>
+                <td>Results:<br>
+                <textarea name="display" cols="77" rows="5" readonly>Hammer of Jholm Damage Range is 4 -10 %, Default is 10% which you can change.</textarea></td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+</form>
+</center>
+</body>
+</html>

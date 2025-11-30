@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Rarity Calculator - Diablo Calculator</title>
+    <link rel="stylesheet" href="calc-styles.css">
+    <script type="text/javascript" src="js/rare.js"></script>
+</head>
+<body>
+<center>
+<!-- Item Rarity Calculator by Eso aka the_Langolier -->
+<form Name="SelectItem">
+<table class="blog">
+    <tr>
+        <td><span class="title">Item Rarity Calculator </span><i>By: <a href="https://web.archive.org/web/20120530085029/http://www.dpsyche.com/rarity.html">Eso aka the_Langolier</a></i></td>
+    </tr>
+    <tr>
+        <input type="hidden" name="blank1">
+        <td colspan="3" style="text-align: center">Item Class:<br>
+        <select name="Class" onChange="updateSelectMenu();">
+        <option value="unvalid" selected>Select this first</option>
+        <option>Helm</option>
+        <option>Armor</option>
+        <option>Shield</option>
+        <option>Sword</option>
+        <option>Axe</option>
+        <option>Club</option>
+        <option>Bow</option>
+        <option>Staff</option>
+        <option>Jewelry</option>
+        </select>
+        <input type="hidden" name="blank2">
+        </td>
+    <tr>
+        <td align="center">
+        <table class="sub">
+                <tr>
+                <td>Prefix:<br>
+                <select name="Prefix" disabled onChange="validate();">
+                <option selected></option>
+                <option>1234567890</option>
+                </select>
+                </td>
+                <td>Base Item:<br>
+                <select name="Base" disabled>
+                <option selected>Select this second</option>
+                </select>
+                </td>
+                <td>Suffix:<br>
+                <select name="Suffix" disabled onChange="validate();">
+                <option selected></option>
+                <option>1234567890</option>
+                </select>
+                </td>
+            </tr>
+        </table></td>
+    </tr>
+    <tr>
+        <td align="center">
+        <table class="sub" align="right">
+            <tr>
+                <td id="Valid" ></td>
+                <td align="right"><input name="Calculate" type="button" value="Calculate" onclick="main();" disabled></td>
+            </tr>
+        </table></td>
+    </tr>
+    <tr>
+        <td>Results:<br><textarea name="Results" rows=26 cols=54 wrap="soft" readonly></textarea></td>
+    </tr>
+</table>
+</form>
+</center>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orkin Price Calculator - Diablo Calculator</title>
+    <link rel="stylesheet" href="calc-styles.css">
+    <script type="text/javascript" src="js/orkin.js"></script>
+</head>
+<body>
+<center>
+<!-- Orkin Price Calculator by OrkinMan -->
+<form name="SelectMenu">
+<table class="blog">
+    <tr>
+        <td colspan="2"><span class="title">Orkin Price Calculator </span><i>By: <a href="https://web.archive.org/web/20080405195055/http://www.angelsofhell.com/prices.html">OrkinMan</a></i></td>
+    </tr>
+    <tr>
+        <td class="warn" colspan="2">Warning: For some affixes price is inaccurate, but close, when values other than the min/max are selected.</td>
+    </tr>
+    <tr>
+        <td>
+        <table class="sub">
+            <tr>
+                <td>Prefix<br>
+                <select name="Prefi" onChange="changeprefi(this.form)">
+                <script type="text/javascript">
+                with(document){
+                for(i=0;i<prefi_trueLength;i++){
+                write("<option>",prefiopt[i],"</option>");
+                }
+                }
+                </script></select></td>
+                <td>Item<br>
+                <select name="Item" onChange="change(this.form)">
+                <script type="text/javascript">
+                with(document){
+                for(i=0;i<item_trueLength;i++){write("<option>",itemopt[i],"</option>");}}
+                </script></select></td>
+                <td>Suffix<br>
+                <select name="Suffi" onChange="changesuffi(this.form)">
+                <script type="text/javascript">
+                with(document){
+                for(i=0;i<suffi_trueLength;i++){write("<option>",suffiopt[i],"</option>");}}
+                </script></select></td>
+            </tr>
+            <tr>
+                <td>Prefix Value<br>
+                <select name="PrefiValue" onChange="changeprefivalue(this.form)">
+                <option>no prefix selected yet</option>
+                <script type="text/javascript">
+                with(document){
+                for(i=1;i<prefivalue_maxLength;i++){write("<option>","</option>")}}
+                </script></select></td>
+                <td>Price<br><input type="text" name="TotalCost" value="0" readonly></td>
+                <td>Suffix Value<br>
+                <select name="SuffiValue" onChange="changesuffivalue(this.form)">
+                <option>no suffix selected yet</option>
+                <script type="text/javascript">
+                with(document){
+                for(i=1;i<suffivalue_maxLength;i++){write("<option>","</option>");}}
+                </script></select></td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table class="sub">
+            <tr>
+                <td><input type="radio" name="Location" value="Gri" onclick="changeprice()" checked> Griswold's/Adria's Price</td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="Location" value="Wir" onclick="changeprice()"> Wirt's Price</td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="Location" value="Resale" onclick="changeprice()"> Resale Price</td>
+            </tr>
+        </table></td>
+    </tr>
+<input type="hidden" value="0" name="PrefiCost">
+<input type="hidden" value="0" name="SuffiCost">
+<input type="hidden" value="0" name="PrefiDebug">
+<input type="hidden" value="0" name="SuffiDebug">
+<script type="text/javascript">
+    change();
+</script>
+</form>
+</table>
+</center>
+</body>
+</html>

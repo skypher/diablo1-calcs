@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Price Calculator - Diablo Calculator</title>
+    <link rel="stylesheet" href="calc-styles.css">
+    <script type="text/javascript" src="js/price.js"></script>
+</head>
+<body>
+<center>
+<!-- Item Price Calculator by Eso aka the_Langolier -->
+<form Name="SelectItm">
+<table class="blog">
+    <tr>
+        <td><span class="title">Item Price Calculator </span><i>By: <a href="https://web.archive.org/web/20120530085023/http://www.dpsyche.com/price.html">Eso aka the_Langolier</a></i></td>
+    </tr>
+    <tr>
+        <td align="center">
+        <table class="sub">
+            <tr>
+                <td colspan="3" style="text-align: center">Item Class:<br><select name="Clas" onChange="updateClas();calcPrice();"></select></td>
+            </tr>
+            <tr>
+                <td>Prefix:<br><select name="Prefx" disabled onChange="updatePrefx();calcPrice();"></select></td>
+                <td>Base Item:<br><select name="Bse" disabled onChange="updateSource();calcPrice();"></select></td>
+                <td>Suffix:<br><select name="Suffx" disabled onChange="updateSuffx();calcPrice();"></select></td>
+            </tr>
+            <tr>
+                <td>Value:<br><select name="Pvalue" disabled onChange="calcPrice();"></select></td>
+                <td>
+                    <input name="Source" type="radio" value="Gris" onclick="calcPrice();" checked><a id="Gris">Griswold<br>
+                    <input name="Source" type="radio" value="Wirt" onclick="calcPrice();"><a id="Wirt">Wirt<br>
+                    <input name="Source" type="radio" value="Sale" onclick="calcPrice();"><a id="Sale">Resale</td>
+                <td>Value:<br><select name="Svalue" disabled onChange="calcPrice();"></select></td>
+            </tr>
+        </table></td>
+    <tr>
+        <td>Price:</td>
+    </tr>
+    <tr class="magic">
+        <td name="Price" id="Price">0</td>
+    </tr>
+    <script type="text/javascript">
+    reset();
+    </script>
+</table>
+</form>
+</center>
+</body>
+</html>
