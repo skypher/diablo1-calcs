@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="calc-styles.css">
     <style>
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -30,30 +30,35 @@
         .intro a {
             color: #ff8000;
         }
-        .calc-list {
-            list-style: none;
-            padding: 0;
-        }
-        .calc-item {
-            margin: 15px 0;
-            padding: 15px;
+        .calc-section {
+            margin: 30px 0;
             background-color: #111111;
             border-left: 3px solid #ff8000;
+            padding: 15px;
         }
-        .calc-item a.calc-link {
+        .calc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .calc-title {
             color: #a0a5c8;
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: bold;
+            margin: 0;
         }
-        .calc-item a.calc-link:hover {
+        .calc-title a {
+            color: #a0a5c8;
+        }
+        .calc-title a:hover {
             color: #ff8000;
         }
         .author {
             color: #666;
             font-size: 0.9em;
             font-style: italic;
-            display: block;
-            margin-top: 5px;
         }
         .embed-code {
             margin-top: 10px;
@@ -79,6 +84,15 @@
             white-space: pre-wrap;
             word-break: break-all;
         }
+        .calc-embed {
+            margin-top: 15px;
+            border: 1px solid #333;
+        }
+        .calc-embed iframe {
+            display: block;
+            width: 100%;
+            border: none;
+        }
         .kudos {
             margin-top: 50px;
             padding: 20px;
@@ -102,6 +116,35 @@
             color: #666;
             font-size: 0.85em;
         }
+        .toc {
+            background-color: #111111;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .toc h3 {
+            color: #ff8000;
+            margin-top: 0;
+        }
+        .toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            column-count: 2;
+        }
+        .toc li {
+            margin: 5px 0;
+        }
+        .toc a {
+            color: #a0a5c8;
+        }
+        .toc a:hover {
+            color: #ff8000;
+        }
+        @media (max-width: 600px) {
+            .toc ul {
+                column-count: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -110,133 +153,229 @@
     <p class="intro">A collection of classic Diablo 1 calculators, split into standalone embeddable pages.<br>
     Each calculator can be used directly or embedded via iframe on your own site.</p>
 
+    <div class="toc">
+        <h3>Quick Navigation</h3>
+        <ul>
+            <li><a href="#premium">Premium Item Checker</a></li>
+            <li><a href="#rarity">Item Rarity Calculator</a></li>
+            <li><a href="#price">Item Price Calculator</a></li>
+            <li><a href="#shopqlvl">Shop qlvl Calculator</a></li>
+            <li><a href="#orkin">Orkin Price Calculator</a></li>
+            <li><a href="#weapdam">Weapon Damage Calculator</a></li>
+            <li><a href="#dps">DPS Calculator</a></li>
+            <li><a href="#armor">Armor Calculator</a></li>
+            <li><a href="#actohit">AC & To Hit Calculator</a></li>
+            <li><a href="#ac">Armor Class Calculator</a></li>
+            <li><a href="#cth">Chance to Hit Calculator</a></li>
+            <li><a href="#block">Block Calculator</a></li>
+            <li><a href="#charstats">Character Stats Calculator</a></li>
+            <li><a href="#lifemana">Life/Mana Calculator</a></li>
+        </ul>
+    </div>
+
     <h2>Item Calculators</h2>
-    <ul class="calc-list">
-        <li class="calc-item">
-            <a class="calc-link" href="premium-item-checker.html">Premium Item Checker</a>
+
+    <div class="calc-section" id="premium">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="premium-item-checker.html">Premium Item Checker</a></h3>
             <span class="author">By: King aka Red-Wolf</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/premium-item-checker.html" width="100%" height="500" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="item-rarity-calculator.html">Item Rarity Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/premium-item-checker.html" width="100%" height="520" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="premium-item-checker.html" height="520"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="rarity">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="item-rarity-calculator.html">Item Rarity Calculator</a></h3>
             <span class="author">By: Eso aka the_Langolier</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/item-rarity-calculator.html" width="100%" height="600" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="item-price-calculator.html">Item Price Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/item-rarity-calculator.html" width="100%" height="620" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="item-rarity-calculator.html" height="620"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="price">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="item-price-calculator.html">Item Price Calculator</a></h3>
             <span class="author">By: Eso aka the_Langolier</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/item-price-calculator.html" width="100%" height="350" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="shop-qlvl-calculator.html">Shop qlvl Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/item-price-calculator.html" width="100%" height="320" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="item-price-calculator.html" height="320"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="shopqlvl">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="shop-qlvl-calculator.html">Shop qlvl Calculator</a></h3>
             <span class="author">By: @Royal#4121</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/shop-qlvl-calculator.html" width="100%" height="450" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="orkin-price-calculator.html">Orkin Price Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/shop-qlvl-calculator.html" width="100%" height="480" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="shop-qlvl-calculator.html" height="480"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="orkin">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="orkin-price-calculator.html">Orkin Price Calculator</a></h3>
             <span class="author">By: OrkinMan</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/orkin-price-calculator.html" width="100%" height="300" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-    </ul>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/orkin-price-calculator.html" width="100%" height="280" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="orkin-price-calculator.html" height="280"></iframe>
+        </div>
+    </div>
 
     <h2>Weapon & Armor Calculators</h2>
-    <ul class="calc-list">
-        <li class="calc-item">
-            <a class="calc-link" href="weapon-damage-calculator.html">Weapon Damage Calculator</a>
+
+    <div class="calc-section" id="weapdam">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="weapon-damage-calculator.html">Weapon Damage Calculator</a></h3>
             <span class="author">By: King aka Red-Wolf</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/weapon-damage-calculator.html" width="100%" height="350" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="dps-calculator.html">Damage Per Second Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/weapon-damage-calculator.html" width="100%" height="320" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="weapon-damage-calculator.html" height="320"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="dps">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="dps-calculator.html">Damage Per Second Calculator</a></h3>
             <span class="author">By: GhastMaster</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/dps-calculator.html" width="100%" height="350" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="armor-calculator.html">Armor Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/dps-calculator.html" width="100%" height="320" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="dps-calculator.html" height="320"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="armor">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="armor-calculator.html">Armor Calculator</a></h3>
             <span class="author">By: King aka Red-Wolf</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/armor-calculator.html" width="100%" height="200" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-    </ul>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/armor-calculator.html" width="100%" height="180" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="armor-calculator.html" height="180"></iframe>
+        </div>
+    </div>
 
     <h2>Combat Calculators</h2>
-    <ul class="calc-list">
-        <li class="calc-item">
-            <a class="calc-link" href="ac-tohit-calculator.html">AC & To Hit Calculator</a>
+
+    <div class="calc-section" id="actohit">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="ac-tohit-calculator.html">AC & To Hit Calculator</a></h3>
             <span class="author">By: Arnold van Wakeren aka Moriah</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/ac-tohit-calculator.html" width="100%" height="600" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="ac-calculator.html">Armor Class Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/ac-tohit-calculator.html" width="100%" height="580" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="ac-tohit-calculator.html" height="580"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="ac">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="ac-calculator.html">Armor Class Calculator</a></h3>
             <span class="author">By: Eso aka the_Langolier</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/ac-calculator.html" width="100%" height="700" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="cth-calculator.html">Chance to Hit Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/ac-calculator.html" width="100%" height="680" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="ac-calculator.html" height="680"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="cth">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="cth-calculator.html">Chance to Hit Calculator</a></h3>
             <span class="author">By: Eso aka the_Langolier</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/cth-calculator.html" width="100%" height="800" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="block-calculator.html">Block Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/cth-calculator.html" width="100%" height="820" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="cth-calculator.html" height="820"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="block">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="block-calculator.html">Block Calculator</a></h3>
             <span class="author">By: Eso aka the_Langolier</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/block-calculator.html" width="100%" height="700" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-    </ul>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/block-calculator.html" width="100%" height="680" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="block-calculator.html" height="680"></iframe>
+        </div>
+    </div>
 
     <h2>Character Calculators</h2>
-    <ul class="calc-list">
-        <li class="calc-item">
-            <a class="calc-link" href="character-stats-calculator.html">Character Stats Calculator</a>
+
+    <div class="calc-section" id="charstats">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="character-stats-calculator.html">Character Stats Calculator</a></h3>
             <span class="author">By: King aka Red-Wolf</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/character-stats-calculator.html" width="100%" height="900" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-        <li class="calc-item">
-            <a class="calc-link" href="life-mana-calculator.html">Life/Mana Calculator</a>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/character-stats-calculator.html" width="100%" height="1050" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="character-stats-calculator.html" height="1050"></iframe>
+        </div>
+    </div>
+
+    <div class="calc-section" id="lifemana">
+        <div class="calc-header">
+            <h3 class="calc-title"><a href="life-mana-calculator.html">Life/Mana Calculator</a></h3>
             <span class="author">By: Virgil Tibbs</span>
-            <details class="embed-code">
-                <summary>Embed Code</summary>
-                <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/life-mana-calculator.html" width="100%" height="350" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
-            </details>
-        </li>
-    </ul>
+        </div>
+        <details class="embed-code">
+            <summary>Embed Code</summary>
+            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/life-mana-calculator.html" width="100%" height="340" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </details>
+        <div class="calc-embed">
+            <iframe src="life-mana-calculator.html" height="340"></iframe>
+        </div>
+    </div>
 
     <div class="kudos">
         <h3>Special Thanks</h3>
