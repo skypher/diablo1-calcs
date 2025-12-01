@@ -219,8 +219,8 @@ button {
     }
 }
 
-/* Life/Mana calculator: grid layout on small screens without jumbling */
-@media (max-width: 840px) {
+/* Life/Mana calculator: grid layout on small/medium screens without jumbling */
+@media (max-width: 980px) {
     body.life-mana table.blog {
         width: 100%;
         box-sizing: border-box;
@@ -274,6 +274,27 @@ button {
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+    }
+}
+
+/* Life/Mana: single-column stack on very small screens */
+@media (max-width: 620px) {
+    body.life-mana table.blog tr {
+        grid-template-columns: 1fr;
+    }
+
+    body.life-mana table.blog td {
+        grid-column: 1 / -1;
+    }
+
+    body.life-mana table.blog .action-row td:last-child {
+        flex-wrap: wrap;
+    }
+
+    body.life-mana table.blog .action-row input[type="button"],
+    body.life-mana table.blog .action-row input[type="reset"] {
+        flex: 1 1 100%;
+        max-width: none;
     }
 }
 
