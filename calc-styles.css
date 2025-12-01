@@ -277,8 +277,8 @@ button {
     }
 }
 
-/* Life/Mana: single-column stack on very small screens */
-@media (max-width: 620px) {
+/* Life/Mana: single-column stack on small/medium screens */
+@media (max-width: 850px) {
     body.life-mana table.blog tr {
         grid-template-columns: 1fr;
     }
