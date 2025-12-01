@@ -94,6 +94,54 @@ button {
     vertical-align: middle;
 }
 
+/* Life/Mana calculator: make 4-column rows wrap gracefully on tablets */
+@media (max-width: 900px) {
+    body.life-mana table.blog {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    body.life-mana table.blog tr {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 12px;
+        align-items: center;
+    }
+
+    body.life-mana table.blog td {
+        flex: 1 1 200px;
+        min-width: 140px;
+        padding-right: 6px;
+    }
+
+    body.life-mana table.blog td[colspan="3"],
+    body.life-mana table.blog td[colspan="4"] {
+        flex: 1 1 100%;
+    }
+
+    body.life-mana table.blog input[type="text"],
+    body.life-mana table.blog select,
+    body.life-mana table.blog textarea {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    body.life-mana table.blog .action-row {
+        gap: 8px;
+    }
+
+    body.life-mana table.blog .action-row td {
+        flex: 1 1 100%;
+    }
+
+    body.life-mana table.blog .action-row input[type="button"],
+    body.life-mana table.blog .action-row input[type="reset"] {
+        width: 48%;
+        min-width: 120px;
+    }
+}
+
 /* Premium item checker: wrap the first control row cleanly on narrow widths */
 @media (max-width: 900px) {
     body.premium-checker table.sub .control-row {
@@ -216,6 +264,15 @@ button {
         -webkit-overflow-scrolling: touch;
         padding-bottom: 12px;
         display: block;
+    }
+}
+
+/* Re-apply flex sizing for life/mana rows after the general 800px stacking rule */
+@media (max-width: 800px) {
+    body.life-mana table.blog > tbody > tr > td {
+        width: auto;
+        padding: 8px 6px;
+        flex: 1 1 200px;
     }
 }
 
