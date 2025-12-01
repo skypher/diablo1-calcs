@@ -94,8 +94,8 @@ button {
     vertical-align: middle;
 }
 
-/* Mobile responsive styles */
-@media (max-width: 600px) {
+/* Mobile / tablet responsive styles */
+@media (max-width: 800px) {
     body {
         padding: 8px 6px;
         margin: 0;
@@ -118,12 +118,12 @@ button {
     /* Give the large result grids breathing room and allow sideways scroll instead of clipping */
     table[id^="Max"],
     table[id^="Enemy"] {
-        min-width: 440px;
+        min-width: 520px;
     }
 
     table.sub {
         width: auto;
-        min-width: 520px;
+        min-width: 680px;
         display: table;
         border-collapse: collapse;
     }
@@ -140,7 +140,7 @@ button {
 
     table.char {
         width: auto;
-        min-width: 560px;
+        min-width: 640px;
         margin-top: 15px;
     }
 
