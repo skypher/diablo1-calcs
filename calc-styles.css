@@ -115,16 +115,19 @@ button {
 
     table.sub {
         width: 100%;
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     table.sub tr {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 8px;
+        display: table-row;
     }
 
     table.sub td {
         min-width: 0;
+        white-space: nowrap; /* keep label + field together */
+        padding-right: 8px;
     }
 
     table.char {
