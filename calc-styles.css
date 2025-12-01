@@ -94,54 +94,6 @@ button {
     vertical-align: middle;
 }
 
-/* Life/Mana calculator: make 4-column rows wrap gracefully on tablets */
-@media (max-width: 900px) {
-    body.life-mana table.blog {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    body.life-mana table.blog tr {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px 12px;
-        align-items: center;
-    }
-
-    body.life-mana table.blog td {
-        flex: 1 1 200px;
-        min-width: 140px;
-        padding-right: 6px;
-    }
-
-    body.life-mana table.blog td[colspan="3"],
-    body.life-mana table.blog td[colspan="4"] {
-        flex: 1 1 100%;
-    }
-
-    body.life-mana table.blog input[type="text"],
-    body.life-mana table.blog select,
-    body.life-mana table.blog textarea {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    body.life-mana table.blog .action-row {
-        gap: 8px;
-    }
-
-    body.life-mana table.blog .action-row td {
-        flex: 1 1 100%;
-    }
-
-    body.life-mana table.blog .action-row input[type="button"],
-    body.life-mana table.blog .action-row input[type="reset"] {
-        width: 48%;
-        min-width: 120px;
-    }
-}
-
 /* Premium item checker: wrap the first control row cleanly on narrow widths */
 @media (max-width: 900px) {
     body.premium-checker table.sub .control-row {
@@ -267,12 +219,61 @@ button {
     }
 }
 
-/* Re-apply flex sizing for life/mana rows after the general 800px stacking rule */
-@media (max-width: 800px) {
-    body.life-mana table.blog > tbody > tr > td {
+/* Life/Mana calculator: grid layout on small screens without jumbling */
+@media (max-width: 840px) {
+    body.life-mana table.blog {
+        width: 100%;
+        box-sizing: border-box;
+        border-collapse: collapse;
+    }
+
+    /* Treat each table row as a 2-column grid so label+input pairs stay together */
+    body.life-mana table.blog tr {
+        display: grid;
+        grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr);
+        grid-auto-flow: dense;
+        column-gap: 12px;
+        row-gap: 10px;
+        align-items: center;
+    }
+
+    body.life-mana table.blog td {
         width: auto;
-        padding: 8px 6px;
-        flex: 1 1 200px;
+        padding: 6px 0;
+        min-width: 0;
+    }
+
+    /* Full-width cells (modifiers/results rows) */
+    body.life-mana table.blog td[colspan="3"],
+    body.life-mana table.blog td[colspan="4"] {
+        grid-column: 1 / -1;
+    }
+
+    /* Action row: drop the empty spacer cell and wrap buttons */
+    body.life-mana table.blog .action-row td:first-child {
+        display: none;
+    }
+
+    body.life-mana table.blog .action-row td:last-child {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    body.life-mana table.blog .action-row input[type="button"],
+    body.life-mana table.blog .action-row input[type="reset"] {
+        flex: 1 1 140px;
+        min-width: 120px;
+        max-width: 220px;
+    }
+
+    body.life-mana table.blog input[type="text"],
+    body.life-mana table.blog select,
+    body.life-mana table.blog textarea {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 }
 
