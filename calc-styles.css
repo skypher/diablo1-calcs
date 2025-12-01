@@ -86,6 +86,13 @@ button {
     color: #ffffff;
 }
 
+.field-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #bca86c;
+    font-size: 0.9em;
+}
+
 /* Mobile responsive styles */
 @media (max-width: 600px) {
     body {

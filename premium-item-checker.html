@@ -19,37 +19,44 @@
         <td colspan="2">
         <table class="sub">
             <tr>
-                <td>Prefix:</td>
-                <td>Base Item:</td>
-                <td>Suffix:</td>
-                <td>Price</td>
-                <td>Reset</td>
-            </tr>
-            <tr>
                 <td>
-                    <select name="prefixx" size="1" onChange="ChgPrefix(this.form)">
+                    <label class="field-label" for="prefixx">Prefix</label>
+                    <select id="prefixx" name="prefixx" size="1" onChange="ChgPrefix(this.form)">
                     <script type="text/javascript">
                     with(document){
                     for(i=0 ;i<=premax;i++){
-                    write("<option>",prefixx[prelst[i]].name,"</option>");}}</script></select></td>
+                    write("<option>",prefixx[prelst[i]].name,"</option>");}}
+                    </script></select>
+                </td>
                 <td>
-                    <select name="basee" size="1" onChange="ChgBasee(this.form)">
+                    <label class="field-label" for="basee">Base Item</label>
+                    <select id="basee" name="basee" size="1" onChange="ChgBasee(this.form)">
                     <script type="text/javascript">
                     with(document){
                     for(i=0 ;i<=basmaxx;i++){
-                    write("<option>",basee[baslst[i]].name,"</option>");}}</script></select></td>
+                    write("<option>",basee[baslst[i]].name,"</option>");}}
+                    </script></select>
+                </td>
                 <td>
-                    <select name="suffixx" size="1" onChange="ChgSuffix(this.form)">
+                    <label class="field-label" for="suffixx">Suffix</label>
+                    <select id="suffixx" name="suffixx" size="1" onChange="ChgSuffix(this.form)">
                     <script type="text/javascript">
                     with(document){
                     for(i=0 ;i<=sufmax;i++){
-                    write("<option>",suffixx[suflst[i]].name,"</option>");}}</script></select></td>
+                    write("<option>",suffixx[suflst[i]].name,"</option>");}}
+                    </script></select>
+                </td>
                 <td>
-                    <select name="calcprice" size="1" onChange="ChgMode(this.form)">
+                    <label class="field-label" for="calcprice">Price</label>
+                    <select id="calcprice" name="calcprice" size="1" onChange="ChgMode(this.form)">
                     <option selected>Off</option>
                     <option>On</option>
-                    </select></td>
-                <td><input type="reset" value="Reset" onClick="Init(this.form)"></td>
+                    </select>
+                </td>
+                <td>
+                    <label class="field-label" aria-hidden="true">&nbsp;</label>
+                    <input type="reset" value="Reset" onClick="Init(this.form)">
+                </td>
             </tr>
             <tr>
                 <td colspan="5">
