@@ -85,3 +85,83 @@ button {
     background-color: #111111;
     color: #ffffff;
 }
+
+/* Mobile responsive styles */
+@media (max-width: 600px) {
+    body {
+        padding: 5px;
+        margin: 0;
+    }
+
+    table.blog {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    table.blog > tbody > tr > td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    table.sub {
+        width: 100%;
+    }
+
+    table.sub tr {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    table.sub td {
+        flex: 1 1 auto;
+        min-width: 120px;
+    }
+
+    table.char {
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    textarea {
+        width: 100% !important;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    select {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    input[type="text"],
+    input[type="button"],
+    input[type="reset"] {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .title {
+        font-size: 1.1em;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .title2 {
+        font-size: 1em;
+    }
+
+    /* Stack form elements vertically */
+    form {
+        width: 100%;
+        padding: 0 5px;
+        box-sizing: border-box;
+    }
+
+    /* Prevent horizontal overflow */
+    center {
+        width: 100%;
+        overflow-x: hidden;
+    }
+}
