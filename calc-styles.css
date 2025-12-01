@@ -279,22 +279,56 @@ button {
 
 /* Life/Mana: single-column stack on small/medium screens */
 @media (max-width: 850px) {
+    body.life-mana table.blog {
+        display: block;
+        width: 100%;
+    }
+
+    body.life-mana table.blog tbody {
+        display: block;
+    }
+
     body.life-mana table.blog tr {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 0;
     }
 
     body.life-mana table.blog td {
-        grid-column: 1 / -1;
+        display: block;
+        width: 100%;
+        padding: 4px 8px;
+        box-sizing: border-box;
+        text-align: left !important;
+    }
+
+    body.life-mana table.blog td[colspan] {
+        width: 100%;
+    }
+
+    body.life-mana table.blog input[type="text"],
+    body.life-mana table.blog select,
+    body.life-mana table.blog textarea {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    body.life-mana table.blog .action-row td:first-child {
+        display: none;
     }
 
     body.life-mana table.blog .action-row td:last-child {
+        display: flex;
         flex-wrap: wrap;
+        gap: 8px;
     }
 
     body.life-mana table.blog .action-row input[type="button"],
     body.life-mana table.blog .action-row input[type="reset"] {
-        flex: 1 1 100%;
-        max-width: none;
+        flex: 1 1 45%;
+        min-width: 100px;
     }
 }
 
