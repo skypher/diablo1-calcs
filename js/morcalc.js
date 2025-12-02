@@ -704,138 +704,131 @@ alert("This should never see the light of day.");
 function reset_form() {
 
 // reset the internal variables here
-with( internal) {
-  ia_player = "Warrior";
-  ia_clvl = 1;
-  ia_weapon = "Bare";
-  ia_slvl = 0;
-  ia_strength = 0;
-  ia_magic = 0;
-  ia_dexterity = 0;
-  ia_vitality = 0;
-  ia_armor = 0;
-  ia_tohit = 0;
-  ia_damlow = 0;
-  ia_damhigh = 0;
-  ia_resmagic = 0;
-  ia_resfire = 0;
-  ia_reslightning = 0;
+  internal.ia_player = "Warrior";
+  internal.ia_clvl = 1;
+  internal.ia_weapon = "Bare";
+  internal.ia_slvl = 0;
+  internal.ia_strength = 0;
+  internal.ia_magic = 0;
+  internal.ia_dexterity = 0;
+  internal.ia_vitality = 0;
+  internal.ia_armor = 0;
+  internal.ia_tohit = 0;
+  internal.ia_damlow = 0;
+  internal.ia_damhigh = 0;
+  internal.ia_resmagic = 0;
+  internal.ia_resfire = 0;
+  internal.ia_reslightning = 0;
 
-  ia_game = "MP Diablo";
-  ia_difficulty = "Normal";
-  ia_dlvl = "1";
-  ia_special = "Plain Monsters";
-  ia_extra = "Zombie";
-  ia_duelclvl = 1;
-  ia_duelstrength = 0;
-  ia_duelmagic = 0;
-  ia_dueldexterity = 0;
-  ia_duelarmor = 0;
-  ia_dueltohit = 0;
-  ia_duelresistance = 0;
-  }
+  internal.ia_game = "MP Diablo";
+  internal.ia_difficulty = "Normal";
+  internal.ia_dlvl = "1";
+  internal.ia_special = "Plain Monsters";
+  internal.ia_extra = "Zombie";
+  internal.ia_duelclvl = 1;
+  internal.ia_duelstrength = 0;
+  internal.ia_duelmagic = 0;
+  internal.ia_dueldexterity = 0;
+  internal.ia_duelarmor = 0;
+  internal.ia_dueltohit = 0;
+  internal.ia_duelresistance = 0;
 
 // reset the flags here
-with( internalflags) {
-  player_flag = false;
-  clvl_flag = false;
-  weapon_flag = false;
-  slvl_flag = false;
-  strength_flag = false;
-  magic_flag = false;
-  dexterity_flag = false;
-  vitality_flag = false;
-  armor_flag = false;
-  tohit_flag = false;
-  damlow_flag = false;
-  damhigh_flag = false;
-  resmagic_flag = false;
-  resfire_flag = false;
-  reslightning_flag = false;
+  internalflags.player_flag = false;
+  internalflags.clvl_flag = false;
+  internalflags.weapon_flag = false;
+  internalflags.slvl_flag = false;
+  internalflags.strength_flag = false;
+  internalflags.magic_flag = false;
+  internalflags.dexterity_flag = false;
+  internalflags.vitality_flag = false;
+  internalflags.armor_flag = false;
+  internalflags.tohit_flag = false;
+  internalflags.damlow_flag = false;
+  internalflags.damhigh_flag = false;
+  internalflags.resmagic_flag = false;
+  internalflags.resfire_flag = false;
+  internalflags.reslightning_flag = false;
 
-  game_flag = false;
-  difficulty_flag = false;
-  dlvl_flag = false;
-  special_flag = false;
-  extra_flag = false;
-  duelclvl_flag = false;
-  duelstrength_flag = false;
-  duelmagic_flag = false;
-  dueldexterity_flag = false;
-  duelarmor_flag = false;
-  dueltohit_flag = false;
-  duelresistance_flag = false;
-  }
+  internalflags.game_flag = false;
+  internalflags.difficulty_flag = false;
+  internalflags.dlvl_flag = false;
+  internalflags.special_flag = false;
+  internalflags.extra_flag = false;
+  internalflags.duelclvl_flag = false;
+  internalflags.duelstrength_flag = false;
+  internalflags.duelmagic_flag = false;
+  internalflags.dueldexterity_flag = false;
+  internalflags.duelarmor_flag = false;
+  internalflags.dueltohit_flag = false;
+  internalflags.duelresistance_flag = false;
 
 // reset the form fields
-with( document.combat) {
-  player.selectedIndex = 0;
-  clvl.selectedIndex = 0;
-  weapon.selectedIndex = 0;
-  slvl.selectedIndex = 0;
-  str_fld.value = "";
-  mag_fld.value = "";
-  dex_fld.value = "";
-  vit_fld.value = "";
-  armor_fld.value = "";
-  tohit_fld.value = "";
-  damlow_fld.value = "";
-  damhigh_fld.value = "";
-  resmagic_fld.value = "";
-  resfire_fld.value = "";
-  reslightning_fld.value = "";
+  document.combat.player.selectedIndex = 0;
+  document.combat.clvl.selectedIndex = 0;
+  document.combat.weapon.selectedIndex = 0;
+  document.combat.slvl.selectedIndex = 0;
+  document.combat.str_fld.value = "";
+  document.combat.mag_fld.value = "";
+  document.combat.dex_fld.value = "";
+  document.combat.vit_fld.value = "";
+  document.combat.armor_fld.value = "";
+  document.combat.tohit_fld.value = "";
+  document.combat.damlow_fld.value = "";
+  document.combat.damhigh_fld.value = "";
+  document.combat.resmagic_fld.value = "";
+  document.combat.resfire_fld.value = "";
+  document.combat.reslightning_fld.value = "";
 
-  game.selectedIndex = 0;
-  difficulty.selectedIndex = 0;
-  dlvl.selectedIndex = 0;
-  special.selectedIndex = 0;
-  extra.selectedIndex = 0;
-  duelclvl.selectedIndex = 0;
-  duelstr_fld.value = "";
-  duelmag_fld.value = "";
-  dueldex_fld.value = "";
-  duelarmor_fld.value = "";
-  dueltohit_fld.value = "";
-  duelres_fld.value = "";
+  document.combat.game.selectedIndex = 0;
+  document.combat.difficulty.selectedIndex = 0;
+  document.combat.dlvl.selectedIndex = 0;
+  document.combat.special.selectedIndex = 0;
+  document.combat.extra.selectedIndex = 0;
+  document.combat.duelclvl.selectedIndex = 0;
+  document.combat.duelstr_fld.value = "";
+  document.combat.duelmag_fld.value = "";
+  document.combat.dueldex_fld.value = "";
+  document.combat.duelarmor_fld.value = "";
+  document.combat.dueltohit_fld.value = "";
+  document.combat.duelres_fld.value = "";
 
-  results.value = "";
-  results2.value = "";
-  }
+  document.combat.results.value = "";
+  document.combat.results2.value = "";
 }
 
 function print_flags() {
 
 var output = "";
 
-with( internalflags) {
-  output += player_flag + "\n";
-  output += clvl_flag + "\n";
-  output += weapon_flag + "\n";
-  output += slvl_flag + "\n";
-  output += strength_flag + "\n";
-  output += magic_flag + "\n";
-  output += dexterity_flag + "\n";
-  output += vitality_flag + "\n";
-  output += armor_flag + "\n";
-  output += tohit_flag + "\n";
-  output += damlow_flag + "\n";
-  output += damhigh_flag + "\n";
-  output += resmagic_flag + "\n";
-  output += resfire_flag + "\n";
-  output += reslightning_flag + "\n";
-  output += game_flag + "\n";
-  output += difficulty_flag + "\n";
-  output += dlvl_flag + "\n";
-  output += special_flag + "\n";
-  output += extra_flag + "\n";
-  output += duelclvl_flag + "\n";
-  output += duelstrength_flag + "\n";
-  output += duelmagic_flag + "\n";
-  output += dueldexterity_flag + "\n";
-  output += duelarmor_flag + "\n";
-  output += dueltohit_flag + "\n";
-  output += duelresistance_flag + "\n";
-  }
+  output += internalflags.player_flag + "\n";
+  output += internalflags.clvl_flag + "\n";
+  output += internalflags.weapon_flag + "\n";
+  output += internalflags.slvl_flag + "\n";
+  output += internalflags.strength_flag + "\n";
+  output += internalflags.magic_flag + "\n";
+  output += internalflags.dexterity_flag + "\n";
+  output += internalflags.vitality_flag + "\n";
+  output += internalflags.armor_flag + "\n";
+  output += internalflags.tohit_flag + "\n";
+  output += internalflags.damlow_flag + "\n";
+  output += internalflags.damhigh_flag + "\n";
+  output += internalflags.resmagic_flag + "\n";
+  output += internalflags.resfire_flag + "\n";
+  output += internalflags.reslightning_flag + "\n";
+  output += internalflags.game_flag + "\n";
+  output += internalflags.difficulty_flag + "\n";
+  output += internalflags.dlvl_flag + "\n";
+  output += internalflags.special_flag + "\n";
+  output += internalflags.extra_flag + "\n";
+  output += internalflags.duelclvl_flag + "\n";
+  output += internalflags.duelstrength_flag + "\n";
+  output += internalflags.duelmagic_flag + "\n";
+  output += internalflags.dueldexterity_flag + "\n";
+  output += internalflags.duelarmor_flag + "\n";
+  output += internalflags.dueltohit_flag + "\n";
+  output += internalflags.duelresistance_flag + "\n";
+
 document.combat.results.value = output;
 document.combat.results2.value = output;
 }
@@ -844,35 +837,134 @@ function print_internal () {
 
 var output = "";
 
-with( internal) {
-  output += ia_player + "\n";
-  output += ia_clvl + "\n";
-  output += ia_weapon + "\n";
-  output += ia_slvl + "\n";
-  output += ia_strength + "\n";
-  output += ia_magic + "\n";
-  output += ia_dexterity + "\n";
-  output += ia_vitality + "\n";
-  output += ia_armor + "\n";
-  output += ia_tohit + "\n";
-  output += ia_damlow + "\n";
-  output += ia_damhigh + "\n";
-  output += ia_resmagic + "\n";
-  output += ia_resfire + "\n";
-  output += ia_reslightning + "\n";
-  output += ia_game + "\n";
-  output += ia_difficulty + "\n";
-  output += ia_dlvl + "\n";
-  output += ia_special + "\n";
-  output += ia_extra + "\n";
-  output += ia_duelclvl + "\n";
-  output += ia_duelstrength + "\n";
-  output += ia_duelmagic + "\n";
-  output += ia_dueldexterity + "\n";
-  output += ia_duelarmor + "\n";
-  output += ia_dueltohit + "\n";
-  output += ia_duelresistance + "\n";
-  }
+  output += internal.ia_player + "\n";
+  output += internal.ia_clvl + "\n";
+  output += internal.ia_weapon + "\n";
+  output += internal.ia_slvl + "\n";
+  output += internal.ia_strength + "\n";
+  output += internal.ia_magic + "\n";
+  output += internal.ia_dexterity + "\n";
+  output += internal.ia_vitality + "\n";
+  output += internal.ia_armor + "\n";
+  output += internal.ia_tohit + "\n";
+  output += internal.ia_damlow + "\n";
+  output += internal.ia_damhigh + "\n";
+  output += internal.ia_resmagic + "\n";
+  output += internal.ia_resfire + "\n";
+  output += internal.ia_reslightning + "\n";
+  output += internal.ia_game + "\n";
+  output += internal.ia_difficulty + "\n";
+  output += internal.ia_dlvl + "\n";
+  output += internal.ia_special + "\n";
+  output += internal.ia_extra + "\n";
+  output += internal.ia_duelclvl + "\n";
+  output += internal.ia_duelstrength + "\n";
+  output += internal.ia_duelmagic + "\n";
+  output += internal.ia_dueldexterity + "\n";
+  output += internal.ia_duelarmor + "\n";
+  output += internal.ia_dueltohit + "\n";
+  output += internal.ia_duelresistance + "\n";
+
 document.combat.results.value = output;
 document.combat.results2.value = output;
+}
+
+// Pure calculation functions for testing
+
+// Calculate melee to-hit chance
+function calcMeleeToHit(baseToHit, playerLevel, weaponBonus, monsterArmor) {
+  return baseToHit + playerLevel + weaponBonus - monsterArmor;
+}
+
+// Calculate bow to-hit chance
+function calcBowToHit(baseToHit, dexterity, playerLevel, bowBonus, monsterArmor) {
+  return baseToHit + Math.floor(dexterity / 2) + playerLevel + bowBonus - monsterArmor;
+}
+
+// Calculate spell to-hit chance
+function calcSpellToHit(magic, magicBonus, monsterLevel) {
+  return 50 + magic + magicBonus - monsterLevel - monsterLevel;
+}
+
+// Calculate monster's to-hit chance against player
+function calcMonsterToHit(monsterTohit, monsterLevel, playerLevel, playerArmor, autohitMin) {
+  const toHit = 30 + monsterTohit + monsterLevel + monsterLevel - playerLevel - playerLevel - playerArmor;
+  return toHit < autohitMin ? autohitMin : toHit;
+}
+
+// Calculate player blocking chance
+function calcBlockingChance(dexterity, playerLevel, monsterLevel, blockBonus) {
+  return dexterity - monsterLevel - monsterLevel + playerLevel + playerLevel + blockBonus;
+}
+
+// Calculate effective monster level with difficulty bonus
+function calcEffectiveMonsterLevel(baseLevel, difficultyBonus) {
+  return baseLevel + difficultyBonus;
+}
+
+// Calculate effective monster armor with difficulty bonus
+function calcEffectiveMonsterArmor(baseArmor, difficultyBonus) {
+  return baseArmor + difficultyBonus;
+}
+
+// Calculate effective monster to-hit with difficulty bonus
+function calcEffectiveMonsterTohit(baseTohit, difficultyBonus) {
+  return baseTohit + difficultyBonus;
+}
+
+// Calculate monster experience with difficulty multipliers
+function calcMonsterExperience(baseExp, expMultiplier, expAdder) {
+  return baseExp * expMultiplier + expAdder;
+}
+
+// Calculate monster HP with difficulty modifiers
+function calcMonsterHP(baseHP, hpMultiplier, hpAdder) {
+  return baseHP * hpMultiplier + hpAdder;
+}
+
+// Calculate monster damage with difficulty modifiers
+function calcMonsterDamage(baseDamage, damageMultiplier, damageAdder) {
+  return baseDamage * damageMultiplier + damageAdder;
+}
+
+// Clamp to-hit value between autoHit and autoMiss
+function clampToHit(value, autoHitMin, autoMissMax) {
+  if (value < autoHitMin) return autoHitMin;
+  if (value > autoMissMax) return autoMissMax;
+  return value;
+}
+
+// Export for testing (CommonJS)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    calcExp,
+    player_attributes,
+    weapon_attributes,
+    game_attributes,
+    difficulty_attributes,
+    dlvl_attributes,
+    special_attributes,
+    monstergroup_attributes,
+    playerArray,
+    weaponArray,
+    gameArray,
+    difficultyArray,
+    dlvlArray,
+    specialArray,
+    autoHit,
+    autoMiss,
+    // New pure calculation functions
+    calcMeleeToHit,
+    calcBowToHit,
+    calcSpellToHit,
+    calcMonsterToHit,
+    calcBlockingChance,
+    calcEffectiveMonsterLevel,
+    calcEffectiveMonsterArmor,
+    calcEffectiveMonsterTohit,
+    calcMonsterExperience,
+    calcMonsterHP,
+    calcMonsterDamage,
+    clampToHit
+  };
 }

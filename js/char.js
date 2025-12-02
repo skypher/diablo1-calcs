@@ -485,3 +485,99 @@ function resallsetring2(theForm){
  theForm.ring2resfire.value	= theForm.ring2resall.value;
  theForm.ring2reslight.value	= theForm.ring2resall.value;
 }
+
+// Pure calculation functions for testing
+function calcWarriorLife(vitBase, level) {
+  var lv2 = (level == 50) ? 48 : level - 1;
+  return vitBase * 2 + lv2 * 2 + 20;
+}
+
+function calcWarriorMana(magBase, level) {
+  var lv2 = (level == 50) ? 48 : level - 1;
+  return magBase + lv2;
+}
+
+function calcRogueLife(vitBase, level) {
+  var lv2 = (level == 50) ? 48 : level - 1;
+  return vitBase + lv2 * 2 + 25;
+}
+
+function calcRogueMana(magBase, level) {
+  var lv2 = (level == 50) ? 48 : level - 1;
+  return magBase + lv2 * 2 + 7;
+}
+
+function calcSorcererLife(vitBase, level) {
+  var lv2 = (level == 50) ? 48 : level - 1;
+  return vitBase + lv2 + 10;
+}
+
+function calcSorcererMana(magBase, level) {
+  var lv2 = (level == 50) ? 48 : level - 1;
+  return magBase * 2 + lv2 * 2;
+}
+
+function calcToHit(dex, toHitEquip) {
+  return Math.floor(dex * 0.5) + 50 + toHitEquip;
+}
+
+function calcAC(dex, acEquip) {
+  return Math.floor(dex * 0.2) + acEquip;
+}
+
+function calcBlock(level, enemyLevel, dex) {
+  return (level - enemyLevel) * 2 + dex;
+}
+
+function clampHitChance(value) {
+  if (value < 5) return 5;
+  if (value > 95) return 95;
+  return value;
+}
+
+function clampBlockChance(value) {
+  if (value < 0) return 0;
+  if (value > 100) return 100;
+  return value;
+}
+
+function formatResistance(value) {
+  if (value >= 75) return "MAX";
+  return value + "%";
+}
+
+function calcMeleeDamage(str, level, mult) {
+  return Math.floor(str * level * mult);
+}
+
+function calcMagicToHit(magic, enemyMagicLevel, bonus) {
+  bonus = bonus || 0;
+  return (25 - enemyMagicLevel) * 2 + magic + bonus;
+}
+
+// Export for testing (CommonJS)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    MakeArray,
+    nxtExp,
+    calcall,
+    myexpset,
+    attrimaxset,
+    attriinitset,
+    enacmaxset,
+    calcWarriorLife,
+    calcWarriorMana,
+    calcRogueLife,
+    calcRogueMana,
+    calcSorcererLife,
+    calcSorcererMana,
+    calcToHit,
+    calcAC,
+    calcBlock,
+    clampHitChance,
+    clampBlockChance,
+    formatResistance,
+    calcMeleeDamage,
+    calcMagicToHit
+  };
+}

@@ -3,115 +3,6 @@
  * Tests experience calculations and attribute constructors
  */
 
-const fs = require('fs');
-const vm = require('vm');
-
-// Create context for executing source
-const context = {
-  Math: Math,
-  Array: Array,
-  alert: () => {},
-  document: {
-    combat: {
-      player: { selectedIndex: 0 },
-      weapon: { selectedIndex: 0 },
-      extra: { selectedIndex: 0 },
-      difficulty: { selectedIndex: 0 },
-      dlvl: { selectedIndex: 0 },
-      clvl: { selectedIndex: 0 },
-      game: { selectedIndex: 0 },
-      special: { selectedIndex: 0 },
-      results: { value: '' },
-      results2: { value: '' },
-      str_fld: { value: '' },
-      mag_fld: { value: '' },
-      dex_fld: { value: '' },
-      vit_fld: { value: '' },
-      armor_fld: { value: '' },
-      tohit_fld: { value: '' },
-      damlow_fld: { value: '' },
-      damhigh_fld: { value: '' },
-      resmagic_fld: { value: '' },
-      resfire_fld: { value: '' },
-      reslightning_fld: { value: '' },
-      duelclvl: { selectedIndex: 0 },
-      duelstr_fld: { value: '' },
-      duelmag_fld: { value: '' },
-      dueldex_fld: { value: '' },
-      duelarmor_fld: { value: '' },
-      dueltohit_fld: { value: '' },
-      duelres_fld: { value: '' },
-      slvl: { selectedIndex: 0 }
-    }
-  },
-  internal: {
-    ia_game: 'MP Diablo',
-    ia_player: 'Warrior',
-    ia_clvl: 1,
-    ia_weapon: 'Bare',
-    ia_slvl: 0,
-    ia_strength: 0,
-    ia_magic: 0,
-    ia_dexterity: 0,
-    ia_vitality: 0,
-    ia_armor: 0,
-    ia_tohit: 0,
-    ia_damlow: 0,
-    ia_damhigh: 0,
-    ia_resmagic: 0,
-    ia_resfire: 0,
-    ia_reslightning: 0,
-    ia_difficulty: 'Normal',
-    ia_dlvl: '1',
-    ia_special: 'Plain Monsters',
-    ia_extra: 'Zombie',
-    ia_duelclvl: 1,
-    ia_duelstrength: 0,
-    ia_duelmagic: 0,
-    ia_dueldexterity: 0,
-    ia_duelarmor: 0,
-    ia_dueltohit: 0,
-    ia_duelresistance: 0
-  },
-  internalflags: {
-    player_flag: false,
-    clvl_flag: false,
-    weapon_flag: false,
-    slvl_flag: false,
-    strength_flag: false,
-    magic_flag: false,
-    dexterity_flag: false,
-    vitality_flag: false,
-    armor_flag: false,
-    tohit_flag: false,
-    damlow_flag: false,
-    damhigh_flag: false,
-    resmagic_flag: false,
-    resfire_flag: false,
-    reslightning_flag: false,
-    game_flag: false,
-    difficulty_flag: false,
-    dlvl_flag: false,
-    special_flag: false,
-    extra_flag: false,
-    duelclvl_flag: false,
-    duelstrength_flag: false,
-    duelmagic_flag: false,
-    dueldexterity_flag: false,
-    duelarmor_flag: false,
-    dueltohit_flag: false,
-    duelresistance_flag: false
-  }
-};
-
-// Create mock monsterArray
-context.monsterArray = [{ m_armor: 20, m_mlvl: 5, m_tohit: 30, m_experience: 100 }];
-
-vm.createContext(context);
-
-const sourceCode = fs.readFileSync('./js/morcalc.js', 'utf8');
-vm.runInContext(sourceCode, context);
-
 const {
   calcExp,
   player_attributes,
@@ -126,15 +17,35 @@ const {
   gameArray,
   difficultyArray,
   dlvlArray,
-  specialArray
-} = context;
+  specialArray,
+  autoHit,
+  autoMiss,
+  // New pure calculation functions
+  calcMeleeToHit,
+  calcBowToHit,
+  calcSpellToHit,
+  calcMonsterToHit,
+  calcBlockingChance,
+  calcEffectiveMonsterLevel,
+  calcEffectiveMonsterArmor,
+  calcEffectiveMonsterTohit,
+  calcMonsterExperience,
+  calcMonsterHP,
+  calcMonsterDamage,
+  clampToHit
+} = require('../js/morcalc.js');
+
+// Mock global.internal for calcExp tests
+global.internal = {
+  ia_game: 'MP Diablo'
+};
 
 describe('morcalc.js - Monster Calculator', () => {
 
   describe('calcExp - Experience Calculation', () => {
     beforeEach(() => {
       // Reset internal game state for each test
-      context.internal.ia_game = 'MP Diablo';
+      global.internal.ia_game = 'MP Diablo';
     });
 
     test('returns 0 when player level is 10 or more above monster level', () => {
@@ -164,7 +75,7 @@ describe('morcalc.js - Monster Calculator', () => {
     });
 
     test('caps SP experience at base experience', () => {
-      context.internal.ia_game = 'SP Diablo';
+      global.internal.ia_game = 'SP Diablo';
       // In SP, exp is capped at baseExp
       // mLevel = 20, pLevel = 10
       // mExp = floor(100 * (1.0 + (20-10)/10)) = floor(100 * 2.0) = 200
@@ -173,7 +84,7 @@ describe('morcalc.js - Monster Calculator', () => {
     });
 
     test('caps MP experience based on player level', () => {
-      context.internal.ia_game = 'MP Diablo';
+      global.internal.ia_game = 'MP Diablo';
       // Level 1 cap: 100
       expect(calcExp(500, 20, 1)).toBeLessThanOrEqual(100);
 
@@ -194,12 +105,12 @@ describe('morcalc.js - Monster Calculator', () => {
     });
 
     test('works correctly for SP Hellfire', () => {
-      context.internal.ia_game = 'SP Hellfire';
+      global.internal.ia_game = 'SP Hellfire';
       expect(calcExp(100, 20, 10)).toBe(100); // Capped at baseExp
     });
 
     test('works correctly for MP Hellfire', () => {
-      context.internal.ia_game = 'MP Hellfire';
+      global.internal.ia_game = 'MP Hellfire';
       // Same caps as MP Diablo
       expect(calcExp(500, 20, 1)).toBeLessThanOrEqual(100);
     });
@@ -381,6 +292,367 @@ describe('morcalc.js - Monster Calculator', () => {
       expect(playerArray[2].p_bwtohit).toBe(0);
       expect(playerArray[2].p_bbtohit).toBe(0);
       expect(playerArray[2].p_bmtohit).toBe(20);
+    });
+  });
+
+  describe('game_attributes Constructor', () => {
+    test('creates game with type', () => {
+      const game = new game_attributes('Test Game');
+      expect(game.g_type).toBe('Test Game');
+    });
+  });
+
+  describe('special_attributes Constructor', () => {
+    test('creates special with type', () => {
+      const special = new special_attributes('Test Special');
+      expect(special.s_type).toBe('Test Special');
+    });
+  });
+
+  describe('monstergroup_attributes Constructor', () => {
+    test('creates monster group with all attributes', () => {
+      const mg = new monstergroup_attributes(
+        'TestGroup', 'Demon', 'Diablo', 'Weapon', 'Magic', 10, 20, 'None', 8, 4, 12
+      );
+      expect(mg.mg_type).toBe('TestGroup');
+      expect(mg.mg_class).toBe('Demon');
+      expect(mg.mg_game).toBe('Diablo');
+      expect(mg.mg_attack).toBe('Weapon');
+      expect(mg.mg_attack2).toBe('Magic');
+      expect(mg.mg_attack2tohit).toBe(10);
+      expect(mg.mg_attack2damage).toBe(20);
+      expect(mg.mg_attack3).toBe('None');
+      expect(mg.mg_speed).toBe(8);
+      expect(mg.mg_recovery).toBe(4);
+      expect(mg.mg_swing).toBe(12);
+    });
+  });
+
+  describe('Combat Constants', () => {
+    test('autoHit is 5', () => {
+      expect(autoHit).toBe(5);
+    });
+
+    test('autoMiss is 95', () => {
+      expect(autoMiss).toBe(95);
+    });
+  });
+
+  describe('Weapon Attack Modes', () => {
+    test('Bare is Melee mode', () => {
+      expect(weaponArray[0].w_mode).toBe('Melee');
+    });
+
+    test('Bow is Arrow mode', () => {
+      const bow = weaponArray.find(w => w.w_type === 'Bow');
+      expect(bow.w_mode).toBe('Arrow');
+    });
+
+    test('all weapons have valid modes', () => {
+      const validModes = ['Melee', 'Arrow', 'Spell'];
+      weaponArray.forEach(w => {
+        expect(validModes).toContain(w.w_mode);
+      });
+    });
+  });
+
+  describe('Player Stat Caps', () => {
+    test('Warrior has highest Diablo strength cap', () => {
+      const warrior = playerArray[0];
+      expect(warrior.p_strength).toBe(425);
+    });
+
+    test('Rogue has highest Diablo dexterity cap', () => {
+      const rogue = playerArray[1];
+      expect(rogue.p_dexterity).toBe(415);
+    });
+
+    test('Sorceror has highest Diablo magic cap', () => {
+      const sorceror = playerArray[2];
+      expect(sorceror.p_magic).toBe(425);
+    });
+
+    test('Hellfire classes have 0 for Diablo stats', () => {
+      const monk = playerArray[3];
+      expect(monk.p_strength).toBe(0);
+      expect(monk.p_magic).toBe(0);
+      expect(monk.p_dexterity).toBe(0);
+      expect(monk.p_vitality).toBe(0);
+    });
+
+    test('Hellfire classes have valid HF stats', () => {
+      const monk = playerArray[3];
+      expect(monk.p_hfstrength).toBe(385);
+      expect(monk.p_hfmagic).toBe(315);
+      expect(monk.p_hfdexterity).toBe(375);
+    });
+  });
+
+  describe('Difficulty Modifiers', () => {
+    test('Nightmare has intermediate modifiers', () => {
+      const nightmare = difficultyArray[1];
+      expect(nightmare.d_mlvl).toBe(15);
+      expect(nightmare.d_armor).toBe(50);
+      expect(nightmare.d_tohit).toBe(85);
+      expect(nightmare.d_damage1).toBe(2);
+      expect(nightmare.d_experience1).toBe(2);
+    });
+
+    test('HP multipliers scale with difficulty', () => {
+      expect(difficultyArray[0].d_hitpoints1).toBe(0);
+      expect(difficultyArray[1].d_hitpoints1).toBe(3);
+      expect(difficultyArray[2].d_hitpoints1).toBe(4);
+    });
+  });
+
+  describe('Dungeon Level Sections', () => {
+    test('Church levels are 1-4', () => {
+      for (let i = 0; i < 4; i++) {
+        expect(dlvlArray[i].dlvl_section).toBe('Church');
+      }
+    });
+
+    test('Catacombs levels are 5-8', () => {
+      for (let i = 4; i < 8; i++) {
+        expect(dlvlArray[i].dlvl_section).toBe('Catacombs');
+      }
+    });
+
+    test('Caves levels are 9-12', () => {
+      for (let i = 8; i < 12; i++) {
+        expect(dlvlArray[i].dlvl_section).toBe('Caves');
+      }
+    });
+
+    test('Hell levels are 13-16', () => {
+      for (let i = 12; i < 16; i++) {
+        expect(dlvlArray[i].dlvl_section).toBe('Hell');
+      }
+    });
+
+    test('Hellfire has Hive and Crypt', () => {
+      expect(dlvlArray[16].dlvl_section).toBe('Hive');
+      expect(dlvlArray[20].dlvl_section).toBe('Crypt');
+    });
+  });
+
+  describe('Special Options Array', () => {
+    test('contains all 8 options', () => {
+      expect(specialArray[0].s_type).toBe('Plain Monsters');
+      expect(specialArray[1].s_type).toBe('Boss Monsters');
+      expect(specialArray[2].s_type).toBe('Special Monsters');
+      expect(specialArray[3].s_type).toBe('Player vs Player');
+      expect(specialArray[4].s_type).toBe('Golem vs Monster');
+      expect(specialArray[5].s_type).toBe('Trap Encounters');
+      expect(specialArray[6].s_type).toBe('Item Drops');
+      expect(specialArray[7].s_type).toBe('Assorted Stats');
+    });
+  });
+
+  describe('calcMeleeToHit Function', () => {
+    test('calculates basic melee to-hit', () => {
+      // baseToHit=50, playerLevel=30, weaponBonus=20, monsterArmor=50
+      expect(calcMeleeToHit(50, 30, 20, 50)).toBe(50);
+    });
+
+    test('Warrior melee bonus increases to-hit', () => {
+      const warrior = playerArray[0];
+      const result = calcMeleeToHit(100, 30, warrior.p_bwtohit, 50);
+      expect(result).toBe(100); // 100 + 30 + 20 - 50
+    });
+
+    test('high monster armor reduces to-hit', () => {
+      expect(calcMeleeToHit(50, 30, 20, 100)).toBe(0); // 50 + 30 + 20 - 100
+    });
+  });
+
+  describe('calcBowToHit Function', () => {
+    test('calculates basic bow to-hit', () => {
+      // baseToHit=50, dex=100, playerLevel=30, bowBonus=20, monsterArmor=50
+      // 50 + floor(100/2) + 30 + 20 - 50 = 50 + 50 + 30 + 20 - 50 = 100
+      expect(calcBowToHit(50, 100, 30, 20, 50)).toBe(100);
+    });
+
+    test('Rogue bow bonus increases to-hit', () => {
+      const rogue = playerArray[1];
+      // 50 + floor(200/2) + 30 + 20 - 50 = 50 + 100 + 30 + 20 - 50 = 150
+      expect(calcBowToHit(50, 200, 30, rogue.p_bbtohit, 50)).toBe(150);
+    });
+
+    test('dexterity is halved and floored', () => {
+      // dex=101 -> floor(50.5) = 50
+      expect(calcBowToHit(0, 101, 0, 0, 0)).toBe(50);
+    });
+  });
+
+  describe('calcSpellToHit Function', () => {
+    test('calculates basic spell to-hit', () => {
+      // magic=100, magicBonus=20, monsterLevel=30
+      // 50 + 100 + 20 - 30 - 30 = 110
+      expect(calcSpellToHit(100, 20, 30)).toBe(110);
+    });
+
+    test('Sorcerer magic bonus increases to-hit', () => {
+      const sorceror = playerArray[2];
+      // 50 + 200 + 20 - 30 - 30 = 210
+      expect(calcSpellToHit(200, sorceror.p_bmtohit, 30)).toBe(210);
+    });
+
+    test('monster level is doubled in formula', () => {
+      // Each monster level reduces to-hit by 2
+      const baseResult = calcSpellToHit(100, 0, 10);  // 50 + 100 + 0 - 20 = 130
+      const higherLevel = calcSpellToHit(100, 0, 15); // 50 + 100 + 0 - 30 = 120
+      expect(baseResult - higherLevel).toBe(10); // 5 more mlvl = 10 less to-hit
+    });
+  });
+
+  describe('calcMonsterToHit Function', () => {
+    test('calculates monster to-hit against player', () => {
+      // monsterTohit=100, monsterLevel=20, playerLevel=30, playerArmor=50, autohitMin=15
+      // 30 + 100 + 20 + 20 - 30 - 30 - 50 = 60
+      expect(calcMonsterToHit(100, 20, 30, 50, 15)).toBe(60);
+    });
+
+    test('enforces autohit minimum', () => {
+      // Low result should be clamped to autohitMin
+      expect(calcMonsterToHit(0, 0, 50, 100, 15)).toBe(15);
+    });
+
+    test('Hell difficulty autohit is 30 on dlvl 16', () => {
+      // Result below 30 should be clamped to 30
+      expect(calcMonsterToHit(10, 10, 40, 50, 30)).toBe(30);
+    });
+  });
+
+  describe('calcBlockingChance Function', () => {
+    test('calculates basic blocking chance', () => {
+      // dex=150, playerLevel=30, monsterLevel=20, blockBonus=20
+      // 150 - 20 - 20 + 30 + 30 + 20 = 190
+      expect(calcBlockingChance(150, 30, 20, 20)).toBe(190);
+    });
+
+    test('Warrior block bonus applied', () => {
+      const warrior = playerArray[0];
+      // dex=150, playerLevel=30, monsterLevel=30, blockBonus=30
+      // 150 - 30 - 30 + 30 + 30 + 30 = 180
+      expect(calcBlockingChance(150, 30, 30, warrior.p_bblock)).toBe(180);
+    });
+
+    test('monster level difference affects blocking', () => {
+      // Each player level adds 2, each monster level subtracts 2
+      const baseLine = calcBlockingChance(100, 30, 30, 0);  // 100
+      const morePLevel = calcBlockingChance(100, 35, 30, 0); // +10
+      expect(morePLevel - baseLine).toBe(10);
+    });
+  });
+
+  describe('calcEffectiveMonsterLevel Function', () => {
+    test('Normal difficulty has no bonus', () => {
+      expect(calcEffectiveMonsterLevel(20, 0)).toBe(20);
+    });
+
+    test('Nightmare adds 15 to monster level', () => {
+      expect(calcEffectiveMonsterLevel(20, 15)).toBe(35);
+    });
+
+    test('Hell adds 30 to monster level', () => {
+      expect(calcEffectiveMonsterLevel(20, 30)).toBe(50);
+    });
+  });
+
+  describe('calcEffectiveMonsterArmor Function', () => {
+    test('Normal difficulty has no bonus', () => {
+      expect(calcEffectiveMonsterArmor(50, 0)).toBe(50);
+    });
+
+    test('Nightmare adds 50 to armor', () => {
+      expect(calcEffectiveMonsterArmor(50, 50)).toBe(100);
+    });
+
+    test('Hell adds 80 to armor', () => {
+      expect(calcEffectiveMonsterArmor(50, 80)).toBe(130);
+    });
+  });
+
+  describe('calcEffectiveMonsterTohit Function', () => {
+    test('Normal difficulty has no bonus', () => {
+      expect(calcEffectiveMonsterTohit(100, 0)).toBe(100);
+    });
+
+    test('Nightmare adds 85 to to-hit', () => {
+      expect(calcEffectiveMonsterTohit(100, 85)).toBe(185);
+    });
+
+    test('Hell adds 120 to to-hit', () => {
+      expect(calcEffectiveMonsterTohit(100, 120)).toBe(220);
+    });
+  });
+
+  describe('calcMonsterExperience Function', () => {
+    test('Normal difficulty is base experience', () => {
+      // baseExp=100, multiplier=1, adder=0
+      expect(calcMonsterExperience(100, 1, 0)).toBe(100);
+    });
+
+    test('Nightmare doubles and adds 2000', () => {
+      // baseExp=100, multiplier=2, adder=2000
+      expect(calcMonsterExperience(100, 2, 2000)).toBe(2200);
+    });
+
+    test('Hell quadruples and adds 4000', () => {
+      // baseExp=100, multiplier=4, adder=4000
+      expect(calcMonsterExperience(100, 4, 4000)).toBe(4400);
+    });
+  });
+
+  describe('calcMonsterHP Function', () => {
+    test('Normal difficulty is base HP', () => {
+      // baseHP=100, multiplier=0, adder=0 (Normal uses 0 multiplier)
+      expect(calcMonsterHP(100, 0, 0)).toBe(0);
+    });
+
+    test('Nightmare HP calculation', () => {
+      // baseHP=100, multiplier=3, adder=1
+      expect(calcMonsterHP(100, 3, 1)).toBe(301);
+    });
+
+    test('Hell HP calculation', () => {
+      // baseHP=100, multiplier=4, adder=3
+      expect(calcMonsterHP(100, 4, 3)).toBe(403);
+    });
+  });
+
+  describe('calcMonsterDamage Function', () => {
+    test('Normal difficulty is base damage', () => {
+      expect(calcMonsterDamage(10, 0, 0)).toBe(0);
+    });
+
+    test('Nightmare damage calculation', () => {
+      // baseDamage=10, multiplier=2, adder=4
+      expect(calcMonsterDamage(10, 2, 4)).toBe(24);
+    });
+
+    test('Hell damage calculation', () => {
+      // baseDamage=10, multiplier=4, adder=6
+      expect(calcMonsterDamage(10, 4, 6)).toBe(46);
+    });
+  });
+
+  describe('clampToHit Function', () => {
+    test('clamps values below autoHit', () => {
+      expect(clampToHit(3, 5, 95)).toBe(5);
+      expect(clampToHit(-10, 5, 95)).toBe(5);
+    });
+
+    test('clamps values above autoMiss', () => {
+      expect(clampToHit(98, 5, 95)).toBe(95);
+      expect(clampToHit(150, 5, 95)).toBe(95);
+    });
+
+    test('returns value unchanged within range', () => {
+      expect(clampToHit(50, 5, 95)).toBe(50);
+      expect(clampToHit(5, 5, 95)).toBe(5);
+      expect(clampToHit(95, 5, 95)).toBe(95);
     });
   });
 });

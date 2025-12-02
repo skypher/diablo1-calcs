@@ -332,3 +332,88 @@ function calcEnemy()
 	TD[123].firstChild.nodeValue = Math.floor(ave3/22) + "%";
 	TD[124].firstChild.nodeValue = Math.floor(ave4/22) + "%";
 }
+
+// Pure calculation functions for testing
+function getClassBonus(cClass, attack) {
+  if (cClass == "Warrior") {
+    if (attack == "melee") return 20;
+    if (attack == "arrow") return 10;
+    return 0;
+  }
+  if (cClass == "Rogue") {
+    if (attack == "arrow") return 20;
+    return 0;
+  }
+  return 0; // Sorcerer and others
+}
+
+function calculatePlayerCS(percent, diff, clvl, bonus, attack, dex) {
+  var arrowPenalty = (attack == "arrow") ? 25 - dex / 2 : 0;
+  var cs = Math.floor(percent + (85 + diff) - clvl - bonus + arrowPenalty);
+  return cs < 0 ? 0 : cs;
+}
+
+function calculateEnemyCS(percent, diff, clvl, bonus, attack, dex, baseAC) {
+  var arrowPenalty = (attack == "arrow") ? 25 - dex / 2 : 0;
+  var cs = Math.floor(percent + (baseAC + diff) - clvl - bonus + arrowPenalty);
+  return cs < 0 ? 0 : cs;
+}
+
+// Monster data for chance to hit calculations (AC values)
+var cthMonsterData = [
+  { name: 'Lava Maw', baseAC: 35 },
+  { name: 'Storm Lord', baseAC: 35 },
+  { name: 'Maelstorm', baseAC: 40 },
+  { name: 'Guardian', baseAC: 65 },
+  { name: 'Vortex Lord', baseAC: 70 },
+  { name: 'Balrog', baseAC: 75 },
+  { name: 'Cave Viper', baseAC: 60 },
+  { name: 'Fire Drake', baseAC: 65 },
+  { name: 'Gold Viper', baseAC: 70 },
+  { name: 'Azure Drake', baseAC: 75 },
+  { name: 'Succubus', baseAC: 60 },
+  { name: 'Snow Witch', baseAC: 65 },
+  { name: 'Hell Spawn', baseAC: 75 },
+  { name: 'Soul Burner', baseAC: 85 },
+  { name: 'Black Knight', baseAC: 75 },
+  { name: 'Doom Guard', baseAC: 75 },
+  { name: 'Steel Lord', baseAC: 80 },
+  { name: 'Blood Knight', baseAC: 85 },
+  { name: 'Counselor', baseAC: 0 },
+  { name: 'Magistrate', baseAC: 0 },
+  { name: 'Cabalist', baseAC: 0 },
+  { name: 'Advocate', baseAC: 0 }
+];
+
+// Calculate CS for all monsters at a given difficulty, clvl, and class
+function calculateAllMonstersCS(percent, diff, clvl, cClass, attack, dex) {
+  var bonus = getClassBonus(cClass, attack);
+  return cthMonsterData.map(function(monster) {
+    return {
+      name: monster.name,
+      cs: calculateEnemyCS(percent, diff, clvl, bonus, attack, dex, monster.baseAC)
+    };
+  });
+}
+
+// Calculate average CS across all monsters
+function calculateAverageCS(percent, diff, clvl, cClass, attack, dex) {
+  var results = calculateAllMonstersCS(percent, diff, clvl, cClass, attack, dex);
+  var sum = results.reduce(function(acc, r) { return acc + r.cs; }, 0);
+  return Math.floor(sum / results.length);
+}
+
+// Export for testing (CommonJS)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    update,
+    calcMax,
+    calcEnemy,
+    getClassBonus,
+    calculatePlayerCS,
+    calculateEnemyCS,
+    cthMonsterData,
+    calculateAllMonstersCS,
+    calculateAverageCS
+  };
+}

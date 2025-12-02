@@ -155,3 +155,11 @@ new monster_attributes("Cabalist", "Mage", 15, 15, 29, 120, 120, 0, 110, 14, 30,
 new monster_attributes("Advocate", "Mage", 16, 16, 30, 145, 145, 0, 120, 15, 25, "I", "R", "I", "I", "I", "I", 4968)
 
 );
+
+// Export for testing (CommonJS)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    monster_attributes,
+    monsterArray
+  };
+}

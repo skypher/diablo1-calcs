@@ -3289,3 +3289,127 @@ function WeaponRack(dlvl)
 
 	return rarity;
 }
+
+// Pure calculation helper functions for testing
+function calcBaseDropChance() {
+  return 0.107;
+}
+
+function calcQualityChance(level, thresholds) {
+  // Returns probability for different item qualities based on level
+  // thresholds = { magic: 10, rare: 20, unique: 30 }
+  if (level >= thresholds.unique) return { magic: 0.6, rare: 0.3, unique: 0.1 };
+  if (level >= thresholds.rare) return { magic: 0.7, rare: 0.3, unique: 0 };
+  if (level >= thresholds.magic) return { magic: 1.0, rare: 0, unique: 0 };
+  return { magic: 0, rare: 0, unique: 0 };
+}
+
+function countValidAffixes(affixes, ilvl, itemClass) {
+  // Count how many affixes can spawn on this item
+  let count = 0;
+  const classIndex = getItemClassIndex(itemClass);
+  for (let i = 0; i < affixes.length; i++) {
+    if (affixes[i].qlvl <= ilvl && affixes[i].spawn.charAt(classIndex) !== '-') {
+      count++;
+    }
+  }
+  return count;
+}
+
+function getItemClassIndex(itemClass) {
+  // Maps item class to spawn code index
+  const classMap = {
+    'Helm': 0, 'Armor': 0,
+    'Shield': 1,
+    'Sword.1': 2, 'Sword.2': 2, 'Axe': 2, 'Club.1': 2, 'Club.2': 2,
+    'Staff': 3,
+    'Bow': 4,
+    'Jewelry': 5
+  };
+  return classMap[itemClass] !== undefined ? classMap[itemClass] : -1;
+}
+
+function calcAffixSpawnChance(affix, ilvl, itemClass) {
+  // Check if an affix can spawn on this item
+  const classIndex = getItemClassIndex(itemClass);
+  if (classIndex < 0) return 0;
+  if (affix.qlvl > ilvl) return 0;
+  if (affix.spawn.charAt(classIndex) === '-') return 0;
+  return affix.dChance ? 2 : 1; // Double chance for certain affixes
+}
+
+function isAffixValid(affix, ilvl, itemClass) {
+  // Check if affix is valid for item
+  const classIndex = getItemClassIndex(itemClass);
+  if (classIndex < 0) return false;
+  if (affix.qlvl > ilvl) return false;
+  return affix.spawn.charAt(classIndex) !== '-';
+}
+
+function isAffixPairValid(prefixName, suffixName, invalidCombinations) {
+  // Check if prefix/suffix combination is valid
+  for (let i = 0; i < 24; i++) {
+    if (invalidCombinations[i] === prefixName && invalidCombinations[i + 24] === suffixName) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function calcUniqueMonsterDropChance(uniqueData) {
+  // Unique monsters always drop their specific item
+  return uniqueData.prob;
+}
+
+function calcDungeonLevelDropChance(dlvl) {
+  // Chance for item drop based on dungeon level
+  if (dlvl <= 4) return 0.107;   // Church
+  if (dlvl <= 8) return 0.107;   // Catacombs
+  if (dlvl <= 12) return 0.107;  // Caves
+  return 0.107;                   // Hell
+}
+
+function getMonsterIlvl(mlvl, diffBonus) {
+  // Calculate item level from monster level
+  return mlvl + diffBonus;
+}
+
+function getDifficultyBonus(difficulty) {
+  // Returns difficulty bonus for item level calculations
+  if (difficulty === 'Normal') return 0;
+  if (difficulty === 'Nightmare') return 15;
+  if (difficulty === 'Hell') return 30;
+  return 0;
+}
+
+// Export for testing (CommonJS)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    Item,
+    Affix,
+    Spell,
+    Monster,
+    uMonster,
+    SigFig,
+    SigFigGAMES,
+    baseEQ,
+    prefix,
+    suffix,
+    spell,
+    invalidCombo,
+    monster,
+    uniqueMonster,
+    // New pure calculation functions
+    calcBaseDropChance,
+    calcQualityChance,
+    countValidAffixes,
+    getItemClassIndex,
+    calcAffixSpawnChance,
+    isAffixValid,
+    isAffixPairValid,
+    calcUniqueMonsterDropChance,
+    calcDungeonLevelDropChance,
+    getMonsterIlvl,
+    getDifficultyBonus
+  };
+}

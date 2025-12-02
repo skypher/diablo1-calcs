@@ -3,123 +3,35 @@
  * Tests character life and mana calculations
  */
 
-const fs = require('fs');
-const vm = require('vm');
-
-// Create context and load the source
-const context = {
-  parseInt: parseInt,
-  Math: Math,
-  RegExp: RegExp,
-  String: String,
-  document: {
-    getElementById: () => ({ value: '' })
-  },
-  LifeManaForm: {
-    CharLevel: { value: 1 },
-    BaseMagic: { value: 10 },
-    BaseVitality: { value: 25 },
-    FinalMagic: { value: 10 },
-    FinalVitality: { value: 25 },
-    LifeMods: { value: '' },
-    ManaMods: { value: '' },
-    CharClass: { value: 'Warrior' }
-  }
-};
-vm.createContext(context);
-
-// Read the source file, skip HTML comment markers
-const sourceCode = fs.readFileSync('./js/tibbs.js', 'utf8')
-  .replace('<!-- Hide script from older browsers', '')
-  .replace('// End hiding script -->', '');
-
-vm.runInContext(sourceCode, context);
-
-const { truncate, AddStringAsNum } = context;
-
-// Character constants from the file
-const characterData = {
-  Warrior: {
-    startMagic: 10, startVitality: 25,
-    maxMagic: 50, maxVitality: 100,
-    lifeGain: 2, manaGain: 1,
-    lifeChar: 2, manaChar: 1,
-    lifeItem: 2, manaItem: 1,
-    lifeBonus: 18, manaBonus: -1
-  },
-  Rogue: {
-    startMagic: 15, startVitality: 20,
-    maxMagic: 70, maxVitality: 80,
-    lifeGain: 2, manaGain: 2,
-    lifeChar: 1, manaChar: 1,
-    lifeItem: 1.5, manaItem: 1.5,
-    lifeBonus: 23, manaBonus: 5
-  },
-  Sorcerer: {
-    startMagic: 35, startVitality: 20,
-    maxMagic: 250, maxVitality: 80,
-    lifeGain: 1, manaGain: 2,
-    lifeChar: 1, manaChar: 2,
-    lifeItem: 1, manaItem: 2,
-    lifeBonus: 9, manaBonus: -2
-  },
-  Monk: {
-    startMagic: 15, startVitality: 20,
-    maxMagic: 80, maxVitality: 80,
-    lifeGain: 2, manaGain: 2,
-    lifeChar: 1, manaChar: 1,
-    lifeItem: 1.5, manaItem: 1.5,
-    lifeBonus: 23, manaBonus: 5
-  },
-  Bard: {
-    startMagic: 20, startVitality: 20,
-    maxMagic: 120, maxVitality: 100,
-    lifeGain: 2, manaGain: 2,
-    lifeChar: 1, manaChar: 1.5,
-    lifeItem: 1.5, manaItem: 1.75,
-    lifeBonus: 23, manaBonus: 3
-  },
-  Barbarian: {
-    startMagic: 0, startVitality: 25,
-    maxMagic: 0, maxVitality: 150,
-    lifeGain: 2, manaGain: 0,
-    lifeChar: 2, manaChar: 1,
-    lifeItem: 2.5, manaItem: 1,
-    lifeBonus: 18, manaBonus: 0
-  }
-};
-
-// Pure implementation of truncate logic from tibbs.js
-function truncatePure(number) {
-  // The original uses regex to extract integer part
-  const match = /^(-?\d+)\.?(\d*)$/.exec(number.toString());
-  if (match) {
-    let temp = match[1];
-    temp++;
-    temp--;
-    return temp;
-  }
-  return 0;
-}
+const {
+  truncate,
+  AddStringAsNum,
+  calcLife,
+  calcMana,
+  parseModifiers,
+  characterData,
+  Rexp,
+  Rexp3
+} = require('../js/tibbs.js');
 
 describe('tibbs.js - Life/Mana Calculator', () => {
 
-  describe('truncate (pure implementation)', () => {
+  describe('truncate', () => {
     test('truncates positive decimals', () => {
-      expect(truncatePure(5.7)).toBe(5);
-      expect(truncatePure(10.99)).toBe(10);
-      expect(truncatePure(100.1)).toBe(100);
+      expect(truncate(5.7)).toBe(5);
+      expect(truncate(10.99)).toBe(10);
+      expect(truncate(100.1)).toBe(100);
     });
 
     test('truncates negative decimals', () => {
-      expect(truncatePure(-5.7)).toBe(-5);
-      expect(truncatePure(-10.99)).toBe(-10);
+      expect(truncate(-5.7)).toBe(-5);
+      expect(truncate(-10.99)).toBe(-10);
     });
 
     test('returns whole numbers unchanged', () => {
-      expect(truncatePure(5)).toBe(5);
-      expect(truncatePure(100)).toBe(100);
-      expect(truncatePure(0)).toBe(0);
+      expect(truncate(5)).toBe(5);
+      expect(truncate(100)).toBe(100);
+      expect(truncate(0)).toBe(0);
     });
   });
 
@@ -271,9 +183,6 @@ describe('tibbs.js - Life/Mana Calculator', () => {
   });
 
   describe('Input Validation Regex', () => {
-    const Rexp = /^[+-]?\d+$/;
-    const Rexp3 = /^([+-]\d+)*$/;
-
     test('Rexp validates whole numbers', () => {
       expect(Rexp.test('123')).toBe(true);
       expect(Rexp.test('+123')).toBe(true);
@@ -291,6 +200,128 @@ describe('tibbs.js - Life/Mana Calculator', () => {
       expect(Rexp3.test('+5-3+10')).toBe(true);
       expect(Rexp3.test('5')).toBe(false);
       expect(Rexp3.test('++5')).toBe(false);
+    });
+  });
+
+  describe('calcLife function', () => {
+    test('Warrior level 1 base life', () => {
+      // LifeBonus(18) + Clvl(1)*LifeGain(2) + BaseV(25)*LifeChar(2) + ItemV(0)*LifeItem(2)
+      expect(calcLife('Warrior', 1, 25, 0)).toBe(70);
+    });
+
+    test('Warrior level 50 max life', () => {
+      // At clvl 50, use 49 for gain calculation
+      expect(calcLife('Warrior', 50, 100, 0)).toBe(316);
+    });
+
+    test('Sorcerer level 1 base life', () => {
+      expect(calcLife('Sorcerer', 1, 20, 0)).toBe(30);
+    });
+
+    test('Rogue life with item vitality (truncated)', () => {
+      expect(calcLife('Rogue', 10, 20, 10)).toBe(78);
+    });
+
+    test('Monk life with item vitality (truncated)', () => {
+      // LifeBonus(23) + Clvl(10)*LifeGain(2) + BaseV(20)*LifeChar(1) + ItemV(10)*LifeItem(1.5)
+      // = 23 + 20 + 20 + 15 = 78
+      expect(calcLife('Monk', 10, 20, 10)).toBe(78);
+    });
+
+    test('Bard life with item vitality (truncated)', () => {
+      expect(calcLife('Bard', 10, 20, 10)).toBe(78);
+    });
+
+    test('Barbarian life with item vitality (truncated)', () => {
+      // LifeBonus(18) + Clvl(10)*LifeGain(2) + BaseV(25)*LifeChar(2) + ItemV(10)*LifeItem(2.5)
+      // = 18 + 20 + 50 + 25 = 113
+      expect(calcLife('Barbarian', 10, 25, 10)).toBe(113);
+    });
+
+    test('includes life modifiers', () => {
+      const baseLife = calcLife('Warrior', 1, 25, 0);
+      const lifeWithMods = calcLife('Warrior', 1, 25, 0, 25);
+      expect(lifeWithMods).toBe(baseLife + 25);
+    });
+
+    test('returns 0 for unknown class', () => {
+      expect(calcLife('Unknown', 1, 25, 0)).toBe(0);
+    });
+  });
+
+  describe('calcMana function', () => {
+    test('Warrior level 1 base mana', () => {
+      // ManaBonus(-1) + Clvl(1)*ManaGain(1) + BaseM(10)*ManaChar(1) + ItemM(0)*ManaItem(1)
+      expect(calcMana('Warrior', 1, 10, 0)).toBe(10);
+    });
+
+    test('Sorcerer level 1 base mana', () => {
+      // ManaBonus(-2) + Clvl(1)*ManaGain(2) + BaseM(35)*ManaChar(2) + ItemM(0)*ManaItem(2)
+      expect(calcMana('Sorcerer', 1, 35, 0)).toBe(70);
+    });
+
+    test('Rogue mana with item magic (truncated)', () => {
+      // ManaBonus(5) + Clvl(10)*ManaGain(2) + BaseM(15)*ManaChar(1) + ItemM(10)*ManaItem(1.5)
+      // = 5 + 20 + 15 + 15 = 55
+      expect(calcMana('Rogue', 10, 15, 10)).toBe(55);
+    });
+
+    test('Monk mana with item magic (truncated)', () => {
+      // ManaBonus(5) + Clvl(10)*ManaGain(2) + BaseM(15)*ManaChar(1) + ItemM(10)*ManaItem(1.5)
+      expect(calcMana('Monk', 10, 15, 10)).toBe(55);
+    });
+
+    test('Bard mana with item magic (truncated)', () => {
+      // ManaBonus(3) + Clvl(10)*ManaGain(2) + BaseM(20)*ManaChar(1.5) + ItemM(10)*ManaItem(1.75)
+      // = 3 + 20 + 30 + 17.5 = 70.5 -> 70
+      expect(calcMana('Bard', 10, 20, 10)).toBe(70);
+    });
+
+    test('Barbarian has 0 mana gain per level', () => {
+      expect(calcMana('Barbarian', 20, 0, 0)).toBe(0);
+    });
+
+    test('includes mana modifiers', () => {
+      const baseMana = calcMana('Sorcerer', 1, 35, 0);
+      const manaWithMods = calcMana('Sorcerer', 1, 35, 0, 30);
+      expect(manaWithMods).toBe(baseMana + 30);
+    });
+
+    test('returns 0 for unknown class', () => {
+      expect(calcMana('Unknown', 1, 35, 0)).toBe(0);
+    });
+  });
+
+  describe('parseModifiers function', () => {
+    test('returns 0 for empty string', () => {
+      expect(parseModifiers('')).toBe(0);
+    });
+
+    test('returns 0 for null/undefined', () => {
+      expect(parseModifiers(null)).toBe(0);
+      expect(parseModifiers(undefined)).toBe(0);
+    });
+
+    test('parses single positive modifier', () => {
+      expect(parseModifiers('+5')).toBe(5);
+      expect(parseModifiers('+25')).toBe(25);
+    });
+
+    test('parses single negative modifier', () => {
+      expect(parseModifiers('-5')).toBe(-5);
+      expect(parseModifiers('-25')).toBe(-25);
+    });
+
+    test('parses multiple modifiers', () => {
+      expect(parseModifiers('+5-3')).toBe(2);
+      expect(parseModifiers('+10+20-5')).toBe(25);
+      expect(parseModifiers('+1+2+3+4+5')).toBe(15);
+    });
+
+    test('returns NaN for invalid format', () => {
+      expect(parseModifiers('5')).toBeNaN();
+      expect(parseModifiers('abc')).toBeNaN();
+      expect(parseModifiers('++5')).toBeNaN();
     });
   });
 });

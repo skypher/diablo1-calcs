@@ -3,6 +3,15 @@
  * Tests block chance calculations for players and enemies
  */
 
+const {
+  getDifficultyBonus,
+  calculatePlayerDEX,
+  calculateEnemyDEX,
+  blockMonsterData,
+  calculateAllMonstersDEX,
+  calculateAverageDEX
+} = require('../js/block.js');
+
 describe('block.js - Block Calculator', () => {
 
   // Block formula from block.js:
@@ -10,13 +19,6 @@ describe('block.js - Block Calculator', () => {
 
   function calculateBlockDEX(percent, bonus, clvl, baseLevel) {
     return percent + 2 * ((baseLevel + bonus) - clvl);
-  }
-
-  function getDifficultyBonus(diff) {
-    if (diff === 0) return 0;      // Normal
-    if (diff === 85) return 15;    // Nightmare
-    if (diff === 120) return 30;   // Hell
-    return 0;
   }
 
   describe('Difficulty Bonus Calculation', () => {
@@ -238,6 +240,166 @@ describe('block.js - Block Calculator', () => {
       const dex = calculateBlockDEX(0, 30, 1, 30);
       // DEX = 0 + 2*(60-1) = 118
       expect(dex).toBe(118);
+    });
+  });
+
+  describe('calculatePlayerDEX function', () => {
+    test('calculates DEX at clvl 30 on Normal', () => {
+      // percent=0, bonus=0, clvl=30
+      // DEX = 0 + 2*(30-30) = 0
+      expect(calculatePlayerDEX(0, 0, 30)).toBe(0);
+    });
+
+    test('calculates DEX at clvl 40 on Normal', () => {
+      // percent=0, bonus=0, clvl=40
+      // DEX = 0 + 2*(30-40) = -20
+      expect(calculatePlayerDEX(0, 0, 40)).toBe(-20);
+    });
+
+    test('calculates DEX at clvl 50 on Normal', () => {
+      // percent=0, bonus=0, clvl=50
+      // DEX = 0 + 2*(30-50) = -40
+      expect(calculatePlayerDEX(0, 0, 50)).toBe(-40);
+    });
+
+    test('calculates DEX on Nightmare', () => {
+      // percent=0, bonus=15, clvl=30
+      // DEX = 0 + 2*(45-30) = 30
+      expect(calculatePlayerDEX(0, 15, 30)).toBe(30);
+    });
+
+    test('calculates DEX on Hell', () => {
+      // percent=0, bonus=30, clvl=30
+      // DEX = 0 + 2*(60-30) = 60
+      expect(calculatePlayerDEX(0, 30, 30)).toBe(60);
+    });
+
+    test('includes percent modifier', () => {
+      // percent=50, bonus=0, clvl=30
+      // DEX = 50 + 2*(30-30) = 50
+      expect(calculatePlayerDEX(50, 0, 30)).toBe(50);
+    });
+  });
+
+  describe('calculateEnemyDEX function', () => {
+    test('calculates Lava Maw DEX (baseLevel=25) on Normal', () => {
+      // percent=0, bonus=0, clvl=30, baseLevel=25
+      // DEX = 0 + 2*(25-30) = -10
+      expect(calculateEnemyDEX(0, 0, 30, 25)).toBe(-10);
+    });
+
+    test('calculates Blood Knight DEX (baseLevel=30) on Normal', () => {
+      // percent=0, bonus=0, clvl=30, baseLevel=30
+      // DEX = 0 + 2*(30-30) = 0
+      expect(calculateEnemyDEX(0, 0, 30, 30)).toBe(0);
+    });
+
+    test('calculates Steel Lord DEX (baseLevel=28) on Hell', () => {
+      // percent=0, bonus=30, clvl=50, baseLevel=28
+      // DEX = 0 + 2*(58-50) = 16
+      expect(calculateEnemyDEX(0, 30, 50, 28)).toBe(16);
+    });
+
+    test('includes percent modifier', () => {
+      // percent=50, bonus=0, clvl=30, baseLevel=25
+      // DEX = 50 + 2*(25-30) = 40
+      expect(calculateEnemyDEX(50, 0, 30, 25)).toBe(40);
+    });
+
+    test('calculates for all difficulty levels', () => {
+      const normalDEX = calculateEnemyDEX(0, 0, 30, 25);
+      const nightmareDEX = calculateEnemyDEX(0, 15, 30, 25);
+      const hellDEX = calculateEnemyDEX(0, 30, 30, 25);
+
+      expect(nightmareDEX - normalDEX).toBe(30);
+      expect(hellDEX - nightmareDEX).toBe(30);
+    });
+  });
+
+  describe('blockMonsterData Array', () => {
+    test('contains 14 monsters', () => {
+      expect(blockMonsterData.length).toBe(14);
+    });
+
+    test('contains Lava Maw with correct baseLevel', () => {
+      const lavaMaw = blockMonsterData.find(m => m.name === 'Lava Maw');
+      expect(lavaMaw).toBeDefined();
+      expect(lavaMaw.baseLevel).toBe(25);
+    });
+
+    test('contains Blood Knight with correct baseLevel', () => {
+      const bloodKnight = blockMonsterData.find(m => m.name === 'Blood Knight');
+      expect(bloodKnight).toBeDefined();
+      expect(bloodKnight.baseLevel).toBe(30);
+    });
+
+    test('all monsters have required properties', () => {
+      blockMonsterData.forEach(m => {
+        expect(m.name).toBeDefined();
+        expect(m.baseLevel).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  describe('calculateAllMonstersDEX Function', () => {
+    test('returns array of all monster DEXs', () => {
+      const results = calculateAllMonstersDEX(50, 0, 30);
+      expect(results.length).toBe(14);
+      expect(results[0]).toHaveProperty('name');
+      expect(results[0]).toHaveProperty('dex');
+    });
+
+    test('Lava Maw DEX on Normal at clvl 30', () => {
+      const results = calculateAllMonstersDEX(50, 0, 30);
+      const lavaMaw = results.find(r => r.name === 'Lava Maw');
+      // 50 + 2*(25-30) = 40
+      expect(lavaMaw.dex).toBe(40);
+    });
+
+    test('Blood Knight DEX on Hell at clvl 50', () => {
+      const results = calculateAllMonstersDEX(50, 30, 50);
+      const bloodKnight = results.find(r => r.name === 'Blood Knight');
+      // 50 + 2*(60-50) = 70
+      expect(bloodKnight.dex).toBe(70);
+    });
+
+    test('higher difficulty increases all DEXs', () => {
+      const normalResults = calculateAllMonstersDEX(50, 0, 30);
+      const hellResults = calculateAllMonstersDEX(50, 30, 30);
+
+      normalResults.forEach((normal, i) => {
+        expect(hellResults[i].dex).toBeGreaterThan(normal.dex);
+      });
+    });
+  });
+
+  describe('calculateAverageDEX Function', () => {
+    test('returns average DEX across all monsters', () => {
+      const avg = calculateAverageDEX(50, 0, 30);
+      expect(typeof avg).toBe('number');
+    });
+
+    test('average is floored', () => {
+      const avg = calculateAverageDEX(50, 0, 30);
+      expect(avg).toBe(Math.floor(avg));
+    });
+
+    test('average increases with difficulty', () => {
+      const normalAvg = calculateAverageDEX(50, 0, 30);
+      const nightmareAvg = calculateAverageDEX(50, 15, 30);
+      const hellAvg = calculateAverageDEX(50, 30, 30);
+
+      expect(nightmareAvg).toBeGreaterThan(normalAvg);
+      expect(hellAvg).toBeGreaterThan(nightmareAvg);
+    });
+
+    test('average decreases with higher clvl', () => {
+      const avgAt30 = calculateAverageDEX(50, 0, 30);
+      const avgAt40 = calculateAverageDEX(50, 0, 40);
+      const avgAt50 = calculateAverageDEX(50, 0, 50);
+
+      expect(avgAt40).toBeLessThan(avgAt30);
+      expect(avgAt50).toBeLessThan(avgAt40);
     });
   });
 });

@@ -210,3 +210,69 @@ function calcEne()
 	TD[83].firstChild.nodeValue = Math.floor(ave3/14);
 	TD[84].firstChild.nodeValue = Math.floor(ave4/14);
 }
+
+// Pure calculation functions for testing
+function getDifficultyBonus(diff) {
+  if (diff == 0) return 0;       // Normal
+  if (diff == 85) return 15;     // Nightmare
+  if (diff == 120) return 30;    // Hell
+  return 0;
+}
+
+function calculatePlayerDEX(percent, bonus, clvl) {
+  return percent + 2 * ((30 + bonus) - clvl);
+}
+
+function calculateEnemyDEX(percent, bonus, clvl, baseLevel) {
+  return percent + 2 * ((baseLevel + bonus) - clvl);
+}
+
+// Monster data for block calculations
+var blockMonsterData = [
+  { name: 'Lava Maw', baseLevel: 25 },
+  { name: 'Storm Lord', baseLevel: 22 },
+  { name: 'Maelstorm', baseLevel: 24 },
+  { name: 'Guardian', baseLevel: 22 },
+  { name: 'Vortex Lord', baseLevel: 24 },
+  { name: 'Balrog', baseLevel: 26 },
+  { name: 'Cave Viper', baseLevel: 21 },
+  { name: 'Fire Drake', baseLevel: 23 },
+  { name: 'Gold Viper', baseLevel: 25 },
+  { name: 'Azure Drake', baseLevel: 27 },
+  { name: 'Black Knight', baseLevel: 24 },
+  { name: 'Doom Guard', baseLevel: 26 },
+  { name: 'Steel Lord', baseLevel: 28 },
+  { name: 'Blood Knight', baseLevel: 30 }
+];
+
+// Calculate DEX for all monsters at a given difficulty and clvl
+function calculateAllMonstersDEX(percent, bonus, clvl) {
+  return blockMonsterData.map(function(monster) {
+    return {
+      name: monster.name,
+      dex: calculateEnemyDEX(percent, bonus, clvl, monster.baseLevel)
+    };
+  });
+}
+
+// Calculate average DEX across all monsters
+function calculateAverageDEX(percent, bonus, clvl) {
+  var results = calculateAllMonstersDEX(percent, bonus, clvl);
+  var sum = results.reduce(function(acc, r) { return acc + r.dex; }, 0);
+  return Math.floor(sum / results.length);
+}
+
+// Export for testing (CommonJS)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    updated,
+    calcM,
+    calcEne,
+    getDifficultyBonus,
+    calculatePlayerDEX,
+    calculateEnemyDEX,
+    blockMonsterData,
+    calculateAllMonstersDEX,
+    calculateAverageDEX
+  };
+}

@@ -218,3 +218,75 @@ function calcEnem()
 	TD[83].firstChild.nodeValue = Math.floor(ave3/14);
 	TD[84].firstChild.nodeValue = Math.floor(ave4/14);
 }
+
+// Pure calculation functions for testing
+function getDifficultyBonus(diff) {
+  if (diff == 0) return 0;       // Normal
+  if (diff == 85) return 15;     // Nightmare
+  if (diff == 120) return 30;    // Hell
+  return 0;
+}
+
+function calculatePlayerAC(percent, diff, bonus, clvl, threshold) {
+  threshold = threshold || 30;
+  var percentMod = percent < threshold ? -threshold : -percent;
+  var baseToHit = 130;
+  var baseLevel = 30;
+  return percentMod + 30 + (baseToHit + diff) + 2 * ((baseLevel + bonus) - clvl);
+}
+
+function calculateEnemyAC(percent, diff, bonus, clvl, baseToHit, baseLevel, threshold) {
+  threshold = threshold || 15;
+  var percentMod = percent < threshold ? -threshold : -percent;
+  return percentMod + 30 + (baseToHit + diff) + 2 * ((baseLevel + bonus) - clvl);
+}
+
+// Monster data for AC calculations
+var acMonsterData = [
+  { name: 'Lava Maw', baseToHit: 65, baseLevel: 25, threshold: 15 },
+  { name: 'Storm Lord', baseToHit: 85, baseLevel: 22, threshold: 15 },
+  { name: 'Maelstorm', baseToHit: 90, baseLevel: 24, threshold: 15 },
+  { name: 'Guardian', baseToHit: 110, baseLevel: 22, threshold: 15 },
+  { name: 'Vortex Lord', baseToHit: 120, baseLevel: 24, threshold: 15 },
+  { name: 'Balrog', baseToHit: 130, baseLevel: 26, threshold: 15 },
+  { name: 'Cave Viper', baseToHit: 90, baseLevel: 21, threshold: 15 },
+  { name: 'Fire Drake', baseToHit: 105, baseLevel: 23, threshold: 15 },
+  { name: 'Gold Viper', baseToHit: 120, baseLevel: 25, threshold: 15 },
+  { name: 'Azure Drake', baseToHit: 130, baseLevel: 27, threshold: 25 },
+  { name: 'Black Knight', baseToHit: 110, baseLevel: 24, threshold: 15 },
+  { name: 'Doom Guard', baseToHit: 130, baseLevel: 26, threshold: 25 },
+  { name: 'Steel Lord', baseToHit: 120, baseLevel: 28, threshold: 20 },
+  { name: 'Blood Knight', baseToHit: 130, baseLevel: 30, threshold: 15 }
+];
+
+// Calculate AC for all monsters at a given difficulty and clvl
+function calculateAllMonstersAC(percent, diff, bonus, clvl) {
+  return acMonsterData.map(function(monster) {
+    return {
+      name: monster.name,
+      ac: calculateEnemyAC(percent, diff, bonus, clvl, monster.baseToHit, monster.baseLevel, monster.threshold)
+    };
+  });
+}
+
+// Calculate average AC across all monsters
+function calculateAverageAC(percent, diff, bonus, clvl) {
+  var results = calculateAllMonstersAC(percent, diff, bonus, clvl);
+  var sum = results.reduce(function(acc, r) { return acc + r.ac; }, 0);
+  return Math.floor(sum / results.length);
+}
+
+// Export for testing (CommonJS)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    updat,
+    calcMa,
+    calcEnem,
+    getDifficultyBonus,
+    calculatePlayerAC,
+    calculateEnemyAC,
+    acMonsterData,
+    calculateAllMonstersAC,
+    calculateAverageAC
+  };
+}

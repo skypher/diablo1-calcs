@@ -3,43 +3,22 @@
  * Tests weapon damage distribution and AC calculations
  */
 
-// Pure implementations from weapdam.js
-
-function MakeArray(n) {
-  this.length = n;
-}
-
-function MakeBase(name, min, max, rate, add) {
-  this.name = name;
-  this.min = min;
-  this.max = max;
-  this.rate = rate;
-  this.add = add;
-}
-
-function AcCalc(theForm) {
-  var myAc = theForm.base.value * 1;
-  var myAcRate = 1 + theForm.acrate.value * 0.01;
-  theForm.ac.value = Math.floor(myAc * myAcRate);
-}
-
-// Create base array with weapon data
-var basmax = 98;
-var base = new MakeArray(basmax + 1);
-
-base[0] = new MakeBase("------- Custom -------", 0, 0, 0, 0);
-base[1] = new MakeBase("Dagger", 1, 4, 0, 0);
-base[12] = new MakeBase("Great Sword", 10, 20, 0, 0);
-base[29] = new MakeBase("Short Bow", 1, 4, 0, 0);
-base[36] = new MakeBase("Long War Bow", 1, 14, 0, 0);
-base[38] = new MakeBase("Short Staff", 2, 4, 0, 0);
-base[42] = new MakeBase("War Staff", 8, 16, 0, 0);
-base[44] = new MakeBase("The Rift Bow", 1, 4, 0, 2);
-base[48] = new MakeBase("The Blackoak Bow", 1, 6, 50, 0);
-base[52] = new MakeBase("Windforce", 1, 14, 200, 0);
-base[69] = new MakeBase("The Falcon's Talon", 3, 7, -33, 0);
-base[78] = new MakeBase("Messerschmidt's Reaver", 12, 30, 200, 15);
-base[87] = new MakeBase("Schaefer's Hammer", 5, 9, -100, 0);
+const {
+  MakeArray,
+  MakeBase,
+  AcCalc,
+  basmax,
+  base,
+  calcDamageValue,
+  calcMinDamage,
+  calcMaxDamage,
+  calcDamageDistribution,
+  calcAverageDamage,
+  calcACWithRate,
+  validateDamageRange,
+  ratePercentToMultiplier,
+  getWeaponStats
+} = require('../js/weapdam.js');
 
 describe('weapdam.js - Weapon Damage Calculator', () => {
 
@@ -168,6 +147,10 @@ describe('weapdam.js - Weapon Damage Calculator', () => {
   });
 
   describe('Base Weapon Data', () => {
+    test('basmax is 98', () => {
+      expect(basmax).toBe(98);
+    });
+
     test('base array has correct length', () => {
       expect(base.length).toBe(99);
     });
@@ -219,8 +202,8 @@ describe('weapdam.js - Weapon Damage Calculator', () => {
 
     test('negative rate modifier exists', () => {
       // The Falcon's Talon has -33% rate
-      expect(base[69].name).toBe("The Falcon's Talon");
-      expect(base[69].rate).toBe(-33);
+      expect(base[65].name).toBe("The Falcon's Talon");
+      expect(base[65].rate).toBe(-33);
 
       // Schaefer's Hammer has -100% rate
       expect(base[87].name).toBe("Schaefer's Hammer");
@@ -249,18 +232,6 @@ describe('weapdam.js - Weapon Damage Calculator', () => {
   });
 
   describe('Edge Cases', () => {
-    test('handles zero base damage', () => {
-      const result = calculateDamageDistribution(0, 0, 0, 0);
-      expect(result.distribution).toEqual([0]);
-      expect(result.average).toBe(0);
-    });
-
-    test('handles single value range', () => {
-      const result = calculateDamageDistribution(5, 5, 0, 0);
-      expect(result.distribution).toEqual([5]);
-      expect(result.average).toBe(5);
-    });
-
     function calculateDamageDistribution(dammin, dammax, rate, add) {
       const distribution = [];
       let total = 0;
@@ -277,5 +248,222 @@ describe('weapdam.js - Weapon Damage Calculator', () => {
 
       return { distribution, average, minDam, maxDam };
     }
+
+    test('handles zero base damage', () => {
+      const result = calculateDamageDistribution(0, 0, 0, 0);
+      expect(result.distribution).toEqual([0]);
+      expect(result.average).toBe(0);
+    });
+
+    test('handles single value range', () => {
+      const result = calculateDamageDistribution(5, 5, 0, 0);
+      expect(result.distribution).toEqual([5]);
+      expect(result.average).toBe(5);
+    });
+  });
+
+  describe('calcDamageValue Function', () => {
+    test('calculates damage with no modifiers', () => {
+      expect(calcDamageValue(10, 1, 0)).toBe(10);
+    });
+
+    test('calculates damage with rate modifier', () => {
+      // 10 * 1.5 = 15
+      expect(calcDamageValue(10, 1.5, 0)).toBe(15);
+    });
+
+    test('calculates damage with add modifier', () => {
+      expect(calcDamageValue(10, 1, 5)).toBe(15);
+    });
+
+    test('calculates damage with both modifiers', () => {
+      // floor(10 * 1.5) + 5 = 20
+      expect(calcDamageValue(10, 1.5, 5)).toBe(20);
+    });
+
+    test('floors the result', () => {
+      // floor(10 * 1.33) + 0 = floor(13.3) = 13
+      expect(calcDamageValue(10, 1.33, 0)).toBe(13);
+    });
+  });
+
+  describe('calcMinDamage and calcMaxDamage Functions', () => {
+    test('calcMinDamage with no modifiers', () => {
+      expect(calcMinDamage(5, 1, 0)).toBe(5);
+    });
+
+    test('calcMaxDamage with no modifiers', () => {
+      expect(calcMaxDamage(15, 1, 0)).toBe(15);
+    });
+
+    test('calcMinDamage with rate modifier', () => {
+      expect(calcMinDamage(10, 2, 0)).toBe(20);
+    });
+
+    test('calcMaxDamage with rate and add', () => {
+      expect(calcMaxDamage(20, 1.5, 5)).toBe(35);
+    });
+  });
+
+  describe('calcDamageDistribution Function', () => {
+    test('returns array of damage values', () => {
+      const dist = calcDamageDistribution(1, 5, 1, 0);
+      expect(dist).toEqual([1, 2, 3, 4, 5]);
+    });
+
+    test('applies rate modifier to all values', () => {
+      const dist = calcDamageDistribution(10, 12, 2, 0);
+      expect(dist).toEqual([20, 22, 24]);
+    });
+
+    test('applies add modifier to all values', () => {
+      const dist = calcDamageDistribution(1, 3, 1, 10);
+      expect(dist).toEqual([11, 12, 13]);
+    });
+
+    test('handles single value range', () => {
+      const dist = calcDamageDistribution(5, 5, 1, 0);
+      expect(dist).toEqual([5]);
+    });
+
+    test('handles empty range', () => {
+      const dist = calcDamageDistribution(5, 4, 1, 0);
+      expect(dist).toEqual([]);
+    });
+  });
+
+  describe('calcAverageDamage Function', () => {
+    test('calculates average for simple range', () => {
+      const avg = calcAverageDamage(1, 5, 1, 0);
+      expect(avg).toBe(3);
+    });
+
+    test('calculates average with modifiers', () => {
+      const avg = calcAverageDamage(10, 10, 2, 0);
+      expect(avg).toBe(20);
+    });
+
+    test('returns 0 for empty range', () => {
+      const avg = calcAverageDamage(5, 4, 1, 0);
+      expect(avg).toBe(0);
+    });
+
+    test('handles non-integer average', () => {
+      const avg = calcAverageDamage(1, 4, 1, 0);
+      // [1, 2, 3, 4] -> 10/4 = 2.5
+      expect(avg).toBe(2.5);
+    });
+  });
+
+  describe('calcACWithRate Function', () => {
+    test('calculates AC with no rate', () => {
+      expect(calcACWithRate(100, 0)).toBe(100);
+    });
+
+    test('calculates AC with positive rate', () => {
+      expect(calcACWithRate(100, 50)).toBe(150);
+    });
+
+    test('calculates AC with 100% rate', () => {
+      expect(calcACWithRate(50, 100)).toBe(100);
+    });
+
+    test('calculates AC with negative rate', () => {
+      expect(calcACWithRate(100, -50)).toBe(50);
+    });
+
+    test('floors the result', () => {
+      expect(calcACWithRate(10, 33)).toBe(13);
+    });
+  });
+
+  describe('validateDamageRange Function', () => {
+    test('valid range returns valid: true', () => {
+      const result = validateDamageRange(1, 10);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBeNull();
+    });
+
+    test('min greater than max returns error', () => {
+      const result = validateDamageRange(10, 5);
+      expect(result.valid).toBe(false);
+      expect(result.error).toBe('Damage Min > Damage Max');
+    });
+
+    test('negative min returns error', () => {
+      const result = validateDamageRange(-1, 10);
+      expect(result.valid).toBe(false);
+      expect(result.error).toBe('Damage Min < 0');
+    });
+
+    test('equal min and max is valid', () => {
+      const result = validateDamageRange(5, 5);
+      expect(result.valid).toBe(true);
+    });
+
+    test('zero min is valid', () => {
+      const result = validateDamageRange(0, 5);
+      expect(result.valid).toBe(true);
+    });
+  });
+
+  describe('ratePercentToMultiplier Function', () => {
+    test('0% rate is 1.0 multiplier', () => {
+      expect(ratePercentToMultiplier(0)).toBe(1);
+    });
+
+    test('100% rate is 2.0 multiplier', () => {
+      expect(ratePercentToMultiplier(100)).toBe(2);
+    });
+
+    test('50% rate is 1.5 multiplier', () => {
+      expect(ratePercentToMultiplier(50)).toBe(1.5);
+    });
+
+    test('-50% rate is 0.5 multiplier', () => {
+      expect(ratePercentToMultiplier(-50)).toBe(0.5);
+    });
+
+    test('200% rate is 3.0 multiplier', () => {
+      expect(ratePercentToMultiplier(200)).toBe(3);
+    });
+  });
+
+  describe('getWeaponStats Function', () => {
+    test('returns Dagger stats', () => {
+      const stats = getWeaponStats(1);
+      expect(stats.name).toBe('Dagger');
+      expect(stats.min).toBe(1);
+      expect(stats.max).toBe(4);
+      expect(stats.rate).toBe(0);
+      expect(stats.add).toBe(0);
+    });
+
+    test('returns Great Sword stats', () => {
+      const stats = getWeaponStats(12);
+      expect(stats.name).toBe('Great Sword');
+      expect(stats.min).toBe(10);
+      expect(stats.max).toBe(20);
+    });
+
+    test('returns unique weapon stats', () => {
+      const stats = getWeaponStats(52);
+      expect(stats.name).toBe('Windforce');
+      expect(stats.rate).toBe(200);
+    });
+
+    test('returns null for invalid index', () => {
+      expect(getWeaponStats(-1)).toBeNull();
+      expect(getWeaponStats(100)).toBeNull();
+    });
+
+    test('returns stats with all properties', () => {
+      const stats = getWeaponStats(78);
+      expect(stats).toHaveProperty('name');
+      expect(stats).toHaveProperty('min');
+      expect(stats).toHaveProperty('max');
+      expect(stats).toHaveProperty('rate');
+      expect(stats).toHaveProperty('add');
+    });
   });
 });

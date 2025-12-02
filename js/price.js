@@ -1700,3 +1700,118 @@ function calcPrice()
 	document.getElementById("Price").firstChild.nodeValue = ""+price;
 	return;
 }
+
+// Pure calculation function for item price
+function calcItemPrice(basePrice, prefixB, prefixM, prefixRange, suffixB, suffixM, suffixRange, source) {
+  // Source multipliers: Griswold=1, Adria=1, Wirt=1.5, monster=1, unique=based on item
+  let price = basePrice;
+
+  // Add prefix contribution if present
+  if (prefixB !== undefined) {
+    price += prefixB + Math.floor(prefixRange * prefixM / 100);
+  }
+
+  // Add suffix contribution if present
+  if (suffixB !== undefined) {
+    price += suffixB + Math.floor(suffixRange * suffixM / 100);
+  }
+
+  // Apply source multiplier
+  if (source === 'Wirt') {
+    price = Math.floor(price * 1.5);
+  }
+
+  return price;
+}
+
+// Calculate price with positive affix multipliers
+function calcPricePositiveM(basePrice, prefixB, prefixQ, prefixM, suffixB, suffixQ, suffixM) {
+  const totalM = (prefixM || 0) + (suffixM || 0);
+  if (totalM === 0) return basePrice;
+  if (totalM > 0) {
+    return (prefixB || 0) + (suffixB || 0) + (prefixQ || 0) + (suffixQ || 0) + basePrice * totalM;
+  }
+  // Negative multiplier (rare case)
+  return (prefixB || 0) + (suffixB || 0) + (prefixQ || 0) + (suffixQ || 0) + basePrice / totalM;
+}
+
+// Calculate sell price (1/4 of buy, minimum 1)
+function calcSellPrice(buyPrice) {
+  const price = Math.floor(buyPrice / 4);
+  return price < 1 ? 1 : price;
+}
+
+// Calculate Wirt price (1.5x)
+function calcWirtPrice(basePrice) {
+  return Math.floor(basePrice * 1.5);
+}
+
+// Check if item is too expensive to buy from Griswold (>140000)
+function isTooExpensiveGriswold(price) {
+  return price > 140000;
+}
+
+// Check if item is too expensive to buy from Wirt (>90000 before multiplier)
+function isTooExpensiveWirt(price) {
+  return price > 90000;
+}
+
+// Get affix range value based on slider position
+function calcAffixRangeValue(sliderIndex, totalOptions, affixRange) {
+  if (affixRange === 0) return 0;
+  return Math.floor(Math.floor(sliderIndex / (totalOptions - 1) * 100) / 100 * affixRange);
+}
+
+// Check if prefix/suffix combination is invalid
+function isInvalidCombo(prefixName, suffixName) {
+  for (let i = 0; i < 24; i++) {
+    if (invalidComb[i] === prefixName && invalidComb[i + 24] === suffixName) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Get spawn pattern for item class
+function getSpawnPattern(itemClass) {
+  const patterns = {
+    'Helm': 0,
+    'Armor': 1,
+    'Sword': 2,
+    'Staff': 3,
+    'Bow': 4,
+    'Jewelry': 5
+  };
+  return patterns[itemClass] !== undefined ? patterns[itemClass] : -1;
+}
+
+// Check if affix can spawn on item class
+function canAffixSpawn(affixSpawnCode, itemClassIndex) {
+  if (itemClassIndex < 0 || itemClassIndex > 5) return false;
+  return affixSpawnCode.charAt(itemClassIndex) !== '-';
+}
+
+// Export for testing (CommonJS)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    Itm,
+    Affx,
+    Spel,
+    bseEQ,
+    unique,
+    prefx,
+    suffx,
+    spel,
+    invalidComb,
+    calcItemPrice,
+    calcPricePositiveM,
+    calcSellPrice,
+    calcWirtPrice,
+    isTooExpensiveGriswold,
+    isTooExpensiveWirt,
+    calcAffixRangeValue,
+    isInvalidCombo,
+    getSpawnPattern,
+    canAffixSpawn
+  };
+}

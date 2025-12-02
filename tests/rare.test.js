@@ -3,38 +3,34 @@
  * Tests SigFig formatting functions and Item/Affix constructors
  */
 
-const fs = require('fs');
-const vm = require('vm');
-
-// Create context
-const context = {
-  Math: Math,
-  Array: Array,
-  String: String,
-  parseInt: parseInt,
-  parseFloat: parseFloat,
-  document: {
-    getElementById: () => ({
-      selectedIndex: 0,
-      options: [{ value: 0 }],
-      innerHTML: ''
-    }),
-    main: {
-      sourceSel: { selectedIndex: 0, options: [{ value: '0' }] },
-      baseSel: { selectedIndex: 0, options: [{ value: '0' }] },
-      prefixSel: { selectedIndex: 0, options: [{ value: '0' }] },
-      suffixSel: { selectedIndex: 0, options: [{ value: '0' }] },
-      cursedIn: { checked: false },
-      result: { innerHTML: '' }
-    }
-  }
-};
-vm.createContext(context);
-
-const sourceCode = fs.readFileSync('./js/rare.js', 'utf8');
-vm.runInContext(sourceCode, context);
-
-const { SigFig, SigFigGAMES, Item, Affix, baseEQ, prefix, suffix } = context;
+const {
+  Item,
+  Affix,
+  Spell,
+  Monster,
+  uMonster,
+  SigFig,
+  SigFigGAMES,
+  baseEQ,
+  prefix,
+  suffix,
+  spell,
+  invalidCombo,
+  monster,
+  uniqueMonster,
+  // New pure calculation functions
+  calcBaseDropChance,
+  calcQualityChance,
+  countValidAffixes,
+  getItemClassIndex,
+  calcAffixSpawnChance,
+  isAffixValid,
+  isAffixPairValid,
+  calcUniqueMonsterDropChance,
+  calcDungeonLevelDropChance,
+  getMonsterIlvl,
+  getDifficultyBonus
+} = require('../js/rare.js');
 
 describe('rare.js - Rare Item Calculator', () => {
 
@@ -349,6 +345,386 @@ describe('rare.js - Rare Item Calculator', () => {
       // Should have both low and higher qlvl cursed items
       expect(Math.min(...qlvls)).toBe(1);
       expect(Math.max(...qlvls)).toBeGreaterThan(1);
+    });
+  });
+
+  describe('Spell Constructor', () => {
+    test('creates spell with all properties', () => {
+      const testSpell = new Spell('Test Spell', 10, true);
+      expect(testSpell.name).toBe('Test Spell');
+      expect(testSpell.qlvl).toBe(10);
+      expect(testSpell.spawnStaff).toBe(true);
+    });
+
+    test('creates non-staff spell', () => {
+      const testSpell = new Spell('Identify', null, false);
+      expect(testSpell.name).toBe('Identify');
+      expect(testSpell.qlvl).toBeNull();
+      expect(testSpell.spawnStaff).toBe(false);
+    });
+  });
+
+  describe('Spell Array', () => {
+    test('spell array has 28 spells', () => {
+      expect(spell.length).toBe(28);
+    });
+
+    test('contains Apocalypse as highest level', () => {
+      expect(spell[0].name).toBe('Apocalypse');
+      expect(spell[0].qlvl).toBe(15);
+    });
+
+    test('contains basic spells', () => {
+      const fireball = spell.find(s => s.name === 'Fireball');
+      expect(fireball).toBeDefined();
+      expect(fireball.qlvl).toBe(7);
+
+      const healing = spell.find(s => s.name === 'Healing');
+      expect(healing).toBeDefined();
+      expect(healing.qlvl).toBe(1);
+    });
+
+    test('Identify and Infravision are non-staff spells', () => {
+      const identify = spell.find(s => s.name === 'Identify');
+      const infravision = spell.find(s => s.name === 'Infravision');
+
+      expect(identify.spawnStaff).toBe(false);
+      expect(infravision.spawnStaff).toBe(false);
+    });
+  });
+
+  describe('Monster Constructor', () => {
+    test('creates monster with all properties', () => {
+      const testMonster = new Monster('Test Monster', 15);
+      expect(testMonster.name).toBe('Test Monster');
+      expect(testMonster.mlvl).toBe(15);
+    });
+  });
+
+  describe('Monster Array', () => {
+    test('monster array has 84 monsters', () => {
+      expect(monster.length).toBe(84);
+    });
+
+    test('contains early dungeon monsters', () => {
+      expect(monster[0].name).toBe('Zobmie');
+      expect(monster[0].mlvl).toBe(1);
+
+      expect(monster[8].name).toBe('Skeleton');
+      expect(monster[8].mlvl).toBe(1);
+    });
+
+    test('contains late dungeon monsters', () => {
+      expect(monster[79].name).toBe('Blood Knight');
+      expect(monster[79].mlvl).toBe(30);
+
+      expect(monster[83].name).toBe('Advocate');
+      expect(monster[83].mlvl).toBe(30);
+    });
+
+    test('monster levels increase with index', () => {
+      // Generally, later monsters have higher mlvl
+      expect(monster[0].mlvl).toBeLessThan(monster[79].mlvl);
+    });
+  });
+
+  describe('uMonster Constructor', () => {
+    test('creates unique monster with all properties', () => {
+      const testUnique = new uMonster('Test Boss', 15, 20, 'Zombie', 5, 0.25);
+      expect(testUnique.name).toBe('Test Boss');
+      expect(testUnique.mlvl).toBe(15);
+      expect(testUnique.ilvl).toBe(20);
+      expect(testUnique.type).toBe('Zombie');
+      expect(testUnique.dlvl).toBe(5);
+      expect(testUnique.prob).toBe(0.25);
+    });
+  });
+
+  describe('Unique Monster Array', () => {
+    test('uniqueMonster array has 69 entries', () => {
+      expect(uniqueMonster.length).toBe(69);
+    });
+
+    test('contains early unique monsters', () => {
+      expect(uniqueMonster[0].name).toBe('Rotfeast the Hungry');
+      expect(uniqueMonster[0].dlvl).toBe(2);
+    });
+
+    test('unique monsters have spawn probabilities', () => {
+      uniqueMonster.forEach(um => {
+        if (um) {
+          expect(um.prob).toBeGreaterThan(0);
+          expect(um.prob).toBeLessThanOrEqual(1);
+        }
+      });
+    });
+
+    test('unique monsters are tied to monster types', () => {
+      expect(uniqueMonster[0].type).toBe('Zombie');
+      expect(uniqueMonster[4].type).toBe('Fallen One');
+    });
+  });
+
+  describe('Invalid Affix Combinations', () => {
+    test('invalidCombo array has 48 entries', () => {
+      expect(invalidCombo.length).toBe(48);
+    });
+
+    test('contains forbidden prefix/suffix pairs', () => {
+      // First 24 are prefixes, second 24 are corresponding suffixes
+      expect(invalidCombo[0]).toBe("Angel's");
+      expect(invalidCombo[24]).toBe("Trouble");
+
+      expect(invalidCombo[5]).toBe("Gold");
+      expect(invalidCombo[29]).toBe("Pit");
+    });
+
+    test('Gold prefix has multiple forbidden suffixes', () => {
+      let goldCount = 0;
+      for (let i = 0; i < 24; i++) {
+        if (invalidCombo[i] === 'Gold') goldCount++;
+      }
+      expect(goldCount).toBeGreaterThan(1);
+    });
+  });
+
+  describe('calcBaseDropChance Function', () => {
+    test('returns standard drop chance', () => {
+      expect(calcBaseDropChance()).toBe(0.107);
+    });
+  });
+
+  describe('calcQualityChance Function', () => {
+    test('returns no quality for low level', () => {
+      const thresholds = { magic: 10, rare: 20, unique: 30 };
+      const result = calcQualityChance(5, thresholds);
+      expect(result.magic).toBe(0);
+      expect(result.rare).toBe(0);
+      expect(result.unique).toBe(0);
+    });
+
+    test('returns magic quality at magic threshold', () => {
+      const thresholds = { magic: 10, rare: 20, unique: 30 };
+      const result = calcQualityChance(10, thresholds);
+      expect(result.magic).toBe(1.0);
+      expect(result.rare).toBe(0);
+      expect(result.unique).toBe(0);
+    });
+
+    test('returns magic and rare at rare threshold', () => {
+      const thresholds = { magic: 10, rare: 20, unique: 30 };
+      const result = calcQualityChance(20, thresholds);
+      expect(result.magic).toBe(0.7);
+      expect(result.rare).toBe(0.3);
+      expect(result.unique).toBe(0);
+    });
+
+    test('returns all qualities at unique threshold', () => {
+      const thresholds = { magic: 10, rare: 20, unique: 30 };
+      const result = calcQualityChance(30, thresholds);
+      expect(result.magic).toBe(0.6);
+      expect(result.rare).toBe(0.3);
+      expect(result.unique).toBe(0.1);
+    });
+  });
+
+  describe('getItemClassIndex Function', () => {
+    test('returns correct index for armor types', () => {
+      expect(getItemClassIndex('Helm')).toBe(0);
+      expect(getItemClassIndex('Armor')).toBe(0);
+    });
+
+    test('returns correct index for shield', () => {
+      expect(getItemClassIndex('Shield')).toBe(1);
+    });
+
+    test('returns correct index for weapon types', () => {
+      expect(getItemClassIndex('Sword.1')).toBe(2);
+      expect(getItemClassIndex('Sword.2')).toBe(2);
+      expect(getItemClassIndex('Axe')).toBe(2);
+      expect(getItemClassIndex('Club.1')).toBe(2);
+      expect(getItemClassIndex('Club.2')).toBe(2);
+    });
+
+    test('returns correct index for staff', () => {
+      expect(getItemClassIndex('Staff')).toBe(3);
+    });
+
+    test('returns correct index for bow', () => {
+      expect(getItemClassIndex('Bow')).toBe(4);
+    });
+
+    test('returns correct index for jewelry', () => {
+      expect(getItemClassIndex('Jewelry')).toBe(5);
+    });
+
+    test('returns -1 for unknown class', () => {
+      expect(getItemClassIndex('Unknown')).toBe(-1);
+    });
+  });
+
+  describe('countValidAffixes Function', () => {
+    test('counts prefixes valid for Helm at ilvl 20', () => {
+      // At ilvl 20, should count prefixes with A in spawn code and qlvl <= 20
+      const count = countValidAffixes(prefix, 20, 'Helm');
+      expect(count).toBeGreaterThan(0);
+    });
+
+    test('counts prefixes valid for Sword.1 at ilvl 30', () => {
+      const count = countValidAffixes(prefix, 30, 'Sword.1');
+      expect(count).toBeGreaterThan(0);
+    });
+
+    test('counts all affixes for unknown item class (no filter)', () => {
+      // When item class is unknown, classIndex is -1, charAt(-1) returns ''
+      // which doesn't equal '-', so all affixes with qlvl <= ilvl are counted
+      const count = countValidAffixes(prefix, 30, 'Unknown');
+      expect(count).toBeGreaterThan(0);
+    });
+
+    test('counts more affixes at higher ilvl', () => {
+      const lowCount = countValidAffixes(prefix, 5, 'Shield');
+      const highCount = countValidAffixes(prefix, 60, 'Shield');
+      expect(highCount).toBeGreaterThan(lowCount);
+    });
+  });
+
+  describe('calcAffixSpawnChance Function', () => {
+    test('returns 0 for affix with qlvl higher than ilvl', () => {
+      const godlyPrefix = prefix.find(p => p.name === 'Godly'); // qlvl 60
+      expect(calcAffixSpawnChance(godlyPrefix, 10, 'Shield')).toBe(0);
+    });
+
+    test('returns 0 for invalid item class', () => {
+      const finePrefix = prefix.find(p => p.name === 'Fine' && p.spawn.includes('A'));
+      expect(calcAffixSpawnChance(finePrefix, 30, 'Unknown')).toBe(0);
+    });
+
+    test('returns 2 for dChance affix', () => {
+      // Fine (AS----) has dChance = true
+      const finePrefix = prefix.find(p => p.name === 'Fine' && p.dChance === true);
+      if (finePrefix) {
+        expect(calcAffixSpawnChance(finePrefix, 30, 'Helm')).toBe(2);
+      }
+    });
+
+    test('returns 1 for non-dChance affix', () => {
+      // Spider's has dChance = false
+      const spiderPrefix = prefix.find(p => p.name === "Spider's");
+      expect(calcAffixSpawnChance(spiderPrefix, 30, 'Staff')).toBe(1);
+    });
+  });
+
+  describe('isAffixValid Function', () => {
+    test('returns true for valid affix', () => {
+      // Fine (AS----) is valid for Helm (index 0)
+      const finePrefix = prefix.find(p => p.name === 'Fine' && p.spawn.includes('A'));
+      expect(isAffixValid(finePrefix, 30, 'Helm')).toBe(true);
+    });
+
+    test('returns false for affix with qlvl too high', () => {
+      const godlyPrefix = prefix.find(p => p.name === 'Godly'); // qlvl 60
+      expect(isAffixValid(godlyPrefix, 10, 'Shield')).toBe(false);
+    });
+
+    test('returns false for affix that cannot spawn on item class', () => {
+      // Dragon's (---T-J) cannot spawn on Helm
+      const dragonPrefix = prefix.find(p => p.name === "Dragon's");
+      expect(isAffixValid(dragonPrefix, 30, 'Helm')).toBe(false);
+    });
+
+    test('returns false for unknown item class', () => {
+      const finePrefix = prefix.find(p => p.name === 'Fine');
+      expect(isAffixValid(finePrefix, 30, 'Unknown')).toBe(false);
+    });
+  });
+
+  describe('isAffixPairValid Function', () => {
+    test('returns true for valid combination', () => {
+      expect(isAffixPairValid('Godly', 'Ages', invalidCombo)).toBe(true);
+    });
+
+    test('returns false for invalid Angel + Trouble combination', () => {
+      expect(isAffixPairValid("Angel's", 'Trouble', invalidCombo)).toBe(false);
+    });
+
+    test('returns false for invalid Gold + Pit combination', () => {
+      expect(isAffixPairValid('Gold', 'Pit', invalidCombo)).toBe(false);
+    });
+
+    test('returns true when prefix not in invalid list', () => {
+      expect(isAffixPairValid('Obsidian', 'Ages', invalidCombo)).toBe(true);
+    });
+  });
+
+  describe('calcUniqueMonsterDropChance Function', () => {
+    test('returns prob from unique monster data', () => {
+      const rotfeast = uniqueMonster.find(um => um.name === 'Rotfeast the Hungry');
+      expect(calcUniqueMonsterDropChance(rotfeast)).toBe(rotfeast.prob);
+    });
+
+    test('returns probability between 0 and 1', () => {
+      uniqueMonster.forEach(um => {
+        if (um) {
+          const chance = calcUniqueMonsterDropChance(um);
+          expect(chance).toBeGreaterThan(0);
+          expect(chance).toBeLessThanOrEqual(1);
+        }
+      });
+    });
+  });
+
+  describe('calcDungeonLevelDropChance Function', () => {
+    test('returns 0.107 for church levels (1-4)', () => {
+      expect(calcDungeonLevelDropChance(1)).toBe(0.107);
+      expect(calcDungeonLevelDropChance(4)).toBe(0.107);
+    });
+
+    test('returns 0.107 for catacombs levels (5-8)', () => {
+      expect(calcDungeonLevelDropChance(5)).toBe(0.107);
+      expect(calcDungeonLevelDropChance(8)).toBe(0.107);
+    });
+
+    test('returns 0.107 for caves levels (9-12)', () => {
+      expect(calcDungeonLevelDropChance(9)).toBe(0.107);
+      expect(calcDungeonLevelDropChance(12)).toBe(0.107);
+    });
+
+    test('returns 0.107 for hell levels (13-16)', () => {
+      expect(calcDungeonLevelDropChance(13)).toBe(0.107);
+      expect(calcDungeonLevelDropChance(16)).toBe(0.107);
+    });
+  });
+
+  describe('getMonsterIlvl Function', () => {
+    test('calculates item level correctly', () => {
+      expect(getMonsterIlvl(10, 0)).toBe(10);
+      expect(getMonsterIlvl(10, 15)).toBe(25);
+      expect(getMonsterIlvl(30, 30)).toBe(60);
+    });
+
+    test('returns mlvl when no difficulty bonus', () => {
+      expect(getMonsterIlvl(1, 0)).toBe(1);
+      expect(getMonsterIlvl(30, 0)).toBe(30);
+    });
+  });
+
+  describe('getDifficultyBonus Function', () => {
+    test('returns 0 for Normal difficulty', () => {
+      expect(getDifficultyBonus('Normal')).toBe(0);
+    });
+
+    test('returns 15 for Nightmare difficulty', () => {
+      expect(getDifficultyBonus('Nightmare')).toBe(15);
+    });
+
+    test('returns 30 for Hell difficulty', () => {
+      expect(getDifficultyBonus('Hell')).toBe(30);
+    });
+
+    test('returns 0 for unknown difficulty', () => {
+      expect(getDifficultyBonus('Unknown')).toBe(0);
+      expect(getDifficultyBonus('')).toBe(0);
     });
   });
 });

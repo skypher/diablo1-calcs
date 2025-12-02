@@ -3,6 +3,15 @@
  * Tests chance to hit calculations for different classes and attack types
  */
 
+const {
+  getClassBonus,
+  calculatePlayerCS,
+  calculateEnemyCS,
+  cthMonsterData,
+  calculateAllMonstersCS,
+  calculateAverageCS
+} = require('../js/cth.js');
+
 describe('cth.js - Chance to Hit Calculator', () => {
 
   // Class bonuses from cth.js
@@ -19,13 +28,6 @@ describe('cth.js - Chance to Hit Calculator', () => {
     const arrowPenalty = isArrow ? 25 - dex / 2 : 0;
     const cs = Math.floor(percent + (monsterAC + diff) - clvl - bonus + arrowPenalty);
     return cs < 0 ? 0 : cs;
-  }
-
-  function getClassBonus(className, attackType) {
-    const classInfo = classData[className];
-    if (attackType === 'melee') return classInfo.meleeBonus;
-    if (attackType === 'arrow') return classInfo.arrowBonus;
-    return 0;
   }
 
   describe('Class Bonus Calculation', () => {
@@ -262,6 +264,131 @@ describe('cth.js - Chance to Hit Calculator', () => {
       const cs = calculateCS(100, 85, 120, 50, 20, false, 225);
       // CS = 100 + 205 - 50 - 20 = 235
       expect(cs).toBe(235);
+    });
+  });
+
+  describe('calculatePlayerCS function', () => {
+    test('calculates CS for Warrior melee on Normal', () => {
+      expect(calculatePlayerCS(50, 0, 30, 20, 'melee', 225)).toBe(85);
+    });
+
+    test('calculates CS for Warrior arrow on Normal', () => {
+      expect(calculatePlayerCS(50, 0, 30, 10, 'arrow', 225)).toBe(7);
+    });
+
+    test('calculates CS for Rogue arrow on Normal', () => {
+      expect(calculatePlayerCS(50, 0, 30, 20, 'arrow', 250)).toBe(0);
+    });
+
+    test('clamps negative CS to 0', () => {
+      expect(calculatePlayerCS(0, 0, 50, 50, 'melee', 200)).toBe(0);
+    });
+  });
+
+  describe('calculateEnemyCS function', () => {
+    test('calculates CS for Lava Maw on Normal', () => {
+      const cs = calculateEnemyCS(50, 0, 30, 20, 'melee', 225, 35);
+      expect(cs).toBe(35);
+    });
+
+    test('calculates CS for Blood Knight on Hell', () => {
+      const cs = calculateEnemyCS(50, 120, 50, 20, 'melee', 225, 85);
+      // 50 + (85 + 120) - 50 - 20 = 185
+      expect(cs).toBe(185);
+    });
+  });
+
+  describe('cthMonsterData Array', () => {
+    test('contains 22 monsters', () => {
+      expect(cthMonsterData.length).toBe(22);
+    });
+
+    test('contains Lava Maw with correct baseAC', () => {
+      const lavaMaw = cthMonsterData.find(m => m.name === 'Lava Maw');
+      expect(lavaMaw).toBeDefined();
+      expect(lavaMaw.baseAC).toBe(35);
+    });
+
+    test('contains Blood Knight with correct baseAC', () => {
+      const bloodKnight = cthMonsterData.find(m => m.name === 'Blood Knight');
+      expect(bloodKnight).toBeDefined();
+      expect(bloodKnight.baseAC).toBe(85);
+    });
+
+    test('Mages have 0 AC', () => {
+      const mages = ['Counselor', 'Magistrate', 'Cabalist', 'Advocate'];
+      mages.forEach(mageName => {
+        const mage = cthMonsterData.find(m => m.name === mageName);
+        expect(mage).toBeDefined();
+        expect(mage.baseAC).toBe(0);
+      });
+    });
+
+    test('all monsters have required properties', () => {
+      cthMonsterData.forEach(m => {
+        expect(m.name).toBeDefined();
+        expect(m.baseAC).toBeGreaterThanOrEqual(0);
+      });
+    });
+  });
+
+  describe('calculateAllMonstersCS Function', () => {
+    test('returns array of all monster CSs', () => {
+      const results = calculateAllMonstersCS(50, 0, 30, 'Warrior', 'melee', 225);
+      expect(results.length).toBe(22);
+      expect(results[0]).toHaveProperty('name');
+      expect(results[0]).toHaveProperty('cs');
+    });
+
+    test('Lava Maw CS on Normal with Warrior melee', () => {
+      const results = calculateAllMonstersCS(50, 0, 30, 'Warrior', 'melee', 225);
+      const lavaMaw = results.find(r => r.name === 'Lava Maw');
+      // 50 + 35 - 30 - 20 = 35
+      expect(lavaMaw.cs).toBe(35);
+    });
+
+    test('Blood Knight CS on Hell with Warrior melee', () => {
+      const results = calculateAllMonstersCS(50, 120, 50, 'Warrior', 'melee', 225);
+      const bloodKnight = results.find(r => r.name === 'Blood Knight');
+      // 50 + (85 + 120) - 50 - 20 = 185
+      expect(bloodKnight.cs).toBe(185);
+    });
+
+    test('Mages easier to hit (0 AC)', () => {
+      const results = calculateAllMonstersCS(50, 0, 30, 'Warrior', 'melee', 225);
+      const counselor = results.find(r => r.name === 'Counselor');
+      // 50 + 0 - 30 - 20 = 0
+      expect(counselor.cs).toBe(0);
+    });
+  });
+
+  describe('calculateAverageCS Function', () => {
+    test('returns average CS across all monsters', () => {
+      const avg = calculateAverageCS(50, 0, 30, 'Warrior', 'melee', 225);
+      expect(typeof avg).toBe('number');
+      expect(avg).toBeGreaterThanOrEqual(0);
+    });
+
+    test('average is floored', () => {
+      const avg = calculateAverageCS(50, 0, 30, 'Warrior', 'melee', 225);
+      expect(avg).toBe(Math.floor(avg));
+    });
+
+    test('Rogue with arrows benefits from bow bonus', () => {
+      const warriorMelee = calculateAverageCS(50, 0, 30, 'Warrior', 'melee', 225);
+      const rogueArrow = calculateAverageCS(50, 0, 30, 'Rogue', 'arrow', 250);
+      // Both should return a valid average
+      expect(warriorMelee).toBeGreaterThanOrEqual(0);
+      expect(rogueArrow).toBeGreaterThanOrEqual(0);
+    });
+
+    test('higher difficulty increases average CS needed', () => {
+      const normalAvg = calculateAverageCS(50, 0, 30, 'Warrior', 'melee', 225);
+      const nightmareAvg = calculateAverageCS(50, 85, 30, 'Warrior', 'melee', 225);
+      const hellAvg = calculateAverageCS(50, 120, 30, 'Warrior', 'melee', 225);
+
+      expect(nightmareAvg).toBeGreaterThan(normalAvg);
+      expect(hellAvg).toBeGreaterThan(nightmareAvg);
     });
   });
 });

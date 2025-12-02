@@ -3,52 +3,9 @@
  * Tests damage per second calculations for different weapon types and classes
  */
 
+const { swingSpeeds, calculateDPS, avgdps } = require('../js/dps.js');
+
 describe('dps.js - DPS Calculator', () => {
-
-  // Weapon speeds from dps.js (in seconds per swing)
-  const weaponSpeeds = {
-    sword: {
-      Warrior: { normal: 0.45, swift: 0.40, speed: 0.35 },
-      Rogue: { normal: 0.50, swift: 0.45, speed: 0.40 },
-      Sorcerer: { normal: 0.60, swift: 0.55, speed: 0.50 },
-      Monk: { normal: 0.60, swift: 0.55, speed: 0.50 },
-      Bard: { normal: 0.50, swift: 0.45, speed: 0.40 },
-      // Barbarian shows two values (one-hand/two-hand)
-      Barbarian: {
-        normal: [0.45, 0.40],
-        swift: [0.40, 0.35],
-        speed: [0.35, 0.30]
-      }
-    },
-    axe: {
-      Warrior: { normal: 0.50, swift: 0.45, speed: 0.40 },
-      Rogue: { normal: 0.65, swift: 0.60, speed: 0.55 },
-      Sorcerer: { normal: 0.80, swift: 0.75, speed: 0.70 },
-      Monk: { normal: 0.70, swift: 0.65, speed: 0.60 },
-      Bard: { normal: 0.65, swift: 0.60, speed: 0.55 },
-      Barbarian: { normal: 0.40, swift: 0.35, speed: 0.30 }
-    },
-    staff: {
-      Warrior: { normal: 0.55, swift: 0.50, speed: 0.45 },
-      Rogue: { normal: 0.55, swift: 0.50, speed: 0.45 },
-      Sorcerer: { normal: 0.60, swift: 0.55, speed: 0.50 },
-      Monk: { normal: 0.40, swift: 0.35, speed: 0.30 },
-      Bard: { normal: 0.55, swift: 0.50, speed: 0.45 },
-      Barbarian: { normal: 0.55, swift: 0.50, speed: 0.45 }
-    },
-    bow: {
-      Warrior: { normal: 0.55, swift: 0.50 },
-      Rogue: { normal: 0.35, swift: 0.30 },
-      Sorcerer: { normal: 0.80, swift: 0.75 },
-      Monk: { normal: 0.70, swift: 0.70 },
-      Bard: { normal: 0.55, swift: 0.55 },
-      Barbarian: { normal: 0.55, swift: 0.55 }
-    }
-  };
-
-  function calculateDPS(avgDamage, swingTime) {
-    return parseFloat((avgDamage / swingTime).toFixed(2));
-  }
 
   describe('DPS Calculation', () => {
     test('basic DPS formula works', () => {
@@ -78,13 +35,33 @@ describe('dps.js - DPS Calculator', () => {
     });
   });
 
+  describe('Swing Speeds Data', () => {
+    test('swingSpeeds contains all weapon types', () => {
+      expect(swingSpeeds).toHaveProperty('sword');
+      expect(swingSpeeds).toHaveProperty('axe');
+      expect(swingSpeeds).toHaveProperty('staff');
+      expect(swingSpeeds).toHaveProperty('bow');
+    });
+
+    test('each weapon type has all classes', () => {
+      const classes = ['Warrior', 'Rogue', 'Sorcerer', 'Monk', 'Bard', 'Barbarian'];
+      const weapons = ['sword', 'axe', 'staff', 'bow'];
+
+      weapons.forEach(weapon => {
+        classes.forEach(cls => {
+          expect(swingSpeeds[weapon]).toHaveProperty(cls);
+        });
+      });
+    });
+  });
+
   describe('Sword DPS by Class', () => {
     const avgDamage = 100;
 
     test('Warrior has fastest sword speed', () => {
-      const warriorDPS = calculateDPS(avgDamage, weaponSpeeds.sword.Warrior.normal);
-      const rogueDPS = calculateDPS(avgDamage, weaponSpeeds.sword.Rogue.normal);
-      const sorcererDPS = calculateDPS(avgDamage, weaponSpeeds.sword.Sorcerer.normal);
+      const warriorDPS = calculateDPS(avgDamage, swingSpeeds.sword.Warrior.normal);
+      const rogueDPS = calculateDPS(avgDamage, swingSpeeds.sword.Rogue.normal);
+      const sorcererDPS = calculateDPS(avgDamage, swingSpeeds.sword.Sorcerer.normal);
 
       expect(warriorDPS).toBeGreaterThan(rogueDPS);
       expect(rogueDPS).toBeGreaterThan(sorcererDPS);
@@ -94,9 +71,9 @@ describe('dps.js - DPS Calculator', () => {
       const classes = ['Warrior', 'Rogue', 'Sorcerer', 'Monk', 'Bard'];
 
       classes.forEach(cls => {
-        const normalDPS = calculateDPS(avgDamage, weaponSpeeds.sword[cls].normal);
-        const swiftDPS = calculateDPS(avgDamage, weaponSpeeds.sword[cls].swift);
-        const speedDPS = calculateDPS(avgDamage, weaponSpeeds.sword[cls].speed);
+        const normalDPS = calculateDPS(avgDamage, swingSpeeds.sword[cls].normal);
+        const swiftDPS = calculateDPS(avgDamage, swingSpeeds.sword[cls].swiftness);
+        const speedDPS = calculateDPS(avgDamage, swingSpeeds.sword[cls].speed);
 
         expect(swiftDPS).toBeGreaterThan(normalDPS);
         expect(speedDPS).toBeGreaterThan(swiftDPS);
@@ -108,15 +85,15 @@ describe('dps.js - DPS Calculator', () => {
     const avgDamage = 100;
 
     test('Barbarian is fastest with axes', () => {
-      const barbarianDPS = calculateDPS(avgDamage, weaponSpeeds.axe.Barbarian.normal);
-      const warriorDPS = calculateDPS(avgDamage, weaponSpeeds.axe.Warrior.normal);
+      const barbarianDPS = calculateDPS(avgDamage, swingSpeeds.axe.Barbarian.normal);
+      const warriorDPS = calculateDPS(avgDamage, swingSpeeds.axe.Warrior.normal);
 
       expect(barbarianDPS).toBeGreaterThan(warriorDPS);
     });
 
     test('Sorcerer is slowest with axes', () => {
-      const sorcererDPS = calculateDPS(avgDamage, weaponSpeeds.axe.Sorcerer.normal);
-      const rogueDPS = calculateDPS(avgDamage, weaponSpeeds.axe.Rogue.normal);
+      const sorcererDPS = calculateDPS(avgDamage, swingSpeeds.axe.Sorcerer.normal);
+      const rogueDPS = calculateDPS(avgDamage, swingSpeeds.axe.Rogue.normal);
 
       expect(rogueDPS).toBeGreaterThan(sorcererDPS);
     });
@@ -126,16 +103,16 @@ describe('dps.js - DPS Calculator', () => {
     const avgDamage = 100;
 
     test('Monk is fastest with staves', () => {
-      const monkDPS = calculateDPS(avgDamage, weaponSpeeds.staff.Monk.normal);
-      const warriorDPS = calculateDPS(avgDamage, weaponSpeeds.staff.Warrior.normal);
-      const sorcererDPS = calculateDPS(avgDamage, weaponSpeeds.staff.Sorcerer.normal);
+      const monkDPS = calculateDPS(avgDamage, swingSpeeds.staff.Monk.normal);
+      const warriorDPS = calculateDPS(avgDamage, swingSpeeds.staff.Warrior.normal);
+      const sorcererDPS = calculateDPS(avgDamage, swingSpeeds.staff.Sorcerer.normal);
 
       expect(monkDPS).toBeGreaterThan(warriorDPS);
       expect(monkDPS).toBeGreaterThan(sorcererDPS);
     });
 
     test('Warrior and Rogue have same staff speed', () => {
-      expect(weaponSpeeds.staff.Warrior.normal).toBe(weaponSpeeds.staff.Rogue.normal);
+      expect(swingSpeeds.staff.Warrior.normal).toBe(swingSpeeds.staff.Rogue.normal);
     });
   });
 
@@ -143,42 +120,40 @@ describe('dps.js - DPS Calculator', () => {
     const avgDamage = 100;
 
     test('Rogue is fastest with bows', () => {
-      const rogueDPS = calculateDPS(avgDamage, weaponSpeeds.bow.Rogue.normal);
-      const warriorDPS = calculateDPS(avgDamage, weaponSpeeds.bow.Warrior.normal);
-      const sorcererDPS = calculateDPS(avgDamage, weaponSpeeds.bow.Sorcerer.normal);
+      const rogueDPS = calculateDPS(avgDamage, swingSpeeds.bow.Rogue.normal);
+      const warriorDPS = calculateDPS(avgDamage, swingSpeeds.bow.Warrior.normal);
+      const sorcererDPS = calculateDPS(avgDamage, swingSpeeds.bow.Sorcerer.normal);
 
       expect(rogueDPS).toBeGreaterThan(warriorDPS);
       expect(rogueDPS).toBeGreaterThan(sorcererDPS);
     });
 
     test('Sorcerer is slowest with bows', () => {
-      const sorcererDPS = calculateDPS(avgDamage, weaponSpeeds.bow.Sorcerer.normal);
+      const sorcererDPS = calculateDPS(avgDamage, swingSpeeds.bow.Sorcerer.normal);
 
-      Object.keys(weaponSpeeds.bow).forEach(cls => {
+      Object.keys(swingSpeeds.bow).forEach(cls => {
         if (cls !== 'Sorcerer') {
-          const otherDPS = calculateDPS(avgDamage, weaponSpeeds.bow[cls].normal);
+          const otherDPS = calculateDPS(avgDamage, swingSpeeds.bow[cls].normal);
           expect(otherDPS).toBeGreaterThan(sorcererDPS);
         }
       });
     });
 
     test('bow has fewer speed tiers', () => {
-      // Bows only have normal and swift, no speed tier
-      expect(weaponSpeeds.bow.Warrior.speed).toBeUndefined();
+      // Bows only have normal and swiftness, no speed tier
+      expect(swingSpeeds.bow.Warrior.speed).toBeUndefined();
     });
   });
 
   describe('Speed Suffix Effects', () => {
-    const avgDamage = 100;
-
     test('Swiftness suffix reduces swing time', () => {
       const weapons = ['sword', 'axe', 'staff'];
       const classes = ['Warrior', 'Rogue', 'Sorcerer'];
 
       weapons.forEach(weapon => {
         classes.forEach(cls => {
-          expect(weaponSpeeds[weapon][cls].swift)
-            .toBeLessThan(weaponSpeeds[weapon][cls].normal);
+          expect(swingSpeeds[weapon][cls].swiftness)
+            .toBeLessThan(swingSpeeds[weapon][cls].normal);
         });
       });
     });
@@ -189,8 +164,8 @@ describe('dps.js - DPS Calculator', () => {
 
       weapons.forEach(weapon => {
         classes.forEach(cls => {
-          expect(weaponSpeeds[weapon][cls].speed)
-            .toBeLessThan(weaponSpeeds[weapon][cls].swift);
+          expect(swingSpeeds[weapon][cls].speed)
+            .toBeLessThan(swingSpeeds[weapon][cls].swiftness);
         });
       });
     });
@@ -198,7 +173,7 @@ describe('dps.js - DPS Calculator', () => {
 
   describe('Barbarian Special Cases', () => {
     test('Barbarian shows one-hand/two-hand sword speeds', () => {
-      const barbarianSword = weaponSpeeds.sword.Barbarian;
+      const barbarianSword = swingSpeeds.sword.Barbarian;
 
       expect(Array.isArray(barbarianSword.normal)).toBe(true);
       expect(barbarianSword.normal.length).toBe(2);
@@ -208,7 +183,7 @@ describe('dps.js - DPS Calculator', () => {
     });
 
     test('Barbarian axe speed is fastest overall', () => {
-      const barbarianAxeSpeed = weaponSpeeds.axe.Barbarian.speed;
+      const barbarianAxeSpeed = swingSpeeds.axe.Barbarian.speed;
 
       // 0.30 is the fastest axe speed
       expect(barbarianAxeSpeed).toBe(0.30);
@@ -266,19 +241,111 @@ describe('dps.js - DPS Calculator', () => {
 
     test('each class has an optimal weapon type', () => {
       // Warrior: Sword
-      const warriorSword = calculateDPS(avgDamage, weaponSpeeds.sword.Warrior.normal);
-      const warriorAxe = calculateDPS(avgDamage, weaponSpeeds.axe.Warrior.normal);
+      const warriorSword = calculateDPS(avgDamage, swingSpeeds.sword.Warrior.normal);
+      const warriorAxe = calculateDPS(avgDamage, swingSpeeds.axe.Warrior.normal);
       expect(warriorSword).toBeGreaterThan(warriorAxe);
 
       // Rogue: Bow
-      const rogueBow = calculateDPS(avgDamage, weaponSpeeds.bow.Rogue.normal);
-      const rogueSword = calculateDPS(avgDamage, weaponSpeeds.sword.Rogue.normal);
+      const rogueBow = calculateDPS(avgDamage, swingSpeeds.bow.Rogue.normal);
+      const rogueSword = calculateDPS(avgDamage, swingSpeeds.sword.Rogue.normal);
       expect(rogueBow).toBeGreaterThan(rogueSword);
 
       // Monk: Staff
-      const monkStaff = calculateDPS(avgDamage, weaponSpeeds.staff.Monk.normal);
-      const monkSword = calculateDPS(avgDamage, weaponSpeeds.sword.Monk.normal);
+      const monkStaff = calculateDPS(avgDamage, swingSpeeds.staff.Monk.normal);
+      const monkSword = calculateDPS(avgDamage, swingSpeeds.sword.Monk.normal);
       expect(monkStaff).toBeGreaterThan(monkSword);
+    });
+  });
+
+  describe('avgdps DOM handler', () => {
+    function createMockForm(basetype, avg) {
+      return {
+        basetype: { value: basetype },
+        avg: { value: avg },
+        display: { value: '' },
+        display1: { value: '' },
+        display2: { value: '' },
+        display3: { value: '' },
+        display4: { value: '' },
+        display5: { value: '' },
+        display6: { value: '' }
+      };
+    }
+
+    test('calculates sword DPS for all classes', () => {
+      const form = createMockForm('sword', 100);
+      avgdps(form);
+
+      expect(form.display.value).toContain('Suffix:');
+      expect(form.display1.value).toContain('Warrior:');
+      expect(form.display2.value).toContain('Rogue:');
+      expect(form.display3.value).toContain('Sorcerer:');
+      expect(form.display4.value).toContain('Monk:');
+      expect(form.display5.value).toContain('Bard:');
+      expect(form.display6.value).toContain('Barbarian:');
+    });
+
+    test('calculates axe DPS for all classes', () => {
+      const form = createMockForm('axe', 100);
+      avgdps(form);
+
+      expect(form.display1.value).toContain('Warrior:');
+      expect(form.display6.value).toContain('Barbarian:');
+    });
+
+    test('calculates staff DPS for all classes', () => {
+      const form = createMockForm('staff', 100);
+      avgdps(form);
+
+      expect(form.display1.value).toContain('Warrior:');
+      expect(form.display4.value).toContain('Monk:');
+    });
+
+    test('calculates bow DPS for all classes', () => {
+      const form = createMockForm('bow', 100);
+      avgdps(form);
+
+      expect(form.display1.value).toContain('Warrior:');
+      expect(form.display2.value).toContain('Rogue:');
+    });
+
+    test('sword DPS values are correct', () => {
+      const form = createMockForm('sword', 100);
+      avgdps(form);
+
+      // Warrior: 100/0.45 = 222.22, 100/0.4 = 250, 100/0.35 = 285.71
+      expect(form.display1.value).toContain('222.22');
+      expect(form.display1.value).toContain('250');
+      expect(form.display1.value).toContain('285.71');
+    });
+
+    test('axe DPS values are correct for Barbarian', () => {
+      const form = createMockForm('axe', 100);
+      avgdps(form);
+
+      // Barbarian: 100/0.4 = 250, 100/0.35 = 285.71, 100/0.3 = 333.33
+      expect(form.display6.value).toContain('250');
+      expect(form.display6.value).toContain('285.71');
+      expect(form.display6.value).toContain('333.33');
+    });
+
+    test('staff DPS values are correct for Monk', () => {
+      const form = createMockForm('staff', 100);
+      avgdps(form);
+
+      // Monk: 100/0.4 = 250, 100/0.35 = 285.71, 100/0.3 = 333.33
+      expect(form.display4.value).toContain('250');
+      expect(form.display4.value).toContain('285.71');
+      expect(form.display4.value).toContain('333.33');
+    });
+
+    test('bow DPS values are correct for Rogue', () => {
+      const form = createMockForm('bow', 100);
+      avgdps(form);
+
+      // Rogue: 100/0.35 = 285.71, 100/0.3 = 333.33
+      expect(form.display2.value).toContain('285.71');
+      expect(form.display2.value).toContain('333.33');
     });
   });
 });

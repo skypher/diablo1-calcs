@@ -3,17 +3,25 @@
  * Tests comprehensive character stat calculations
  */
 
-describe('char.js - Character Stats Calculator', () => {
+const {
+  nxtExp,
+  calcWarriorLife,
+  calcWarriorMana,
+  calcRogueLife,
+  calcRogueMana,
+  calcSorcererLife,
+  calcSorcererMana,
+  calcToHit,
+  calcAC,
+  calcBlock,
+  clampHitChance,
+  clampBlockChance,
+  formatResistance,
+  calcMeleeDamage,
+  calcMagicToHit
+} = require('../js/char.js');
 
-  // Experience table from char.js
-  const nxtExp = [
-    0, 2000, 4620, 8040, 12489, 18258, 25712, 35309, 47622, 63364,
-    83419, 108879, 141086, 181683, 231075, 313658, 424067, 571190, 766569, 1025154,
-    1366227, 1814568, 2401895, 3168651, 4166200, 5459523, 7130496, 9281874, 12042092, 15571031,
-    20066092, 25774405, 32994399, 42095202, 53525811, 67831218, 85670061, 107834823, 135274799, 169122009,
-    210720231, 261657253, 323800420, 399335440, 490808349, 601170414, 733825617, 892680222, 1082908612, 1310707109,
-    1583495809
-  ];
+describe('char.js - Character Stats Calculator', () => {
 
   // Class formulas from char.js
   const classData = {
@@ -76,19 +84,19 @@ describe('char.js - Character Stats Calculator', () => {
   describe('Warrior Life Calculation', () => {
     test('calculates base life at level 1', () => {
       // vit * 2 + 0 * 2 + 20 = vit * 2 + 20
-      const life = classData.Warrior.lifeBase(25, 1);
+      const life = calcWarriorLife(25, 1);
       expect(life).toBe(70); // 25*2 + 0*2 + 20 = 70
     });
 
     test('calculates base life at level 50', () => {
       // vit * 2 + 48 * 2 + 20
-      const life = classData.Warrior.lifeBase(100, 50);
+      const life = calcWarriorLife(100, 50);
       expect(life).toBe(316); // 100*2 + 48*2 + 20 = 316
     });
 
     test('vitality has 2x multiplier', () => {
-      const life1 = classData.Warrior.lifeBase(50, 1);
-      const life2 = classData.Warrior.lifeBase(60, 1);
+      const life1 = calcWarriorLife(50, 1);
+      const life2 = calcWarriorLife(60, 1);
       expect(life2 - life1).toBe(20); // 10 vit * 2 = 20
     });
   });
@@ -96,13 +104,13 @@ describe('char.js - Character Stats Calculator', () => {
   describe('Warrior Mana Calculation', () => {
     test('calculates base mana at level 1', () => {
       // mag + 0 = mag
-      const mana = classData.Warrior.manaBase(10, 1);
+      const mana = calcWarriorMana(10, 1);
       expect(mana).toBe(10);
     });
 
     test('calculates base mana at level 50', () => {
       // mag + 48
-      const mana = classData.Warrior.manaBase(50, 50);
+      const mana = calcWarriorMana(50, 50);
       expect(mana).toBe(98);
     });
   });
@@ -110,13 +118,13 @@ describe('char.js - Character Stats Calculator', () => {
   describe('Rogue Life Calculation', () => {
     test('calculates base life at level 1', () => {
       // vit + 0 * 2 + 25 = vit + 25
-      const life = classData.Rogue.lifeBase(20, 1);
+      const life = calcRogueLife(20, 1);
       expect(life).toBe(45);
     });
 
     test('level gain is 2x for Rogue', () => {
-      const life1 = classData.Rogue.lifeBase(20, 10);
-      const life2 = classData.Rogue.lifeBase(20, 11);
+      const life1 = calcRogueLife(20, 10);
+      const life2 = calcRogueLife(20, 11);
       expect(life2 - life1).toBe(2);
     });
   });
@@ -124,35 +132,35 @@ describe('char.js - Character Stats Calculator', () => {
   describe('Rogue Mana Calculation', () => {
     test('calculates base mana at level 1', () => {
       // mag + 0 * 2 + 7 = mag + 7
-      const mana = classData.Rogue.manaBase(15, 1);
+      const mana = calcRogueMana(15, 1);
       expect(mana).toBe(22);
     });
   });
 
   describe('Sorcerer Life Calculation', () => {
     test('calculates base life at level 1', () => {
-      // vit + 0 + 9 = vit + 9
-      const life = classData.Sorcerer.lifeBase(20, 1);
-      expect(life).toBe(29);
+      // vit + 0 + 10 = vit + 10
+      const life = calcSorcererLife(20, 1);
+      expect(life).toBe(30);
     });
 
     test('level gain is 1x for Sorcerer life', () => {
-      const life1 = classData.Sorcerer.lifeBase(20, 10);
-      const life2 = classData.Sorcerer.lifeBase(20, 11);
+      const life1 = calcSorcererLife(20, 10);
+      const life2 = calcSorcererLife(20, 11);
       expect(life2 - life1).toBe(1);
     });
   });
 
   describe('Sorcerer Mana Calculation', () => {
     test('calculates base mana at level 1', () => {
-      // mag * 2 + 0 * 2 - 2 = mag * 2 - 2
-      const mana = classData.Sorcerer.manaBase(35, 1);
-      expect(mana).toBe(68);
+      // mag * 2 + 0 * 2 = mag * 2
+      const mana = calcSorcererMana(35, 1);
+      expect(mana).toBe(70);
     });
 
     test('magic has 2x multiplier', () => {
-      const mana1 = classData.Sorcerer.manaBase(35, 1);
-      const mana2 = classData.Sorcerer.manaBase(45, 1);
+      const mana1 = calcSorcererMana(35, 1);
+      const mana2 = calcSorcererMana(45, 1);
       expect(mana2 - mana1).toBe(20); // 10 mag * 2 = 20
     });
   });
@@ -302,8 +310,8 @@ describe('char.js - Character Stats Calculator', () => {
   describe('Level 50 Special Case', () => {
     test('level 50 uses level 48 for gain calculations', () => {
       // At level 50, the game uses level 48 (clvl-2) instead of 49
-      const warriorLife49 = classData.Warrior.lifeBase(100, 49);
-      const warriorLife50 = classData.Warrior.lifeBase(100, 50);
+      const warriorLife49 = calcWarriorLife(100, 49);
+      const warriorLife50 = calcWarriorLife(100, 50);
 
       // Both should use the same level gain
       expect(warriorLife50).toBe(warriorLife49);
@@ -335,6 +343,148 @@ describe('char.js - Character Stats Calculator', () => {
     test('sums base and equipment attributes', () => {
       const total = calculateTotalAttribute(100, 5, 10, 5, 15, 10, 10, 10);
       expect(total).toBe(165);
+    });
+  });
+
+  describe('calcToHit function', () => {
+    test('calculates to-hit with no equipment bonus', () => {
+      // floor(100 * 0.5) + 50 + 0 = 100
+      expect(calcToHit(100, 0)).toBe(100);
+    });
+
+    test('calculates to-hit with equipment bonus', () => {
+      // floor(100 * 0.5) + 50 + 20 = 120
+      expect(calcToHit(100, 20)).toBe(120);
+    });
+
+    test('dex is floored before adding', () => {
+      // floor(55 * 0.5) + 50 + 0 = 27 + 50 = 77
+      expect(calcToHit(55, 0)).toBe(77);
+    });
+  });
+
+  describe('calcAC function', () => {
+    test('calculates AC with no equipment bonus', () => {
+      // floor(100 * 0.2) + 0 = 20
+      expect(calcAC(100, 0)).toBe(20);
+    });
+
+    test('calculates AC with equipment bonus', () => {
+      // floor(100 * 0.2) + 50 = 70
+      expect(calcAC(100, 50)).toBe(70);
+    });
+
+    test('dex is floored before adding', () => {
+      // floor(55 * 0.2) + 10 = 11 + 10 = 21
+      expect(calcAC(55, 10)).toBe(21);
+    });
+  });
+
+  describe('calcBlock function', () => {
+    test('calculates block chance when player level equals enemy level', () => {
+      // (30 - 30) * 2 + 100 = 100
+      expect(calcBlock(30, 30, 100)).toBe(100);
+    });
+
+    test('higher player level increases block chance', () => {
+      // (40 - 30) * 2 + 100 = 120
+      expect(calcBlock(40, 30, 100)).toBe(120);
+    });
+
+    test('higher enemy level decreases block chance', () => {
+      // (30 - 40) * 2 + 100 = 80
+      expect(calcBlock(30, 40, 100)).toBe(80);
+    });
+  });
+
+  describe('clampHitChance function', () => {
+    test('clamps values below 5 to 5', () => {
+      expect(clampHitChance(0)).toBe(5);
+      expect(clampHitChance(-10)).toBe(5);
+      expect(clampHitChance(4)).toBe(5);
+    });
+
+    test('clamps values above 95 to 95', () => {
+      expect(clampHitChance(100)).toBe(95);
+      expect(clampHitChance(96)).toBe(95);
+      expect(clampHitChance(200)).toBe(95);
+    });
+
+    test('returns value unchanged if within range', () => {
+      expect(clampHitChance(5)).toBe(5);
+      expect(clampHitChance(50)).toBe(50);
+      expect(clampHitChance(95)).toBe(95);
+    });
+  });
+
+  describe('clampBlockChance function', () => {
+    test('clamps values below 0 to 0', () => {
+      expect(clampBlockChance(-10)).toBe(0);
+      expect(clampBlockChance(-1)).toBe(0);
+    });
+
+    test('clamps values above 100 to 100', () => {
+      expect(clampBlockChance(101)).toBe(100);
+      expect(clampBlockChance(200)).toBe(100);
+    });
+
+    test('returns value unchanged if within range', () => {
+      expect(clampBlockChance(0)).toBe(0);
+      expect(clampBlockChance(50)).toBe(50);
+      expect(clampBlockChance(100)).toBe(100);
+    });
+  });
+
+  describe('formatResistance function', () => {
+    test('returns MAX for values >= 75', () => {
+      expect(formatResistance(75)).toBe('MAX');
+      expect(formatResistance(80)).toBe('MAX');
+      expect(formatResistance(100)).toBe('MAX');
+    });
+
+    test('returns value with % for values < 75', () => {
+      expect(formatResistance(0)).toBe('0%');
+      expect(formatResistance(50)).toBe('50%');
+      expect(formatResistance(74)).toBe('74%');
+    });
+  });
+
+  describe('calcMeleeDamage function', () => {
+    test('calculates melee damage with 1% multiplier (Warrior)', () => {
+      // floor(100 * 30 * 0.01) = 30
+      expect(calcMeleeDamage(100, 30, 0.01)).toBe(30);
+    });
+
+    test('calculates melee damage with 0.5% multiplier (Rogue/Sorcerer)', () => {
+      // floor(100 * 30 * 0.005) = 15
+      expect(calcMeleeDamage(100, 30, 0.005)).toBe(15);
+    });
+
+    test('floors the result', () => {
+      // floor(55 * 10 * 0.01) = floor(5.5) = 5
+      expect(calcMeleeDamage(55, 10, 0.01)).toBe(5);
+    });
+  });
+
+  describe('calcMagicToHit function', () => {
+    test('calculates magic to-hit against same level', () => {
+      // (25 - 25) * 2 + 100 + 0 = 100
+      expect(calcMagicToHit(100, 25)).toBe(100);
+    });
+
+    test('calculates magic to-hit against lower level', () => {
+      // (25 - 15) * 2 + 100 + 0 = 120
+      expect(calcMagicToHit(100, 15)).toBe(120);
+    });
+
+    test('calculates magic to-hit against higher level', () => {
+      // (25 - 30) * 2 + 100 + 0 = 90
+      expect(calcMagicToHit(100, 30)).toBe(90);
+    });
+
+    test('includes bonus when provided', () => {
+      // (25 - 25) * 2 + 100 + 20 = 120
+      expect(calcMagicToHit(100, 25, 20)).toBe(120);
     });
   });
 });

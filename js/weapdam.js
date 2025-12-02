@@ -200,3 +200,90 @@ base[95]  = new MakeBase("The Protector"	,2,4,0,0);
 base[96]  = new MakeBase("Naj's Puzzler"	,4,8,0,0);
 base[97]  = new MakeBase("Mindcry"		,6,12,0,0);
 base[98]  = new MakeBase("Rod of Onan"		,8,16,100,0);
+
+// Pure calculation functions for testing
+
+// Calculate individual damage value with rate and add modifiers
+function calcDamageValue(baseDamage, rate, add) {
+  return Math.floor(baseDamage * rate) + add;
+}
+
+// Calculate min damage with modifiers
+function calcMinDamage(baseMin, rate, add) {
+  return Math.floor(baseMin * rate) + add;
+}
+
+// Calculate max damage with modifiers
+function calcMaxDamage(baseMax, rate, add) {
+  return Math.floor(baseMax * rate) + add;
+}
+
+// Calculate damage distribution array
+function calcDamageDistribution(minDamage, maxDamage, rate, add) {
+  var distribution = [];
+  for (var i = minDamage; i <= maxDamage; i++) {
+    distribution.push(Math.floor(i * rate) + add);
+  }
+  return distribution;
+}
+
+// Calculate average damage from distribution
+function calcAverageDamage(minDamage, maxDamage, rate, add) {
+  var distribution = calcDamageDistribution(minDamage, maxDamage, rate, add);
+  if (distribution.length === 0) return 0;
+  var sum = distribution.reduce(function(acc, val) { return acc + val; }, 0);
+  return sum / distribution.length;
+}
+
+// Calculate AC with rate modifier
+function calcACWithRate(baseAC, ratePercent) {
+  var rate = 1 + ratePercent * 0.01;
+  return Math.floor(baseAC * rate);
+}
+
+// Validate damage range
+function validateDamageRange(minDamage, maxDamage) {
+  if (maxDamage < minDamage) return { valid: false, error: 'Damage Min > Damage Max' };
+  if (minDamage < 0) return { valid: false, error: 'Damage Min < 0' };
+  return { valid: true, error: null };
+}
+
+// Convert rate percent to multiplier
+function ratePercentToMultiplier(ratePercent) {
+  return 1 + ratePercent * 0.01;
+}
+
+// Get weapon base stats by index
+function getWeaponStats(index) {
+  if (index < 0 || index >= base.length) return null;
+  return {
+    name: base[index].name,
+    min: base[index].min,
+    max: base[index].max,
+    rate: base[index].rate,
+    add: base[index].add
+  };
+}
+
+// Export for testing (CommonJS)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    MakeArray,
+    MakeBase,
+    ChgBase,
+    ChkDam,
+    AcCalc,
+    basmax,
+    base,
+    // New pure calculation functions
+    calcDamageValue,
+    calcMinDamage,
+    calcMaxDamage,
+    calcDamageDistribution,
+    calcAverageDamage,
+    calcACWithRate,
+    validateDamageRange,
+    ratePercentToMultiplier,
+    getWeaponStats
+  };
+}
