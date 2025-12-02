@@ -14,11 +14,11 @@ const complexCalcs = [
 ];
 
 const embedChecks = [
-  { key: 'lifemana', filename: 'life-mana-calculator.html', guide: '#213-life-and-mana' },
-  { key: 'actohit', filename: 'ac-tohit-calculator.html', guide: '#214-armor-class-and-to-hit' },
-  { key: 'acmax', filename: 'ac-calculator.html', guide: '#214-armor-class-and-to-hit' },
-  { key: 'price', filename: 'item-price-calculator.html', guide: '#31-armor-weapons-and-jewelry' },
-  { key: 'premium', filename: 'premium-item-checker.html', guide: '#31-armor-weapons-and-jewelry' },
+  { key: 'lifemana', filename: 'life-mana-calculator.html', guides: ['#213-life-and-mana', '#21-characters'] },
+  { key: 'actohit', filename: 'ac-tohit-calculator.html', guides: ['#214-armor-class-and-to-hit', '#221-getting-hit'] },
+  { key: 'acmax', filename: 'ac-calculator.html', guides: ['#214-armor-class-and-to-hit', '#221-getting-hit'] },
+  { key: 'price', filename: 'item-price-calculator.html', guides: ['#31-armor-weapons-and-jewelry', '#36-prefixes-and-suffixes'] },
+  { key: 'premium', filename: 'premium-item-checker.html', guides: ['#31-armor-weapons-and-jewelry', '#36-prefixes-and-suffixes'] },
 ];
 
 test.describe('Index embeds complex calculators', () => {
@@ -55,9 +55,12 @@ test.describe('Embed codes and Jarulf links', () => {
       await expect(input).toBeVisible();
       await expect(input).toHaveValue(new RegExp(embed.filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
-      const guide = meta.locator('a.guide');
-      await expect(guide).toBeVisible();
-      await expect(guide).toHaveAttribute('href', new RegExp(embed.guide.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+      const guides = meta.locator('a.guide');
+      const hrefs = await guides.evaluateAll((nodes) => nodes.map(n => n.getAttribute('href') || ''));
+      expect(hrefs.length).toBeGreaterThan(0);
+      for (const part of embed.guides) {
+        expect(hrefs.some(h => h.includes(part))).toBe(true);
+      }
     });
   }
 });

@@ -18,9 +18,9 @@
     .calc h2 { font-size: clamp(0.9rem, 2.2vw, 1.1rem); color: var(--gold); margin: 0 0 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--gold-dim); }
     .calc h2 a { color: var(--gold-dim); font-size: 0.7em; text-decoration: none; margin-left: 0.5rem; font-weight: normal; font-style: italic; }
     .calc-frame { width: 100%; border: 0; background: transparent; min-height: 1000px; border-radius: 0.35rem; }
-    .meta { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; font-size: clamp(0.6rem, 1.5vw, 0.72rem); color: var(--gold-dim); margin: 0.25rem 0 0.65rem; }
-    .meta .embed-label { font-weight: 600; }
-    .meta input.embed-input { flex: 1 1 16rem; min-width: 12rem; max-width: 100%; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.3rem 0.4rem; border-radius: 0.25rem; font-family: 'Consolas', monospace; font-size: clamp(0.65rem, 1.5vw, 0.75rem); }
+    .meta { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; font-size: clamp(0.6rem, 1.5vw, 0.72rem); color: var(--gold-dim); margin: 0.9rem 0 0; padding: 0.75rem 0 0.35rem; border-top: 1px solid var(--gold-dim); background: linear-gradient(180deg, transparent 0%, rgba(199,164,74,0.08) 100%); border-radius: 0 0 0.35rem 0.35rem; }
+    .meta .embed-label, .meta .resource-label { font-weight: 700; letter-spacing: 0.01em; color: var(--gold); }
+    .meta input.embed-input { flex: 1 1 18rem; min-width: 12rem; max-width: 100%; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.35rem 0.45rem; border-radius: 0.25rem; font-family: 'Consolas', monospace; font-size: clamp(0.65rem, 1.5vw, 0.75rem); }
     .meta a.guide { color: var(--gold); text-decoration: none; font-weight: 600; }
     .meta a.guide:hover { text-decoration: underline; }
     .row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end; }
@@ -271,20 +271,59 @@ const calcPages = {
 };
 const jarulfGuide = 'https://wheybags.gitlab.io/jarulfs-guide/';
 const jarulfLinks = {
-  lifemana: 'https://wheybags.gitlab.io/jarulfs-guide/#213-life-and-mana',
-  shopqlvl: 'https://wheybags.gitlab.io/jarulfs-guide/#38-generation-of-items',
-  weapdam: 'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
-  dps: 'https://wheybags.gitlab.io/jarulfs-guide/#223-weapon-speed',
-  armor: 'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
-  actohit: 'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
-  acmax: 'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
-  block: 'https://wheybags.gitlab.io/jarulfs-guide/#221-getting-hit',
-  cth: 'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
-  char: 'https://wheybags.gitlab.io/jarulfs-guide/#21-characters',
-  price: 'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
-  orkin: 'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
-  rarity: 'https://wheybags.gitlab.io/jarulfs-guide/#36-prefixes-and-suffixes',
-  premium: 'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry'
+  lifemana: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#213-life-and-mana',
+    'https://wheybags.gitlab.io/jarulfs-guide/#21-characters'
+  ],
+  shopqlvl: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#38-generation-of-items',
+    'https://wheybags.gitlab.io/jarulfs-guide/#36-prefixes-and-suffixes'
+  ],
+  weapdam: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
+    'https://wheybags.gitlab.io/jarulfs-guide/#224-damage'
+  ],
+  dps: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#223-weapon-speed',
+    'https://wheybags.gitlab.io/jarulfs-guide/#224-damage'
+  ],
+  armor: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
+    'https://wheybags.gitlab.io/jarulfs-guide/#221-getting-hit'
+  ],
+  actohit: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
+    'https://wheybags.gitlab.io/jarulfs-guide/#221-getting-hit'
+  ],
+  acmax: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
+    'https://wheybags.gitlab.io/jarulfs-guide/#221-getting-hit'
+  ],
+  block: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#221-getting-hit'
+  ],
+  cth: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit'
+  ],
+  char: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#21-characters'
+  ],
+  price: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
+    'https://wheybags.gitlab.io/jarulfs-guide/#36-prefixes-and-suffixes'
+  ],
+  orkin: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
+    'https://wheybags.gitlab.io/jarulfs-guide/#36-prefixes-and-suffixes'
+  ],
+  rarity: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#36-prefixes-and-suffixes',
+    'https://wheybags.gitlab.io/jarulfs-guide/#38-generation-of-items'
+  ],
+  premium: [
+    'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
+    'https://wheybags.gitlab.io/jarulfs-guide/#36-prefixes-and-suffixes'
+  ]
 };
 const loadedComplexCalcs = new Set();
 
@@ -334,7 +373,7 @@ function injectMetaBars() {
     if (!meta) {
       meta = document.createElement('div');
       meta.className = 'meta';
-      title.insertAdjacentElement('afterend', meta);
+      container.appendChild(meta);
     } else {
       meta.innerHTML = '';
     }
@@ -352,14 +391,23 @@ function injectMetaBars() {
     input.value = `<iframe src="${embedUrl}" width="960" height="900" style="border:0;" title="${titleText}"></iframe>`;
     input.addEventListener('click', () => input.select());
 
-    const guide = document.createElement('a');
-    guide.className = 'guide';
-    guide.href = jarulfLinks[key] || jarulfGuide;
-    guide.target = '_blank';
-    guide.rel = 'noopener noreferrer';
-    guide.textContent = "Jarulf's Guide";
+    const resourceLabel = document.createElement('span');
+    resourceLabel.className = 'resource-label';
+    resourceLabel.textContent = 'Jarulf refs';
 
-    meta.append(label, input, guide);
+    const guides = jarulfLinks[key] || [jarulfGuide];
+    const guidesArr = Array.isArray(guides) ? guides : [guides];
+    const guideLinks = guidesArr.map((url, idx) => {
+      const guide = document.createElement('a');
+      guide.className = 'guide';
+      guide.href = url;
+      guide.target = '_blank';
+      guide.rel = 'noopener noreferrer';
+      guide.textContent = `Jarulf ${idx + 1}`;
+      return guide;
+    });
+
+    meta.append(label, input, resourceLabel, ...guideLinks);
   });
 }
 
