@@ -14,11 +14,11 @@ const complexCalcs = [
 ];
 
 const embedChecks = [
-  { key: 'lifemana', filename: 'life-mana-calculator.html', guides: ['#213-life-and-mana', '#21-characters'] },
-  { key: 'actohit', filename: 'ac-tohit-calculator.html', guides: ['#214-armor-class-and-to-hit', '#221-getting-hit'] },
-  { key: 'acmax', filename: 'ac-calculator.html', guides: ['#214-armor-class-and-to-hit', '#221-getting-hit'] },
-  { key: 'price', filename: 'item-price-calculator.html', guides: ['#31-armor-weapons-and-jewelry', '#36-prefixes-and-suffixes'] },
-  { key: 'premium', filename: 'premium-item-checker.html', guides: ['#31-armor-weapons-and-jewelry', '#36-prefixes-and-suffixes'] },
+  { key: 'lifemana', filename: 'life-mana-calculator.html', guides: ['#213-life-and-mana', '#21-characters'], titles: ['2.1.3 Life and Mana', '2.1 Characters'] },
+  { key: 'actohit', filename: 'ac-tohit-calculator.html', guides: ['#214-armor-class-and-to-hit', '#221-getting-hit'], titles: ['2.1.4 AC & To-Hit', '2.2.1 Getting hit'] },
+  { key: 'acmax', filename: 'ac-calculator.html', guides: ['#214-armor-class-and-to-hit', '#221-getting-hit'], titles: ['2.1.4 AC & To-Hit', '2.2.1 Getting hit'] },
+  { key: 'price', filename: 'item-price-calculator.html', guides: ['#31-armor-weapons-and-jewelry', '#36-prefixes-and-suffixes'], titles: ['3.1 Armor, weapons, jewelry', '3.6 Prefixes & suffixes'] },
+  { key: 'premium', filename: 'premium-item-checker.html', guides: ['#31-armor-weapons-and-jewelry', '#36-prefixes-and-suffixes'], titles: ['3.1 Armor, weapons, jewelry', '3.6 Prefixes & suffixes'] },
 ];
 
 test.describe('Index embeds complex calculators', () => {
@@ -57,9 +57,13 @@ test.describe('Embed codes and Jarulf links', () => {
 
       const guides = meta.locator('a.guide');
       const hrefs = await guides.evaluateAll((nodes) => nodes.map(n => n.getAttribute('href') || ''));
+      const texts = await guides.allTextContents();
       expect(hrefs.length).toBeGreaterThan(0);
       for (const part of embed.guides) {
         expect(hrefs.some(h => h.includes(part))).toBe(true);
+      }
+      for (const title of embed.titles) {
+        expect(texts.some(t => t.includes(title))).toBe(true);
       }
     });
   }
