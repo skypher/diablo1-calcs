@@ -14,11 +14,11 @@ const complexCalcs = [
 ];
 
 const embedChecks = [
-  { key: 'lifemana', filename: 'life-mana-calculator.html', guides: ['#213-life-and-mana', '#21-characters'], titles: ['2.1.3 Life and Mana', '2.1 Characters'] },
-  { key: 'actohit', filename: 'ac-tohit-calculator.html', guides: ['#214-armor-class-and-to-hit', '#221-getting-hit'], titles: ['2.1.4 AC & To-Hit', '2.2.1 Getting hit'] },
-  { key: 'acmax', filename: 'ac-calculator.html', guides: ['#214-armor-class-and-to-hit', '#221-getting-hit'], titles: ['2.1.4 AC & To-Hit', '2.2.1 Getting hit'] },
-  { key: 'price', filename: 'item-price-calculator.html', guides: ['#31-armor-weapons-and-jewelry', '#36-prefixes-and-suffixes'], titles: ['3.1 Armor, weapons, jewelry', '3.6 Prefixes & suffixes'] },
-  { key: 'premium', filename: 'premium-item-checker.html', guides: ['#31-armor-weapons-and-jewelry', '#36-prefixes-and-suffixes'], titles: ['3.1 Armor, weapons, jewelry', '3.6 Prefixes & suffixes'] },
+  { key: 'lifemana', filename: 'life-mana-calculator.html', guides: ['#13', '#10'], titles: ['2.1.3 Life and Mana', '2.1 Character stats'] },
+  { key: 'actohit', filename: 'ac-tohit-calculator.html', guides: ['#14', '#16'], titles: ['2.1.4 Armor Class & To Hit', '2.2.1 Getting hit'] },
+  { key: 'acmax', filename: 'ac-calculator.html', guides: ['#14', '#16'], titles: ['2.1.4 Armor Class & To Hit', '2.2.1 Getting hit'] },
+  { key: 'price', filename: 'item-price-calculator.html', guides: ['#27', '#33', '#37'], titles: ['3.1 Armor, weapons & jewelry', '3.4 Prefixes & suffixes', '3.6 Prices of magical items'] },
+  { key: 'premium', filename: 'premium-item-checker.html', guides: ['#27', '#33', '#37'], titles: ['3.1 Armor, weapons & jewelry', '3.4 Prefixes & suffixes', '3.6 Prices of magical items'] },
 ];
 
 test.describe('Index embeds complex calculators', () => {
