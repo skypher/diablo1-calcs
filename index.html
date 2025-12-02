@@ -1,516 +1,565 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diablo 1 Calculators</title>
-    <link rel="stylesheet" href="calc-styles.css">
-    <style>
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            color: #ff8000;
-            text-align: center;
-            font-size: 2em;
-        }
-        h2 {
-            color: #bca86c;
-            margin-top: 40px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-        .intro {
-            text-align: center;
-            color: #bca86c;
-            margin-bottom: 30px;
-        }
-        .intro a {
-            color: #ff8000;
-        }
-        .calc-section {
-            margin: 30px 0;
-            background-color: #111111;
-            border-left: 3px solid #ff8000;
-            padding: 15px;
-        }
-        .calc-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        .calc-title {
-            color: #a0a5c8;
-            font-size: 1.3em;
-            font-weight: bold;
-            margin: 0;
-        }
-        .calc-title a {
-            color: #a0a5c8;
-        }
-        .calc-title a:hover {
-            color: #ff8000;
-        }
-        .author {
-            color: #666;
-            font-size: 0.9em;
-            font-style: italic;
-        }
-        .jarulf-ref {
-            margin-top: 10px;
-        }
-        .jarulf-ref summary {
-            color: #bca86c;
-            cursor: pointer;
-            font-size: 0.85em;
-        }
-        .jarulf-ref summary:hover {
-            color: #ff8000;
-        }
-        .jarulf-ref .links {
-            margin-top: 8px;
-            padding: 10px;
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            font-size: 0.9em;
-        }
-        .jarulf-ref a {
-            color: #a0a5c8;
-        }
-        .jarulf-ref a:hover {
-            color: #ff8000;
-        }
-        .embed-code {
-            margin-top: 10px;
-        }
-        .embed-code summary {
-            color: #bca86c;
-            cursor: pointer;
-            font-size: 0.85em;
-        }
-        .embed-code summary:hover {
-            color: #ff8000;
-        }
-        .embed-code pre {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            padding: 10px;
-            margin-top: 8px;
-            overflow-x: auto;
-            font-size: 0.8em;
-            color: #a0a5c8;
-        }
-        .embed-code code {
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        .calc-embed {
-            margin-top: 15px;
-            border: 1px solid #333;
-        }
-        .calc-embed iframe {
-            display: block;
-            width: 100%;
-            border: none;
-            overflow: hidden;
-        }
-        .kudos {
-            margin-top: 50px;
-            padding: 20px;
-            background-color: #111111;
-            border: 1px solid #ff8000;
-            text-align: center;
-        }
-        .kudos h3 {
-            color: #ff8000;
-            margin-top: 0;
-        }
-        .kudos a {
-            color: #ff8000;
-            font-weight: bold;
-        }
-        .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            text-align: center;
-            color: #666;
-            font-size: 0.85em;
-        }
-        .toc {
-            background-color: #111111;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .toc h3 {
-            color: #ff8000;
-            margin-top: 0;
-        }
-        .toc ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            column-count: 2;
-        }
-        .toc li {
-            margin: 5px 0;
-        }
-        .toc a {
-            color: #a0a5c8;
-        }
-        .toc a:hover {
-            color: #ff8000;
-        }
-        @media (max-width: 600px) {
-            .toc ul {
-                column-count: 1;
-            }
-            .container {
-                padding: 10px;
-            }
-            h1 {
-                font-size: 1.5em;
-            }
-            .calc-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-            .calc-title {
-                font-size: 1.1em;
-            }
-            .author {
-                font-size: 0.8em;
-            }
-            .calc-section {
-                padding: 10px;
-                margin: 20px 0;
-            }
-            .calc-embed iframe {
-                min-height: 400px;
-            }
-            /* Life/Mana calculator needs more height when stacked vertically */
-            #lifemana .calc-embed iframe {
-                min-height: 580px;
-            }
-            .embed-code pre {
-                font-size: 0.7em;
-            }
-            .kudos p {
-                font-size: 0.9em;
-            }
-            .kudos p br {
-                display: none;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diablo I Calculators</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root { --gold: #c7a44a; --gold-dim: #8b7355; --bg: #1a1a1a; --panel: #252525; --text: #d4c4a0; --input-bg: #0d0d0d; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: clamp(0.5rem, 2vw, 1rem); line-height: 1.4; font-size: clamp(0.8rem, 2vw, 0.95rem); }
+    h1 { text-align: center; color: var(--gold); font-size: clamp(1.1rem, 3.5vw, 1.5rem); margin: 0 0 0.75rem; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; justify-content: center; margin-bottom: 0.75rem; max-width: 90rem; margin-inline: auto; }
+    .tab { background: var(--panel); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.35rem 0.6rem; border-radius: 0.25rem; cursor: pointer; font-size: clamp(0.6rem, 1.4vw, 0.75rem); white-space: nowrap; }
+    .tab:hover { border-color: var(--gold); }
+    .tab.active { background: var(--gold-dim); color: #000; font-weight: 600; }
+    .calc { display: none; max-width: 70rem; margin-inline: auto; background: var(--panel); border: 2px solid var(--gold-dim); border-radius: 0.5rem; padding: clamp(0.5rem, 2vw, 1rem); }
+    .calc.visible { display: block; }
+    .calc h2 { font-size: clamp(0.9rem, 2.2vw, 1.1rem); color: var(--gold); margin: 0 0 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--gold-dim); }
+    .calc h2 a { color: var(--gold-dim); font-size: 0.7em; text-decoration: none; margin-left: 0.5rem; font-weight: normal; font-style: italic; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end; }
+    .field { display: flex; flex-direction: column; gap: 0.15rem; flex: 1 1 auto; min-width: 5rem; }
+    .field.full { flex: 1 1 100%; }
+    .field.sm { flex: 0 0 auto; min-width: 3rem; max-width: 5rem; }
+    label { font-size: clamp(0.6rem, 1.5vw, 0.7rem); color: var(--gold-dim); }
+    input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.35rem 0.4rem; border-radius: 0.25rem; font-size: clamp(0.75rem, 1.8vw, 0.85rem); }
+    input:focus, select:focus { outline: none; border-color: var(--gold); }
+    input[readonly] { background: #1a1a1a; color: var(--gold); }
+    textarea { width: 100%; min-height: 5rem; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.4rem; border-radius: 0.25rem; font-family: 'Consolas', monospace; font-size: clamp(0.65rem, 1.5vw, 0.75rem); resize: vertical; }
+    button, input[type="button"], input[type="reset"] { background: var(--gold-dim); border: 1px solid var(--gold); color: #000; padding: 0.35rem 0.6rem; border-radius: 0.25rem; cursor: pointer; font-size: clamp(0.7rem, 1.6vw, 0.8rem); font-weight: 600; white-space: nowrap; }
+    button:hover, input[type="button"]:hover, input[type="reset"]:hover { background: var(--gold); }
+    .buttons { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+    .note { font-size: clamp(0.55rem, 1.3vw, 0.65rem); color: var(--gold-dim); margin-top: 0.4rem; }
+    .warn { color: #cc8844; font-size: clamp(0.6rem, 1.4vw, 0.7rem); margin-bottom: 0.5rem; }
+    .magic { color: #6688ff; }
+    .fire { color: #ff6644; }
+    .sub { width: 100%; }
+    table.data { width: 100%; border-collapse: collapse; font-size: clamp(0.6rem, 1.4vw, 0.7rem); }
+    table.data td, table.data th { padding: 0.25rem 0.4rem; text-align: center; border-bottom: 1px solid #333; }
+    table.data tr:hover { background: rgba(199,164,74,0.1); }
+  </style>
 </head>
 <body>
-<div class="container">
-    <h1>Diablo 1 Calculators</h1>
-    <p class="intro">A collection of classic Diablo 1 calculators, split into standalone embeddable pages.<br>
-    Each calculator can be used directly or embedded via iframe on your own site.</p>
+  <h1>Diablo I Calculators</h1>
+  
+  <div class="tabs">
+    <button class="tab active" data-calc="lifemana">Life/Mana</button>
+    <button class="tab" data-calc="shopqlvl">Shop qlvl</button>
+    <button class="tab" data-calc="weapdam">Weapon Damage</button>
+    <button class="tab" data-calc="dps">DPS</button>
+    <button class="tab" data-calc="armor">Armor</button>
+    <button class="tab" data-calc="acmax">Max AC</button>
+    <button class="tab" data-calc="block">Block</button>
+    <button class="tab" data-calc="cth">To-Hit</button>
+    <button class="tab" data-calc="price">Item Price</button>
+    <button class="tab" data-calc="orkin">Orkin Price</button>
+    <button class="tab" data-calc="rarity">Item Rarity</button>
+  </div>
 
-    <div class="toc">
-        <h3>Quick Navigation</h3>
-        <ul>
-            <li><a href="#premium">Premium Item Checker</a></li>
-            <li><a href="#rarity">Item Rarity Calculator</a></li>
-            <li><a href="#price">Item Price Calculator</a></li>
-            <li><a href="#shopqlvl">Shop qlvl Calculator</a></li>
-            <li><a href="#orkin">Orkin Price Calculator</a></li>
-            <li><a href="#weapdam">Weapon Damage Calculator</a></li>
-            <li><a href="#dps">DPS Calculator</a></li>
-            <li><a href="#armor">Armor Calculator</a></li>
-            <li><a href="#actohit">AC & To Hit Calculator</a></li>
-            <li><a href="#ac">Armor Class Calculator</a></li>
-            <li><a href="#cth">Chance to Hit Calculator</a></li>
-            <li><a href="#block">Block Calculator</a></li>
-            <li><a href="#charstats">Character Stats Calculator</a></li>
-            <li><a href="#lifemana">Life/Mana Calculator</a></li>
-        </ul>
-    </div>
+  <!-- LIFE/MANA CALCULATOR -->
+  <div class="calc visible" id="calc-lifemana">
+    <h2>Life/Mana Calculator <a href="https://web.archive.org/web/20050216223839/http://www.stormpages.com/jc316/diablo/vtlifemana.html">By: Virgil Tibbs</a></h2>
+    <form name="LifeManaForm">
+      <div class="row">
+        <div class="field"><label>Class</label>
+          <select name="CharClass">
+            <option value="Warrior">Warrior</option>
+            <option value="Rogue">Rogue</option>
+            <option value="Sorcerer">Sorcerer</option>
+            <option value="Monk">Monk</option>
+            <option value="Bard">Bard</option>
+            <option value="Barbarian">Barbarian</option>
+          </select>
+        </div>
+        <div class="field sm"><label>Level</label><input type="text" name="CharLevel" maxlength="4"></div>
+      </div>
+      <div class="row">
+        <div class="field sm"><label>Base Magic</label><input type="text" name="BaseMagic" maxlength="3"></div>
+        <div class="field sm"><label>Final Magic</label><input type="text" name="FinalMagic" maxlength="3"></div>
+        <div class="field"><label>Mana Modifiers (e.g. +10-5+20)</label><input type="text" name="ManaMods"></div>
+      </div>
+      <div class="row">
+        <div class="field sm"><label>Base Vitality</label><input type="text" name="BaseVitality" maxlength="3"></div>
+        <div class="field sm"><label>Final Vitality</label><input type="text" name="FinalVitality" maxlength="3"></div>
+        <div class="field"><label>Life Modifiers</label><input type="text" name="LifeMods"></div>
+      </div>
+      <div class="buttons">
+        <input type="button" value="Set Min" onclick="ResetForm(CharClass)">
+        <input type="button" value="Set Max" onclick="MaxForm(CharClass)">
+        <input type="reset" value="Reset">
+        <input type="button" value="Calculate" onclick="GoButton()">
+      </div>
+      <textarea name="lifmantxt" id="lifmantxt" rows="2" readonly>Modifiers are added as such: +1-2+3-4</textarea>
+    </form>
+  </div>
 
-    <h2>Item Calculators</h2>
+  <!-- SHOP QLVL CALCULATOR -->
+  <div class="calc" id="calc-shopqlvl">
+    <h2>Shop qlvl Calculator</h2>
+    <form name="qlvlForm" onsubmit="return false;">
+      <div class="row">
+        <div class="field sm"><label>Character Level</label><input type="number" name="clvl" id="qlvl-clvl" value="30" min="1" max="50"></div>
+        <div class="field"><label></label>
+          <input type="button" value="Calculate" onclick="calcShopQlvl()">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Griswold</label><textarea id="grisresult" rows="8" readonly></textarea></div>
+        <div class="field"><label>Wirt</label><textarea id="wirtresult" rows="8" readonly></textarea></div>
+        <div class="field"><label>Adria</label><textarea id="adriaresult" rows="8" readonly></textarea></div>
+      </div>
+    </form>
+  </div>
 
-    <div class="calc-section" id="premium">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="premium-item-checker.html">Premium Item Checker</a></h3>
-            <span class="author">By: King aka Red-Wolf</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#prefixes-and-suffixes" target="_blank">Prefixes and Suffixes</a> | <a href="https://wheybags.gitlab.io/jarulfs-guide/#item-creation-in-dungeon" target="_blank">Item Creation in Dungeon</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/premium-item-checker.html" width="100%" height="580" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="premium-item-checker.html" height="580" scrolling="no"></iframe>
-        </div>
-    </div>
+  <!-- WEAPON DAMAGE CALCULATOR -->
+  <div class="calc" id="calc-weapdam">
+    <h2>Weapon Damage Calculator <a href="https://web.archive.org/web/20120125124710/http://www.red-wolf.sakura.ne.jp/dia/eqcalc.html">By: King aka Red-Wolf</a></h2>
+    <form name="DamCheck">
+      <div class="row">
+        <div class="field"><label>Weapon</label><select name="base" onchange="ChgBase(this.form)"></select></div>
+      </div>
+      <div class="row">
+        <div class="field sm"><label>Base Min</label><input type="text" name="basemin" maxlength="3"></div>
+        <div class="field sm"><label>Base Max</label><input type="text" name="basemax" maxlength="3"></div>
+        <div class="field sm"><label>+% Prefix</label><input type="text" name="damrate" maxlength="4"></div>
+        <div class="field sm"><label>+Damage</label><input type="text" name="damadd" maxlength="3"></div>
+        <div class="field sm"><label>Result Min</label><input type="text" name="min" readonly></div>
+        <div class="field sm"><label>Result Max</label><input type="text" name="max" readonly></div>
+      </div>
+      <div class="buttons">
+        <input type="button" value="Calculate" onclick="ChkDam(this.form)">
+        <input type="reset" value="Reset">
+      </div>
+      <textarea name="display" rows="5" readonly>Hammer of Jholm Damage Range is 4-10%, Default is 10% which you can change.</textarea>
+    </form>
+  </div>
 
-    <div class="calc-section" id="rarity">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="item-rarity-calculator.html">Item Rarity Calculator</a></h3>
-            <span class="author">By: Eso aka the_Langolier</span>
+  <!-- DPS CALCULATOR -->
+  <div class="calc" id="calc-dps">
+    <h2>DPS Calculator <a href="https://mgpat-gm.github.io">By: GhastMaster</a></h2>
+    <p class="note">This does not take into account character damage modifiers. Only intended to compare items with different speed suffixes. Input the average damage from the weapon damage calculator.</p>
+    <form name="showdps" onsubmit="return false;">
+      <div class="row">
+        <div class="field sm"><label>Avg Damage</label><input type="text" name="avg" maxlength="6"></div>
+        <div class="field"><label>Weapon Type</label>
+          <select name="basetype" onchange="avgdps(this.form)">
+            <option value="sword">Swords/Clubs</option>
+            <option value="axe">Axes</option>
+            <option value="staff">Staves</option>
+            <option value="bow">Bows</option>
+          </select>
         </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#probabilities-of-finding-unique-items" target="_blank">Probabilities of Finding Unique Items</a> | <a href="https://wheybags.gitlab.io/jarulfs-guide/#item-creation-in-dungeon" target="_blank">Item Creation in Dungeon</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/item-rarity-calculator.html" width="100%" height="680" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="item-rarity-calculator.html" height="680" scrolling="no"></iframe>
+        <div class="field"><label></label>
+          <input type="button" value="Calculate" onclick="avgdps(this.form)">
+          <input type="reset" value="Reset">
         </div>
-    </div>
+      </div>
+      <div class="row" style="font-size:clamp(0.55rem,1.3vw,0.65rem);">
+        <div class="field"><textarea name="display" rows="4" readonly></textarea></div>
+        <div class="field"><textarea name="display1" rows="4" readonly></textarea></div>
+        <div class="field"><textarea name="display2" rows="4" readonly></textarea></div>
+        <div class="field"><textarea name="display3" rows="4" readonly></textarea></div>
+        <div class="field"><textarea name="display4" rows="4" readonly></textarea></div>
+        <div class="field"><textarea name="display5" rows="4" readonly></textarea></div>
+        <div class="field"><textarea name="display6" rows="4" readonly></textarea></div>
+      </div>
+    </form>
+  </div>
 
-    <div class="calc-section" id="price">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="item-price-calculator.html">Item Price Calculator</a></h3>
-            <span class="author">By: Eso aka the_Langolier</span>
+  <!-- ARMOR CALCULATOR -->
+  <div class="calc" id="calc-armor">
+    <h2>Armor Calculator <a href="https://web.archive.org/web/20120125124710/http://www.red-wolf.sakura.ne.jp/dia/eqcalc.html">By: King aka Red-Wolf</a></h2>
+    <form name="AcCheck">
+      <div class="row">
+        <div class="field sm"><label>Base AC</label><input type="text" name="base" maxlength="3"></div>
+        <div class="field sm"><label>+% AC</label><input type="text" name="acrate" maxlength="4"></div>
+        <div class="field sm"><label>= Result</label><input type="text" name="ac" readonly></div>
+        <div class="field"><label></label>
+          <input type="button" value="Calculate" onclick="AcCalc(this.form)">
+          <input type="reset" value="Reset">
         </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#prices-of-magical-items" target="_blank">Prices of Magical Items</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/item-price-calculator.html" width="100%" height="340" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="item-price-calculator.html" height="340" scrolling="no"></iframe>
-        </div>
-    </div>
+      </div>
+      <p class="note">Formula: floor(BaseAC × (100 + %AC) / 100)</p>
+    </form>
+  </div>
 
-    <div class="calc-section" id="shopqlvl">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="shop-qlvl-calculator.html">Shop qlvl Calculator</a></h3>
-            <span class="author">By: @Royal#4121</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#item-creation-in-town" target="_blank">Item Creation in Town</a> | <a href="https://wheybags.gitlab.io/jarulfs-guide/#levels-of-base-items" target="_blank">Levels of Base Items</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/shop-qlvl-calculator.html" width="100%" height="520" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="shop-qlvl-calculator.html" height="520" scrolling="no"></iframe>
-        </div>
-    </div>
+  <!-- Placeholder for complex calculators - will add next -->
+  <div class="calc" id="calc-acmax">
+    <h2>Max Useful AC Calculator <a href="https://web.archive.org/web/20120530084932/http://www.dpsyche.com/AC.html">By: Eso aka the_Langolier</a></h2>
+    <p>Complex calculator - loading...</p>
+  </div>
 
-    <div class="calc-section" id="orkin">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="orkin-price-calculator.html">Orkin Price Calculator</a></h3>
-            <span class="author">By: OrkinMan</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#prices-of-magical-items" target="_blank">Prices of Magical Items</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/orkin-price-calculator.html" width="100%" height="320" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="orkin-price-calculator.html" height="320" scrolling="no"></iframe>
-        </div>
-    </div>
+  <div class="calc" id="calc-block">
+    <h2>Block Calculator <a href="https://web.archive.org/web/20120530084947/http://www.dpsyche.com/block.html">By: Eso aka the_Langolier</a></h2>
+    <p>Complex calculator - loading...</p>
+  </div>
 
-    <h2>Weapon & Armor Calculators</h2>
+  <div class="calc" id="calc-cth">
+    <h2>Chance to Hit Calculator <a href="https://web.archive.org/web/20120530084958/http://www.dpsyche.com/cth.html">By: Eso aka the_Langolier</a></h2>
+    <p>Complex calculator - loading...</p>
+  </div>
 
-    <div class="calc-section" id="weapdam">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="weapon-damage-calculator.html">Weapon Damage Calculator</a></h3>
-            <span class="author">By: King aka Red-Wolf</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#damage-done" target="_blank">Damage Done</a> | <a href="https://wheybags.gitlab.io/jarulfs-guide/#weapons" target="_blank">Weapons</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/weapon-damage-calculator.html" width="100%" height="360" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="weapon-damage-calculator.html" height="360" scrolling="no"></iframe>
-        </div>
-    </div>
+  <div class="calc" id="calc-price">
+    <h2>Item Price Calculator <a href="https://web.archive.org/web/20120530085023/http://www.dpsyche.com/price.html">By: Eso aka the_Langolier</a></h2>
+    <p>Complex calculator - loading...</p>
+  </div>
 
-    <div class="calc-section" id="dps">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="dps-calculator.html">Damage Per Second Calculator</a></h3>
-            <span class="author">By: GhastMaster</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#weapon-speed" target="_blank">Weapon Speed</a> | <a href="https://wheybags.gitlab.io/jarulfs-guide/#damage-done" target="_blank">Damage Done</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/dps-calculator.html" width="100%" height="380" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="dps-calculator.html" height="380" scrolling="no"></iframe>
-        </div>
-    </div>
+  <div class="calc" id="calc-orkin">
+    <h2>Orkin Price Calculator <a href="https://web.archive.org/web/20080405195055/http://www.angelsofhell.com/prices.html">By: OrkinMan</a></h2>
+    <p>Complex calculator - loading...</p>
+  </div>
 
-    <div class="calc-section" id="armor">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="armor-calculator.html">Armor Calculator</a></h3>
-            <span class="author">By: King aka Red-Wolf</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#armor" target="_blank">Armor</a> | <a href="https://wheybags.gitlab.io/jarulfs-guide/#armor-class-and-to-hit" target="_blank">Armor Class and To Hit</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/armor-calculator.html" width="100%" height="200" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="armor-calculator.html" height="200" scrolling="no"></iframe>
-        </div>
-    </div>
+  <div class="calc" id="calc-rarity">
+    <h2>Item Rarity Calculator <a href="https://web.archive.org/web/20120530085029/http://www.dpsyche.com/rarity.html">By: Eso aka the_Langolier</a></h2>
+    <p>Complex calculator - loading...</p>
+  </div>
 
-    <h2>Combat Calculators</h2>
+<script>
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.calc').forEach(c => c.classList.remove('visible'));
+    document.getElementById('calc-' + tab.dataset.calc).classList.add('visible');
+  });
+});
 
-    <div class="calc-section" id="actohit">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="ac-tohit-calculator.html">AC & To Hit Calculator</a></h3>
-            <span class="author">By: Arnold van Wakeren aka Moriah</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#armor-class-and-to-hit" target="_blank">Armor Class and To Hit</a> | <a href="https://wheybags.gitlab.io/jarulfs-guide/#getting-hit" target="_blank">Getting Hit</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/ac-tohit-calculator.html" width="100%" height="620" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="ac-tohit-calculator.html" height="620" scrolling="no"></iframe>
-        </div>
-    </div>
+// ========== LIFE/MANA (Virgil Tibbs) ==========
+var WarriorStartMagic=10, WarriorStartVitality=25, RogueStartMagic=15, RogueStartVitality=20;
+var SorcererStartMagic=35, SorcererStartVitality=20, MonkStartMagic=15, MonkStartVitality=20;
+var BardStartMagic=20, BardStartVitality=20, BarbarianStartMagic=0, BarbarianStartVitality=25;
+var WarriorLifeGain=2, WarriorManaGain=1, RogueLifeGain=2, RogueManaGain=2;
+var SorcererLifeGain=1, SorcererManaGain=2, MonkLifeGain=2, MonkManaGain=2;
+var BardLifeGain=2, BardManaGain=2, BarbarianLifeGain=2, BarbarianManaGain=0;
+var WarriorLifeChar=2, WarriorManaChar=1, RogueLifeChar=1, RogueManaChar=1;
+var SorcererLifeChar=1, SorcererManaChar=2, MonkLifeChar=1, MonkManaChar=1;
+var BardLifeChar=1, BardManaChar=1.5, BarbarianLifeChar=2, BarbarianManaChar=1;
+var WarriorLifeItem=2, WarriorManaItem=1, RogueLifeItem=1.5, RogueManaItem=1.5;
+var SorcererLifeItem=1, SorcererManaItem=2, MonkLifeItem=1.5, MonkManaItem=1.5;
+var BardLifeItem=1.5, BardManaItem=1.75, BarbarianLifeItem=2.5, BarbarianManaItem=1;
+var WarriorLifeBonus=18, WarriorManaBonus=-1, RogueLifeBonus=23, RogueManaBonus=5;
+var SorcererLifeBonus=9, SorcererManaBonus=-2, MonkLifeBonus=23, MonkManaBonus=5;
+var BardLifeBonus=23, BardManaBonus=3, BarbarianLifeBonus=18, BarbarianManaBonus=0;
+var WarriorMaxMagic=50, WarriorMaxVitality=100, RogueMaxMagic=70, RogueMaxVitality=80;
+var SorcererMaxMagic=250, SorcererMaxVitality=80, MonkMaxMagic=80, MonkMaxVitality=80;
+var BardMaxMagic=120, BardMaxVitality=100, BarbarianMaxMagic=0, BarbarianMaxVitality=150;
+var Rexp=/^[+-]?\d+$/, Rexp2=/^(-?\d+)\.?(\d*)$/, Rexp3=/^([+-]\d+)*$/;
+var Rexp47=/^([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)$/;
+var Rexp46=/^([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)$/;
+var Rexp45=/^([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)$/;
+var Rexp44=/^([+-]\d+)([+-]\d+)([+-]\d+)([+-]\d+)$/;
+var Rexp43=/^([+-]\d+)([+-]\d+)([+-]\d+)$/;
+var Rexp42=/^([+-]\d+)([+-]\d+)$/;
+var Rexp41=/^([+-]\d+)$/;
 
-    <div class="calc-section" id="ac">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="ac-calculator.html">Armor Class Calculator</a></h3>
-            <span class="author">By: Eso aka the_Langolier</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#armor-class-and-to-hit" target="_blank">Armor Class and To Hit</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/ac-calculator.html" width="100%" height="720" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="ac-calculator.html" height="720" scrolling="no"></iframe>
-        </div>
-    </div>
+function ResetForm(ResetClass) {
+  LifeManaForm.CharLevel.value = 1;
+  LifeManaForm.LifeMods.value = "";
+  LifeManaForm.ManaMods.value = "";
+  var v = ResetClass.value;
+  LifeManaForm.BaseMagic.value = eval(v + "StartMagic");
+  LifeManaForm.BaseVitality.value = eval(v + "StartVitality");
+  LifeManaForm.FinalMagic.value = eval(v + "StartMagic");
+  LifeManaForm.FinalVitality.value = eval(v + "StartVitality");
+}
 
-    <div class="calc-section" id="cth">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="cth-calculator.html">Chance to Hit Calculator</a></h3>
-            <span class="author">By: Eso aka the_Langolier</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#armor-class-and-to-hit" target="_blank">Armor Class and To Hit</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/cth-calculator.html" width="100%" height="880" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="cth-calculator.html" height="880" scrolling="no"></iframe>
-        </div>
-    </div>
+function MaxForm(ResetClass) {
+  LifeManaForm.CharLevel.value = 50;
+  LifeManaForm.LifeMods.value = "";
+  LifeManaForm.ManaMods.value = "";
+  var v = ResetClass.value;
+  LifeManaForm.BaseMagic.value = eval(v + "MaxMagic");
+  LifeManaForm.BaseVitality.value = eval(v + "MaxVitality");
+  LifeManaForm.FinalMagic.value = eval(v + "MaxMagic");
+  LifeManaForm.FinalVitality.value = eval(v + "MaxVitality");
+}
 
-    <div class="calc-section" id="block">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="block-calculator.html">Block Calculator</a></h3>
-            <span class="author">By: Eso aka the_Langolier</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#getting-hit" target="_blank">Getting Hit</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/block-calculator.html" width="100%" height="720" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="block-calculator.html" height="720" scrolling="no"></iframe>
-        </div>
-    </div>
+function truncate(number) {
+  Rexp2.exec(number);
+  var temp = RegExp.$1;
+  temp++; temp--;
+  return temp;
+}
 
-    <h2>Character Calculators</h2>
+function AddStringAsNum(number, string) {
+  var temp = string;
+  temp++; temp--;
+  number += temp;
+  return number;
+}
 
-    <div class="calc-section" id="charstats">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="character-stats-calculator.html">Character Stats Calculator</a></h3>
-            <span class="author">By: King aka Red-Wolf</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#character-stats" target="_blank">Character Stats</a> | <a href="https://wheybags.gitlab.io/jarulfs-guide/#life-and-mana" target="_blank">Life and Mana</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/character-stats-calculator.html" width="100%" height="1150" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="character-stats-calculator.html" height="1150" scrolling="no"></iframe>
-        </div>
-    </div>
+function GoButton() {
+  var f = LifeManaForm, txt = document.getElementById('lifmantxt');
+  if (!Rexp.test(f.CharLevel.value)) { txt.value = "Character Level must be a whole number."; return; }
+  if (!Rexp.test(f.BaseMagic.value)) { txt.value = "Base Magic must be a whole number."; return; }
+  if (!Rexp.test(f.FinalMagic.value)) { txt.value = "Final Magic must be a whole number."; return; }
+  if (!Rexp.test(f.BaseVitality.value)) { txt.value = "Base Vitality must be a whole number."; return; }
+  if (!Rexp.test(f.FinalVitality.value)) { txt.value = "Final Vitality must be a whole number."; return; }
+  if (!Rexp3.test(f.LifeMods.value)) { txt.value = "Incorrect formatting of Life Modifiers.\nModifiers are added as such: +1-2+3-4"; return; }
+  if (!Rexp3.test(f.ManaMods.value)) { txt.value = "Incorrect formatting of Mana Modifiers.\nModifiers are added as such: +1-2+3-4"; return; }
 
-    <div class="calc-section" id="lifemana">
-        <div class="calc-header">
-            <h3 class="calc-title"><a href="life-mana-calculator.html">Life/Mana Calculator</a></h3>
-            <span class="author">By: Virgil Tibbs</span>
-        </div>
-        <details class="jarulf-ref">
-            <summary>Jarulf's Guide reference sections</summary>
-            <div class="links"><a href="https://wheybags.gitlab.io/jarulfs-guide/#life-and-mana" target="_blank">Life and Mana</a></div>
-        </details>
-        <details class="embed-code">
-            <summary>Embed this calculator on your site</summary>
-            <pre><code>&lt;iframe src="https://skypher.github.io/diablo1-calcs/life-mana-calculator.html" width="100%" height="380" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</code></pre>
-        </details>
-        <div class="calc-embed">
-            <iframe src="life-mana-calculator.html" height="380" scrolling="no"></iframe>
-        </div>
-    </div>
+  var Life = 0, Mana = 0, Clvl = f.CharLevel.value;
+  var BaseM = f.BaseMagic.value, ItemM = f.FinalMagic.value - BaseM;
+  var BaseV = f.BaseVitality.value, ItemV = f.FinalVitality.value - BaseV;
+  if (Clvl == 50) Clvl = 49;
+  var c = f.CharClass.value;
 
-    <div class="kudos">
-        <h3>Special Thanks</h3>
-        <p>These calculators were originally collected and maintained at<br>
-        <a href="https://mgpat-gm.github.io/calcs.html">Ghast's Grotto</a><br>
-        by <strong>GhastMaster</strong>.</p>
-        <p>Ghast's Grotto remains an invaluable resource for the Diablo 1 community,<br>
-        preserving tools and knowledge from the game's golden era.</p>
-        <p style="color: #666; font-size: 0.9em; margin-top: 15px;">
-        The original calculator authors are credited above each tool.<br>
-        This project simply splits them into embeddable standalone pages.</p>
-    </div>
+  Life = eval(c + "LifeBonus") + (Clvl * eval(c + "LifeGain")) + (BaseV * eval(c + "LifeChar")) + (ItemV * eval(c + "LifeItem"));
+  Mana = eval(c + "ManaBonus") + (Clvl * eval(c + "ManaGain")) + (BaseM * eval(c + "ManaChar")) + (ItemM * eval(c + "ManaItem"));
 
-    <div class="footer">
-        <p>Diablo&reg; - &copy;1996 Blizzard Entertainment, Inc. All rights reserved.<br>
-        Diablo and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc.</p>
-    </div>
-</div>
+  if (c == "Rogue" || c == "Monk" || c == "Bard" || c == "Barbarian") Life = truncate(Life);
+  if (c == "Rogue" || c == "Monk" || c == "Bard") Mana = truncate(Mana);
+
+  // Parse life mods
+  var mods = f.LifeMods.value.match(/[+-]\d+/g);
+  if (mods) mods.forEach(m => Life = AddStringAsNum(Life, m));
+  // Parse mana mods  
+  mods = f.ManaMods.value.match(/[+-]\d+/g);
+  if (mods) mods.forEach(m => Mana = AddStringAsNum(Mana, m));
+
+  txt.value = "Your total Life should be: " + Life + "\nYour total Mana should be: " + Mana;
+}
+
+// ========== SHOP QLVL ==========
+function specialIlvl(clvl) {
+  if (clvl < 10) return 6;
+  else if (clvl < 12) return 7;
+  else if (clvl < 14) return 8;
+  else if (clvl < 16) return 9;
+  else if (clvl < 18) return 10;
+  else if (clvl < 20) return 11;
+  else if (clvl < 22) return 12;
+  else if (clvl < 24) return 13;
+  else if (clvl < 26) return 14;
+  else if (clvl < 28) return 15;
+  else return 16;
+}
+
+var grisMinMaxIlvl = function(qlvl) { return Math.max(1, Math.min(qlvl, 30)); };
+var calcGriswoldsBaseQlvl = function(ilvl) {
+  ilvl = grisMinMaxIlvl(ilvl);
+  return grisMinMaxIlvl(parseInt(ilvl / 4)) + "-" + Math.min(25, ilvl);
+};
+var calcGriswoldsAffixQlvl = function(ilvl) {
+  ilvl = grisMinMaxIlvl(ilvl);
+  return grisMinMaxIlvl(parseInt(ilvl / 2)) + "-" + ilvl;
+};
+
+function calcShopQlvl() {
+  var clvl = parseInt(document.getElementById('qlvl-clvl').value) || 1;
+  var c = Math.min(clvl, 30);
+  document.getElementById('grisresult').value = 
+    "Slot:  Base:   Affixes:\n\n" +
+    "1:     " + calcGriswoldsBaseQlvl(c-1).padEnd(7) + " " + calcGriswoldsAffixQlvl(c-1) + "\n" +
+    "2:     " + calcGriswoldsBaseQlvl(c-1).padEnd(7) + " " + calcGriswoldsAffixQlvl(c-1) + "\n" +
+    "3:     " + calcGriswoldsBaseQlvl(c).padEnd(7) + " " + calcGriswoldsAffixQlvl(c) + "\n" +
+    "4:     " + calcGriswoldsBaseQlvl(c).padEnd(7) + " " + calcGriswoldsAffixQlvl(c) + "\n" +
+    "5:     " + calcGriswoldsBaseQlvl(c+1).padEnd(7) + " " + calcGriswoldsAffixQlvl(c+1) + "\n" +
+    "6:     " + calcGriswoldsBaseQlvl(c+2).padEnd(7) + " " + calcGriswoldsAffixQlvl(c+2);
+  
+  document.getElementById('wirtresult').value = 
+    "Base items: 1-" + Math.min(clvl, 25) + "\nAffixes: " + Math.min(clvl, 25) + "-" + Math.min(2 * clvl, 60);
+  
+  var ilvl = specialIlvl(clvl);
+  document.getElementById('adriaresult').value = 
+    "Base items & spells:\n1-" + ilvl + "\n\nPrefixes on staffs with spell:\n1-" + (2 * ilvl) + "\n\nAffixes on staffs without spell:\n" + ilvl + "-" + (2 * ilvl);
+}
+
+// ========== WEAPON DAMAGE (Red-Wolf) ==========
+function MakeArray(n) { this.length = n; }
+function MakeBase(name, min, max, rate, add) {
+  this.name = name; this.min = min; this.max = max; this.rate = rate; this.add = add;
+}
+var basmax = 98;
+var base = new MakeArray(basmax + 1);
+base[0]=new MakeBase("------- Custom -------",0,0,0,0);
+base[1]=new MakeBase("Dagger",1,4,0,0);
+base[2]=new MakeBase("Short Sword",2,6,0,0);
+base[3]=new MakeBase("Sabre",1,8,0,0);
+base[4]=new MakeBase("Falchion",4,8,0,0);
+base[5]=new MakeBase("Scimitar",3,7,0,0);
+base[6]=new MakeBase("Blade",3,8,0,0);
+base[7]=new MakeBase("Claymore",1,12,0,0);
+base[8]=new MakeBase("Long Sword",2,10,0,0);
+base[9]=new MakeBase("Broad Sword",4,12,0,0);
+base[10]=new MakeBase("Bastard Sword",6,15,0,0);
+base[11]=new MakeBase("Two-Handed Sword",8,16,0,0);
+base[12]=new MakeBase("Great Sword",10,20,0,0);
+base[13]=new MakeBase("------- Axes -------",0,0,0,0);
+base[14]=new MakeBase("Small Axe",2,10,0,0);
+base[15]=new MakeBase("Axe",4,12,0,0);
+base[16]=new MakeBase("Large Axe",6,16,0,0);
+base[17]=new MakeBase("Broad Axe",8,20,0,0);
+base[18]=new MakeBase("Battle Axe",10,25,0,0);
+base[19]=new MakeBase("Great Axe",12,30,0,0);
+base[20]=new MakeBase("------- Clubs -------",0,0,0,0);
+base[21]=new MakeBase("Mace",1,8,0,0);
+base[22]=new MakeBase("Morning Star",1,10,0,0);
+base[23]=new MakeBase("War Hammer",5,9,0,0);
+base[24]=new MakeBase("Club",1,6,0,0);
+base[25]=new MakeBase("Spiked Club",3,6,0,0);
+base[26]=new MakeBase("Flail",2,12,0,0);
+base[27]=new MakeBase("Maul",6,20,0,0);
+base[28]=new MakeBase("------- Bows -------",0,0,0,0);
+base[29]=new MakeBase("Short Bow",1,4,0,0);
+base[30]=new MakeBase("Hunter's Bow",2,5,0,0);
+base[31]=new MakeBase("Long Bow",1,6,0,0);
+base[32]=new MakeBase("Composite Bow",3,6,0,0);
+base[33]=new MakeBase("Short Battle Bow",3,7,0,0);
+base[34]=new MakeBase("Long Battle Bow",1,10,0,0);
+base[35]=new MakeBase("Short War Bow",4,8,0,0);
+base[36]=new MakeBase("Long War Bow",1,14,0,0);
+base[37]=new MakeBase("------ Staffs ------",0,0,0,0);
+base[38]=new MakeBase("Short Staff",2,4,0,0);
+base[39]=new MakeBase("Long Staff",4,8,0,0);
+base[40]=new MakeBase("Composite Staff",5,10,0,0);
+base[41]=new MakeBase("Quarter Staff",6,12,0,0);
+base[42]=new MakeBase("War Staff",8,16,0,0);
+base[43]=new MakeBase("~~~~~ UNIQUES ~~~~~~",0,0,0,0);
+base[44]=new MakeBase("The Rift Bow",1,4,0,2);
+base[45]=new MakeBase("The Needler",1,3,0,0);
+base[46]=new MakeBase("The Celestial Bow",1,6,0,2);
+base[47]=new MakeBase("Deadly Hunter",3,6,0,0);
+base[48]=new MakeBase("The Blackoak Bow",1,6,50,0);
+base[49]=new MakeBase("Bow of the Dead",3,6,0,0);
+base[50]=new MakeBase("Flamedart",2,5,0,0);
+base[51]=new MakeBase("Fleshstinger",1,6,80,0);
+base[52]=new MakeBase("Windforce",1,14,200,0);
+base[53]=new MakeBase("Eaglehorn",1,10,100,0);
+base[54]=new MakeBase("------ Swords ------",0,0,0,0);
+base[55]=new MakeBase("The Defender",1,8,0,0);
+base[56]=new MakeBase("Gryphons Claw",4,8,100,0);
+base[57]=new MakeBase("Black Razor",1,4,150,0);
+base[58]=new MakeBase("Gibbous Moon",4,12,25,0);
+base[59]=new MakeBase("Ice Shank",2,10,0,0);
+base[60]=new MakeBase("The Executioner's Blade",4,8,150,0);
+base[61]=new MakeBase("The Bonesaw",1,12,0,10);
+base[62]=new MakeBase("Shadowhawk",4,12,0,0);
+base[63]=new MakeBase("Wizardspike",1,4,0,0);
+base[64]=new MakeBase("Lightsabre",1,8,0,0);
+base[65]=new MakeBase("The Falcon's Talon",3,7,-33,0);
+base[66]=new MakeBase("Inferno",2,10,0,0);
+base[67]=new MakeBase("Doombringer",6,15,250,0);
+base[68]=new MakeBase("The Grizzly",8,16,200,0);
+base[69]=new MakeBase("The Grandfather",10,20,70,0);
+base[70]=new MakeBase("------- Axes -------",0,0,0,0);
+base[71]=new MakeBase("Sharp Beak",6,16,0,0);
+base[72]=new MakeBase("Bloodslayer",8,20,100,0);
+base[73]=new MakeBase("The Celestial Axe",10,25,0,0);
+base[74]=new MakeBase("Wicked Axe",6,16,0,0);
+base[75]=new MakeBase("Stonecleaver",8,20,50,0);
+base[76]=new MakeBase("Aguinara's Hatchet",2,10,0,0);
+base[77]=new MakeBase("Hellslayer",10,25,100,0);
+base[78]=new MakeBase("Messerschmidt's Reaver",12,30,200,15);
+base[79]=new MakeBase("------- Clubs -------",0,0,0,0);
+base[80]=new MakeBase("Hammer of Jholm",6,20,10,0);
+base[81]=new MakeBase("Civerb's Cudgel",1,8,0,0);
+base[82]=new MakeBase("The Celestial Star",2,12,0,10);
+base[83]=new MakeBase("Baranar's Star",1,10,80,0);
+base[84]=new MakeBase("Gnarled Root",1,6,300,0);
+base[85]=new MakeBase("Gnarled Root",3,6,300,0);
+base[86]=new MakeBase("The Cranium Basher",6,20,0,20);
+base[87]=new MakeBase("Schaefer's Hammer",5,9,-100,0);
+base[88]=new MakeBase("Dreamflange",1,8,0,0);
+base[89]=new MakeBase("------ Staffs ------",0,0,0,0);
+base[90]=new MakeBase("Staff of Shadows",4,8,60,0);
+base[91]=new MakeBase("Immolator",4,8,0,0);
+base[92]=new MakeBase("Storm Spire",8,16,0,0);
+base[93]=new MakeBase("Gleamsong",2,4,0,0);
+base[94]=new MakeBase("Thundercall",5,10,0,0);
+base[95]=new MakeBase("The Protector",2,4,0,0);
+base[96]=new MakeBase("Naj's Puzzler",4,8,0,0);
+base[97]=new MakeBase("Mindcry",6,12,0,0);
+base[98]=new MakeBase("Rod of Onan",8,16,100,0);
+
+function ChgBase(theForm) {
+  var sel = theForm.base.selectedIndex;
+  theForm.basemin.value = base[sel].min;
+  theForm.basemax.value = base[sel].max;
+  if (sel > 42 || sel == 0) {
+    theForm.damrate.value = base[sel].rate;
+    theForm.damadd.value = base[sel].add;
+  }
+}
+
+function ChkDam(theForm) {
+  var dammin = theForm.basemin.value * 1;
+  var dammax = theForm.basemax.value * 1;
+  var rate = 1 + theForm.damrate.value * 0.01;
+  var add = theForm.damadd.value * 1;
+  var damdsp = "Damage Distribution\n    ";
+  var i, k, l = 0;
+  for (i = dammin; i <= dammax; i++) {
+    k = Math.floor(i * rate) + add;
+    l += k;
+    if (i == dammin) { damdsp += k; theForm.min.value = k; }
+    else { damdsp += "," + k; if (i == dammax) theForm.max.value = k; }
+  }
+  damdsp += "\n\nAverage Damage\n    ";
+  l = l / (dammax - dammin + 1);
+  l = l.toString();
+  if (l.charAt(0) == ".") l = "0" + l;
+  damdsp += l;
+  if (dammax < dammin) damdsp = "Error : Damage Min > Damage Max";
+  if (dammin < 0) damdsp = "Error : Damage Min < 0";
+  theForm.display.value = damdsp;
+}
+
+// ========== DPS (GhastMaster) ==========
+function avgdps(theForm) {
+  theForm.display.value = "Suffix:\nNormal & Readiness:\nSwiftness:\nSpeed & Haste:";
+  var avg = parseFloat(theForm.avg.value);
+  var t = theForm.basetype.value;
+  if (t == "sword") {
+    theForm.display1.value = "Warrior:\n" + (avg/.45).toFixed(2) + "\n" + (avg/.4).toFixed(2) + "\n" + (avg/.35).toFixed(2);
+    theForm.display2.value = "Rogue:\n" + (avg/.5).toFixed(2) + "\n" + (avg/.45).toFixed(2) + "\n" + (avg/.4).toFixed(2);
+    theForm.display3.value = "Sorcerer:\n" + (avg/.6).toFixed(2) + "\n" + (avg/.55).toFixed(2) + "\n" + (avg/.5).toFixed(2);
+    theForm.display4.value = "Monk:\n" + (avg/.6).toFixed(2) + "\n" + (avg/.55).toFixed(2) + "\n" + (avg/.5).toFixed(2);
+    theForm.display5.value = "Bard:\n" + (avg/.5).toFixed(2) + "\n" + (avg/.45).toFixed(2) + "\n" + (avg/.4).toFixed(2);
+    theForm.display6.value = "Barbarian:\n" + (avg/.45).toFixed(2)+"/"+(avg/.4).toFixed(2) + "\n" + (avg/.4).toFixed(2)+"/"+(avg/.35).toFixed(2) + "\n" + (avg/.35).toFixed(2)+"/"+(avg/.3).toFixed(2);
+  } else if (t == "axe") {
+    theForm.display1.value = "Warrior:\n" + (avg/.5).toFixed(2) + "\n" + (avg/.45).toFixed(2) + "\n" + (avg/.4).toFixed(2);
+    theForm.display2.value = "Rogue:\n" + (avg/.65).toFixed(2) + "\n" + (avg/.6).toFixed(2) + "\n" + (avg/.55).toFixed(2);
+    theForm.display3.value = "Sorcerer:\n" + (avg/.8).toFixed(2) + "\n" + (avg/.75).toFixed(2) + "\n" + (avg/.7).toFixed(2);
+    theForm.display4.value = "Monk:\n" + (avg/.7).toFixed(2) + "\n" + (avg/.65).toFixed(2) + "\n" + (avg/.6).toFixed(2);
+    theForm.display5.value = "Bard:\n" + (avg/.65).toFixed(2) + "\n" + (avg/.6).toFixed(2) + "\n" + (avg/.55).toFixed(2);
+    theForm.display6.value = "Barbarian:\n" + (avg/.4).toFixed(2) + "\n" + (avg/.35).toFixed(2) + "\n" + (avg/.3).toFixed(2);
+  } else if (t == "staff") {
+    theForm.display1.value = "Warrior:\n" + (avg/.55).toFixed(2) + "\n" + (avg/.5).toFixed(2) + "\n" + (avg/.45).toFixed(2);
+    theForm.display2.value = "Rogue:\n" + (avg/.55).toFixed(2) + "\n" + (avg/.5).toFixed(2) + "\n" + (avg/.45).toFixed(2);
+    theForm.display3.value = "Sorcerer:\n" + (avg/.6).toFixed(2) + "\n" + (avg/.55).toFixed(2) + "\n" + (avg/.5).toFixed(2);
+    theForm.display4.value = "Monk:\n" + (avg/.4).toFixed(2) + "\n" + (avg/.35).toFixed(2) + "\n" + (avg/.3).toFixed(2);
+    theForm.display5.value = "Bard:\n" + (avg/.55).toFixed(2) + "\n" + (avg/.5).toFixed(2) + "\n" + (avg/.45).toFixed(2);
+    theForm.display6.value = "Barbarian:\n" + (avg/.55).toFixed(2) + "\n" + (avg/.5).toFixed(2) + "\n" + (avg/.45).toFixed(2);
+  } else if (t == "bow") {
+    theForm.display1.value = "Warrior:\n" + (avg/.55).toFixed(2) + "\n" + (avg/.5).toFixed(2);
+    theForm.display2.value = "Rogue:\n" + (avg/.35).toFixed(2) + "\n" + (avg/.3).toFixed(2);
+    theForm.display3.value = "Sorcerer:\n" + (avg/.8).toFixed(2) + "\n" + (avg/.75).toFixed(2);
+    theForm.display4.value = "Monk:\n" + (avg/.7).toFixed(2) + "\n" + (avg/.7).toFixed(2);
+    theForm.display5.value = "Bard:\n" + (avg/.55).toFixed(2) + "\n" + (avg/.55).toFixed(2);
+    theForm.display6.value = "Barbarian:\n" + (avg/.55).toFixed(2) + "\n" + (avg/.55).toFixed(2);
+  }
+}
+
+// ========== ARMOR (Red-Wolf) ==========
+function AcCalc(theForm) {
+  var myAc = theForm.base.value * 1;
+  var myAcRate = 1 + theForm.acrate.value * 0.01;
+  theForm.ac.value = Math.floor(myAc * myAcRate);
+}
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', function() {
+  // Populate weapon dropdown
+  var sel = document.DamCheck.base;
+  for (var i = 0; i <= basmax; i++) {
+    var opt = document.createElement('option');
+    opt.textContent = base[i].name;
+    sel.appendChild(opt);
+  }
+  calcShopQlvl();
+});
+</script>
 </body>
 </html>

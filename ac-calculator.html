@@ -1,212 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Armor Class Calculator - Diablo Calculator</title>
-    <link rel="stylesheet" href="calc-styles.css">
-    <script type="text/javascript" src="js/ac.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armor Class Calculator - Diablo I</title>
+  <script type="text/javascript" src="js/ac.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root { --gold: #c7a44a; --gold-dim: #8b7355; --bg: #1a1a1a; --panel: #252525; --text: #d4c4a0; --input-bg: #0d0d0d; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: clamp(0.5rem, 2vw, 1rem); font-size: clamp(0.75rem, 1.8vw, 0.9rem); }
+    .blog { max-width: 50rem; margin-inline: auto; background: var(--panel); border: 2px solid var(--gold-dim); border-radius: 0.5rem; padding: clamp(0.5rem, 2vw, 1rem); }
+    .title { font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--gold); display: block; margin-bottom: 0.25rem; }
+    .title + i a { color: var(--gold-dim); font-size: 0.8em; }
+    .sub { margin-bottom: 0.75rem; }
+    .sub td { padding: 0.25rem 0.5rem; }
+    select { background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.3rem; border-radius: 0.25rem; font-size: inherit; }
+    table { width: 100%; border-collapse: collapse; font-size: clamp(0.65rem, 1.5vw, 0.8rem); }
+    #MaxAC td, #EnemyAC td { padding: 0.3rem 0.4rem; text-align: center; border-bottom: 1px solid #333; }
+    #MaxAC tr:first-child td, #EnemyAC tr:first-child td { color: var(--gold-dim); font-weight: 600; }
+    .magic { color: #6688ff; }
+  </style>
 </head>
 <body>
-<center>
-<!-- AC Calculator by Eso aka the_Langolier -->
-<table class="blog">
-    <tr>
-        <td><span class="title">Armor Class Calculator</span><br><i>By: <a href="https://web.archive.org/web/20120530084932/http://www.dpsyche.com/AC.html">Eso aka the_Langolier</a></i></td>
-    </tr>
-    <tr>
-        <td>
 <form name="SelectStat">
-        <table class="sub">
-            <tr>
-                <td>Difficulty:</td>
-                <td>Get-Hit %:</td>
-            </tr>
-            <tr>
-                <td>
-                <select name="Dif" onchange="updat();">
-                <option value="0">Normal</option>
-                <option value="85">Nightmare</option>
-                <option value="120" selected>Hell</option>
-                </select></td>
-                <td>
-                <select name="Percen" onchange="updat();">
-                <option value="1" selected>auto-hit</option>
-                <option value="25">25%</option>
-                <option value="33">33%</option>
-                <option value="50">50%</option>
-                <option value="66">66%</option>
-                <option value="75">75%</option>
-                </select></td>
-            </tr>
-        </table>
-        <br>
-        <table id="MaxAC" width="100%">
-            <tr>
-                <td style="text-align: center">Clvl:</td>
-                <td style="text-align: center">30</td>
-                <td style="text-align: center">40</td>
-                <td style="text-align: center">50</td>
-                <td align="center">
-                    <select name="Cclvl" onchange="updat();">
-                    <script type="text/javascript">
-                    for(var i=17; i<=50; i++) {
-                        var sel = (i==45) ? ' selected' : '';
-                        document.write('<option value="'+i+'"'+sel+'>'+i+'</option>');
-                    }
-                    </script>
-                    </select></td>
-            </tr>
-            <tr>
-                <td>Max useful AC<br>(BK's on 16):</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Max useful AC<br>(BK's on 13):</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-        </table>
-        <br>
-        <table >
-            <tr>
-                <td>Maximum useful AC per enemy type:</td>
-            </tr>
-        </table>
-        <br>
-        <table id="EnemyAC" width="100%">
-            <tr>
-                <td style="text-align: center">Clvl:</td>
-                <td style="text-align: center">30</td>
-                <td style="text-align: center">40</td>
-                <td style="text-align: center">50</td>
-                <td style="text-align: center">Your<br>clvl:</td>
-            </tr>
-            <tr>
-                <td>Lava Maw</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Storm Lord</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Maelstorm</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Guardian</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Vortex Lord</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Balrog</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Cave Viper</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Fire Drake</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Gold Viper</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Azure Drake</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Black Knight</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Doom Guard</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Steel Lord</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Blood Knight</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-            </tr>
-            <tr>
-                <td>Average<br>Useful AC:</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-        </table>
-        </td>
+<div class="blog">
+  <span class="title">Max Useful AC Calculator</span>
+  <i>By: <a href="https://web.archive.org/web/20120530084932/http://www.dpsyche.com/AC.html">Eso aka the_Langolier</a></i>
+
+  <table class="sub">
+    <tr>
+      <td>Difficulty:</td>
+      <td>Get-Hit %:</td>
     </tr>
+    <tr>
+      <td><select name="Dif" onchange="updat();">
+        <option value="0">Normal</option>
+        <option value="85">Nightmare</option>
+        <option value="120" selected>Hell</option>
+      </select></td>
+      <td><select name="Percen" onchange="updat();">
+        <option value="1" selected>auto-hit</option>
+        <option value="25">25%</option>
+        <option value="33">33%</option>
+        <option value="50">50%</option>
+        <option value="66">66%</option>
+        <option value="75">75%</option>
+      </select></td>
+    </tr>
+  </table>
+
+  <table id="MaxAC">
+    <tr>
+      <td>Clvl:</td><td>30</td><td>40</td><td>50</td>
+      <td><select name="Cclvl" onchange="updat();">
+        <script>for(var i=17;i<=50;i++){var sel=(i==45)?' selected':'';document.write('<option value="'+i+'"'+sel+'>'+i+'</option>');}</script>
+      </select></td>
+    </tr>
+    <tr><td>Max useful AC (BK's on 16):</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Max useful AC (BK's on 13):</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+  </table>
+
+  <p style="margin:0.75rem 0 0.5rem;color:var(--gold-dim);">Maximum useful AC per enemy type:</p>
+
+  <table id="EnemyAC">
+    <tr><td>Clvl:</td><td>30</td><td>40</td><td>50</td><td>Your clvl:</td></tr>
+    <tr><td>Lava Maw</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Storm Lord</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Maelstorm</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Guardian</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Vortex Lord</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Balrog</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Cave Viper</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Fire Drake</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Gold Viper</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Azure Drake</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Black Knight</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Doom Guard</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Steel Lord</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Blood Knight</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+    <tr><td>Average Useful AC:</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+  </table>
+</div>
 </form>
-<script type="text/javascript">
-updat();
-</script>
-</table>
-</center>
+<script>updat();</script>
 </body>
 </html>

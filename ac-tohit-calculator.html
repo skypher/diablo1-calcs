@@ -1,242 +1,2258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AC & To Hit Calculator - Diablo Calculator</title>
-    <link rel="stylesheet" href="calc-styles.css">
-    <script type="text/javascript" src="js/internals.js"></script>
-    <script type="text/javascript" src="js/monster_data.js"></script>
-    <script type="text/javascript" src="js/parse_funcs.js"></script>
-    <script type="text/javascript" src="js/morcalc.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AC & To Hit Calculator - Diablo I</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root { --gold: #c7a44a; --gold-dim: #8b7355; --bg: #1a1a1a; --panel: #252525; --text: #d4c4a0; --input-bg: #0d0d0d; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: clamp(0.5rem, 2vw, 1rem); font-size: clamp(0.75rem, 1.8vw, 0.9rem); }
+    .blog { max-width: 55rem; margin-inline: auto; background: var(--panel); border: 2px solid var(--gold-dim); border-radius: 0.5rem; padding: clamp(0.5rem, 2vw, 1rem); }
+    .title { font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--gold); }
+    .grid { display: grid; gap: 0.5rem; margin: 0.75rem 0; }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+    .field { display: flex; flex-direction: column; gap: 0.15rem; }
+    .field label { font-size: 0.8em; color: var(--gold-dim); }
+    select, input[type="text"] { width: 100%; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.35rem; border-radius: 0.25rem; font-size: inherit; }
+    input[type="button"] { background: var(--gold-dim); border: 1px solid var(--gold); color: #000; padding: 0.4rem 0.8rem; border-radius: 0.25rem; cursor: pointer; font-weight: 600; }
+    input[type="button"]:hover { background: var(--gold); }
+    textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.5rem; border-radius: 0.25rem; font-family: 'Consolas', monospace; font-size: clamp(0.65rem, 1.5vw, 0.75rem); resize: vertical; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
-<center>
-<!-- AC & To Hit Calculator by Arnold van Wakeren aka Moriah -->
 <form name="combat">
-<table class="blog">
-    <tr>
-        <td><span class="title">AC & To Hit Calculator </span><i>By: <a href="https://web.archive.org/web/20091024004748/http://geocities.com/TimesSquare/Maze/4747/maxmelee12.html">Arnold van Wakeren aka Moriah</a></i></td>
-    </tr>
-        <td>
-        <table class="sub">
-            <tr>
-                <td>
-                <table class="sub">
-                    <tr>
-                        <td>Game:
-                            <select name="game" onchange="parseGame()">
-                            <option value="MP" diablo="">MP Diablo
-                            </option><option value="SP" diablo="">SP Diablo
-                            </option><option value="MP" hellfire="">MP Hellfire
-                            </option><option value="SP" hellfire="">SP Hellfire
-                            </option></select></td>
-                        <td>Monster:
-                            <select name="extra" onchange="parseExtra()">
-                            <option value="Zombie">Zombie
-                            </option><option value="Ghoul">Ghoul
-                            </option><option value="Rotting Carcass">Rotting Carcass
-                            </option><option value="Black Death">Black Death
-                            </option><option value="Fallen One (spear)">Fallen One (spear)
-                            </option><option value="Carver (spear)">Carver (spear)
-                            </option><option value="Devil Kin (spear)">Devil Kin (spear)
-                            </option><option value="Dark One (spear)">Dark One (spear)
-                            </option><option value="Fallen One (sword)">Fallen One (sword)
-                            </option><option value="Carver (sword)">Carver (sword)
-                            </option><option value="Devil Kin (sword)">Devil Kin (sword)
-                            </option><option value="Dark One (sword)">Dark One (sword)
-                            </option><option value="Skeleton">Skeleton
-                            </option><option value="Corpse Axe">Corpse Axe
-                            </option><option value="Burning Dead">Burning Dead
-                            </option><option value="Horror">Horror
-                            </option><option value="Skeleton Archer">Skeleton Archer
-                            </option><option value="Corpse Bow">Corpse Bow
-                            </option><option value="Burning Dead Archer">Burning Dead Archer
-                            </option><option value="Horror Archer">Horror Archer
-                            </option><option value="Skeleton Captain">Skeleton Captain
-                            </option><option value="Corpse Captain">Corpse Captain
-                            </option><option value="Burning Dead Captain">Burning Dead Captain
-                            </option><option value="Horror Captain">Horror Captain
-                            </option><option value="Scavenger">Scavenger
-                            </option><option value="Plague Eater">Plague Eater
-                            </option><option value="Shadow Beast">Shadow Beast
-                            </option><option value="Bone Gasher">Bone Gasher
-                            </option><option value="Fiend">Fiend
-                            </option><option value="Blink">Blink
-                            </option><option value="Gloom">Gloom
-                            </option><option value="Familiar">Familiar
-                            </option><option value="Hidden">Hidden
-                            </option><option value="Stalker">Stalker
-                            </option><option value="Unseen">Unseen
-                            </option><option value="Illusion Weaver">Illusion Weaver
-                            </option><option value="Flesh Clan">Flesh Clan
-                            </option><option value="Stone Clan">Stone Clan
-                            </option><option value="Fire Clan">Fire Clan
-                            </option><option value="Night Clan">Night Clan
-                            </option><option value="Flesh Clan Archer">Flesh Clan Archer
-                            </option><option value="Stone Clan Archer">Stone Clan Archer
-                            </option><option value="Fire Clan Archer">Fire Clan Archer
-                            </option><option value="Night Clan Archer">Night Clan Archer
-                            </option><option value="Overlord">Overlord
-                            </option><option value="Mud Man">Mud Man
-                            </option><option value="Toad Demon">Toad Demon
-                            </option><option value="Flayed One">Flayed One
-                            </option><option value="Winged-Demon">Winged-Demon
-                            </option><option value="Gargoyle">Gargoyle
-                            </option><option value="Blood Claw">Blood Claw
-                            </option><option value="Death Wing">Death Wing
-                            </option><option value="Magma Demon">Magma Demon
-                            </option><option value="Blood Stone">Blood Stone
-                            </option><option value="Hell Stone">Hell Stone
-                            </option><option value="Lava Lord">Lava Lord
-                            </option><option value="Horned Demon">Horned Demon
-                            </option><option value="Mud Runner">Mud Runner
-                            </option><option value="Frost Charger">Frost Charger
-                            </option><option value="Obsidian Lord">Obsidian Lord
-                            </option><option value="Acid Beast">Acid Beast
-                            </option><option value="Poison Spitter">Poison Spitter
-                            </option><option value="Pit Beast">Pit Beast
-                            </option><option value="Lava Maw">Lava Maw
-                            </option><option value="Red Storm">Red Storm
-                            </option><option value="Storm Rider">Storm Rider
-                            </option><option value="Storm Lord">Storm Lord
-                            </option><option value="Maelstrom">Maelstrom
-                            </option><option value="Slayer">Slayer
-                            </option><option value="Guardian">Guardian
-                            </option><option value="Vortex Lord">Vortex Lord
-                            </option><option value="Balrog">Balrog
-                            </option><option value="Cave Viper">Cave Viper
-                            </option><option value="Fire Drake">Fire Drake
-                            </option><option value="Gold Viper">Gold Viper
-                            </option><option value="Azure Drake">Azure Drake
-                            </option><option value="Succubus">Succubus
-                            </option><option value="Snow Witch">Snow Witch
-                            </option><option value="Hell Spawn">Hell Spawn
-                            </option><option value="Soul Burner">Soul Burner
-                            </option><option value="Black Knight">Black Knight
-                            </option><option value="Doom Guard">Doom Guard
-                            </option><option value="Steel Lord">Steel Lord
-                            </option><option value="Blood Knight">Blood Knight
-                            </option><option value="Counselor">Counselor
-                            </option><option value="Magistrate">Magistrate
-                            </option><option value="Cabalist">Cabalist
-                            </option><option value="Advocate">Advocate
-                            </option></select></td>
-                        <td>To-Hit%: <input name="tohit_fld" value="" size="6" maxsize="6" onchange="parseTohit()" type="text"></td>
-                    </tr>
-                        <td>Class:
-                            <select name="player" onchange="parsePlayer()">
-                            <option value="Warrior">Warrior
-                            </option><option value="Rogue">Rogue
-                            </option><option value="Sorcerer">Sorcerer
-                            </option><option value="Monk">Monk
-                            </option><option value="Bard">Bard
-                            </option><option value="Barbarian">Barbarian
-                            </option></select></td>
-                        <td>Difficulty:
-                            <select name="difficulty" onchange="parseDifficulty()">
-                            <option value="Normal">Normal
-                            </option><option value="Nightmare">Nightmare
-                            </option><option value="Hell">Hell
-                            </option></select></td>
-                        <td>Dex: <input name="dex_fld" value="" size="6" maxsize="6" onchange="parseDexterity()" type="text"></td>
-                    <tr>
-                        <td>Clvl:
-                            <select name="clvl" onchange="parseClvl()">
-                            <script type="text/javascript">
-                            for(var i=1; i<=50; i++) { document.write('<option value="'+i+'">'+i+'</option>'); }
-                            </script>
-                            </select></td>
-                        <td>Dlvl:
-                            <select name="dlvl" onchange="parseDlvl()">
-                            <script type="text/javascript">
-                            for(var i=1; i<=16; i++) { document.write('<option value="'+i+'">'+i+'</option>'); }
-                            </script>
-                            <option value="Hive 1">Hive 1</option>
-                            <option value="Hive 2">Hive 2</option>
-                            <option value="Hive 3">Hive 3</option>
-                            <option value="Hive 4">Hive 4</option>
-                            <option value="Crypt 1">Crypt 1</option>
-                            <option value="Crypt 2">Crypt 2</option>
-                            <option value="Crypt 3">Crypt 3</option>
-                            <option value="Crypt 4">Crypt 4</option>
-                            </select></td>
-                        <td>AC: <input name="armor_fld" value="" size="6" maxsize="6" onchange="parseArmor()" type="text"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" align="left"><input value="Calculate" onclick="bothatonce()" type="button"></td>
-                        <td align="right"><input value="Reset" onclick="reset_form()" type="button"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"><textarea name="results" rows="12" cols="67" readonly></textarea>
-                        <br>
-                        <textarea name="results2" rows="4" cols="67" readonly></textarea></td>
-                    </tr>
-                </table>
-                </td>
-            </tr>
-            <tr>
-                <table class="hidden">
-                    <tr>
-                        <td>
-                            <select name="weapon" onchange="parseWeapon()">
-                            <option value="Bare">Bare</option>
-                            <option value="Axe">Axe</option>
-                            <option value="Bow">Bow</option>
-                            <option value="Club">Club</option>
-                            <option value="Shield">Shield</option>
-                            <option value="Staff">Staff</option>
-                            <option value="Sword">Sword</option>
-                            </select></td>
-                        <td>
-                            <select name="slvl" onchange="parseSlvl()">
-                            <script type="text/javascript">
-                            for(var i=0; i<=20; i++) { document.write('<option value="'+i+'">'+i+'</option>'); }
-                            </script>
-                            </select></td>
-                        <td><input name="str_fld" value="" size="6" maxsize="6" onchange="parseStrength()" type="text"></td>
-                        <td><input name="mag_fld" value="" size="6" maxsize="6" onchange="parseMagic()" type="text"></td>
-                        <td><input name="vit_fld" value="" size="6" maxsize="6" onchange="parseVitality()" type="text"></td>
-                        <td><input name="resmagic_fld" value="" size="6" maxsize="6" onchange="parseResMagic()" type="text"></td>
-                        <td><input name="resfire_fld" value="" size="6" maxsize="6" onchange="parseResFire()" type="text"></td>
-                        <td><input name="reslightning_fld" value="" size="6" maxsize="6" onchange="parseResLightning()" type="text"></td>
-                        <td><input value="Help" onclick="helpPlayer()" type="button"></td>
-                        <td><input value="Help" onclick="helpGame()" type="button"></td>
-                        <td>
-                            <select name="special" onchange="parseSpecial()">
-                            <option value="Plain Monsters">Plain Monsters</option>
-                            <option value="Boss Monsters">Boss Monsters</option>
-                            <option value="Special Monsters">Special Monsters</option>
-                            <option value="Player vs Player">Player vs Player</option>
-                            <option value="Golem vs Monster">Golem vs Monster</option>
-                            <option value="Trap Encounters">Trap Encounters</option>
-                            <option value="Item Drops">Item Drops</option>
-                            <option value="Assorted Stats">Assorted Stats</option>
-                            </select></td>
-                        <td>
-                            <select name="duelclvl" onchange="parseDuelClvl()">
-                            <script type="text/javascript">
-                            for(var i=1; i<=50; i++) { document.write('<option value="'+i+'">'+i+'</option>'); }
-                            </script>
-                            </select></td>
-                        <td><input value="Help" onclick="helpSpecial()" type="button"></td>
-                        <td><input name="duelstr_fld" value="" size="6" maxsize="6" onchange="parseDuelStrength()" type="text"></td>
-                        <td><input name="duelmag_fld" value="" size="6" maxsize="6" onchange="parseDuelMagic()" type="text"></td>
-                        <td><input name="dueldex_fld" value="" size="6" maxsize="6" onchange="parseDuelDexterity()" type="text"></td>
-                        <td><input name="duelarmor_fld" value="" size="6" maxsize="6" onchange="parseDuelArmor()" type="text"></td>
-                        <td><input name="dueltohit_fld" value="" size="6" maxsize="6" onchange="parseDuelTohit()" type="text"></td>
-                        <td><input name="duelres_fld" value="" size="6" maxsize="6" onchange="parseResDuel()" type="text"></td>
-                        <td><input name="damlow_fld" value="" size="6" maxsize="6" onchange="parseDamageLow()" type="text"></td>
-                        <td><input name="damhigh_fld" value="" size="6" maxsize="6" onchange="parseDamageHigh()" type="text"></td>
-                    </tr>
-                </table>
-                </td>
-            </tr>
-        </table>
-        </td>
-    </tr>
-</table>
+<div class="blog">
+  <span class="title">AC & To Hit Calculator</span>
+  <i style="font-size:0.8em;"> By: <a href="https://web.archive.org/web/20091024004748/http://geocities.com/TimesSquare/Maze/4747/maxmelee12.html">Arnold van Wakeren aka Moriah</a></i>
+
+  <div class="grid grid-3">
+    <div class="field"><label>Game</label>
+      <select name="game" onchange="parseGame()">
+        <option value="MP" diablo>MP Diablo</option>
+        <option value="SP" diablo>SP Diablo</option>
+        <option value="MP" hellfire>MP Hellfire</option>
+        <option value="SP" hellfire>SP Hellfire</option>
+      </select>
+    </div>
+    <div class="field"><label>Class</label>
+      <select name="player" onchange="parsePlayer()">
+        <option value="Warrior">Warrior</option>
+        <option value="Rogue">Rogue</option>
+        <option value="Sorcerer">Sorcerer</option>
+        <option value="Monk">Monk</option>
+        <option value="Bard">Bard</option>
+        <option value="Barbarian">Barbarian</option>
+      </select>
+    </div>
+    <div class="field"><label>Clvl</label>
+      <select name="clvl" onchange="parseClvl()">
+        <script>for(var i=1;i<=50;i++)document.write('<option value="'+i+'">'+i+'</option>');</script>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="field"><label>Monster</label>
+      <select name="extra" onchange="parseExtra()">
+        <option value="Zombie">Zombie</option><option value="Ghoul">Ghoul</option><option value="Rotting Carcass">Rotting Carcass</option><option value="Black Death">Black Death</option>
+        <option value="Fallen One (spear)">Fallen One (spear)</option><option value="Carver (spear)">Carver (spear)</option><option value="Devil Kin (spear)">Devil Kin (spear)</option><option value="Dark One (spear)">Dark One (spear)</option>
+        <option value="Fallen One (sword)">Fallen One (sword)</option><option value="Carver (sword)">Carver (sword)</option><option value="Devil Kin (sword)">Devil Kin (sword)</option><option value="Dark One (sword)">Dark One (sword)</option>
+        <option value="Skeleton">Skeleton</option><option value="Corpse Axe">Corpse Axe</option><option value="Burning Dead">Burning Dead</option><option value="Horror">Horror</option>
+        <option value="Skeleton Archer">Skeleton Archer</option><option value="Corpse Bow">Corpse Bow</option><option value="Burning Dead Archer">Burning Dead Archer</option><option value="Horror Archer">Horror Archer</option>
+        <option value="Skeleton Captain">Skeleton Captain</option><option value="Corpse Captain">Corpse Captain</option><option value="Burning Dead Captain">Burning Dead Captain</option><option value="Horror Captain">Horror Captain</option>
+        <option value="Scavenger">Scavenger</option><option value="Plague Eater">Plague Eater</option><option value="Shadow Beast">Shadow Beast</option><option value="Bone Gasher">Bone Gasher</option>
+        <option value="Fiend">Fiend</option><option value="Blink">Blink</option><option value="Gloom">Gloom</option><option value="Familiar">Familiar</option>
+        <option value="Hidden">Hidden</option><option value="Stalker">Stalker</option><option value="Unseen">Unseen</option><option value="Illusion Weaver">Illusion Weaver</option>
+        <option value="Flesh Clan">Flesh Clan</option><option value="Stone Clan">Stone Clan</option><option value="Fire Clan">Fire Clan</option><option value="Night Clan">Night Clan</option>
+        <option value="Flesh Clan Archer">Flesh Clan Archer</option><option value="Stone Clan Archer">Stone Clan Archer</option><option value="Fire Clan Archer">Fire Clan Archer</option><option value="Night Clan Archer">Night Clan Archer</option>
+        <option value="Overlord">Overlord</option><option value="Mud Man">Mud Man</option><option value="Toad Demon">Toad Demon</option><option value="Flayed One">Flayed One</option>
+        <option value="Winged-Demon">Winged-Demon</option><option value="Gargoyle">Gargoyle</option><option value="Blood Claw">Blood Claw</option><option value="Death Wing">Death Wing</option>
+        <option value="Magma Demon">Magma Demon</option><option value="Blood Stone">Blood Stone</option><option value="Hell Stone">Hell Stone</option><option value="Lava Lord">Lava Lord</option>
+        <option value="Horned Demon">Horned Demon</option><option value="Mud Runner">Mud Runner</option><option value="Frost Charger">Frost Charger</option><option value="Obsidian Lord">Obsidian Lord</option>
+        <option value="Acid Beast">Acid Beast</option><option value="Poison Spitter">Poison Spitter</option><option value="Pit Beast">Pit Beast</option><option value="Lava Maw">Lava Maw</option>
+        <option value="Red Storm">Red Storm</option><option value="Storm Rider">Storm Rider</option><option value="Storm Lord">Storm Lord</option><option value="Maelstrom">Maelstrom</option>
+        <option value="Slayer">Slayer</option><option value="Guardian">Guardian</option><option value="Vortex Lord">Vortex Lord</option><option value="Balrog">Balrog</option>
+        <option value="Cave Viper">Cave Viper</option><option value="Fire Drake">Fire Drake</option><option value="Gold Viper">Gold Viper</option><option value="Azure Drake">Azure Drake</option>
+        <option value="Succubus">Succubus</option><option value="Snow Witch">Snow Witch</option><option value="Hell Spawn">Hell Spawn</option><option value="Soul Burner">Soul Burner</option>
+        <option value="Black Knight">Black Knight</option><option value="Doom Guard">Doom Guard</option><option value="Steel Lord">Steel Lord</option><option value="Blood Knight">Blood Knight</option>
+        <option value="Counselor">Counselor</option><option value="Magistrate">Magistrate</option><option value="Cabalist">Cabalist</option><option value="Advocate">Advocate</option>
+      </select>
+    </div>
+    <div class="field"><label>Difficulty</label>
+      <select name="difficulty" onchange="parseDifficulty()">
+        <option value="Normal">Normal</option>
+        <option value="Nightmare">Nightmare</option>
+        <option value="Hell">Hell</option>
+      </select>
+    </div>
+    <div class="field"><label>Dlvl</label>
+      <select name="dlvl" onchange="parseDlvl()">
+        <script>for(var i=1;i<=16;i++)document.write('<option value="'+i+'">'+i+'</option>');</script>
+        <option value="Hive 1">Hive 1</option><option value="Hive 2">Hive 2</option><option value="Hive 3">Hive 3</option><option value="Hive 4">Hive 4</option>
+        <option value="Crypt 1">Crypt 1</option><option value="Crypt 2">Crypt 2</option><option value="Crypt 3">Crypt 3</option><option value="Crypt 4">Crypt 4</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="field"><label>To-Hit %</label><input name="tohit_fld" value="" size="6" onchange="parseTohit()" type="text"></div>
+    <div class="field"><label>Dexterity</label><input name="dex_fld" value="" size="6" onchange="parseDexterity()" type="text"></div>
+    <div class="field"><label>Armor Class</label><input name="armor_fld" value="" size="6" onchange="parseArmor()" type="text"></div>
+  </div>
+
+  <div class="buttons">
+    <input value="Calculate" onclick="bothatonce()" type="button">
+    <input value="Reset" onclick="reset_form()" type="button">
+  </div>
+
+  <textarea name="results" rows="12" readonly></textarea>
+  <textarea name="results2" rows="4" readonly style="margin-top:0.5rem;"></textarea>
+
+  <!-- Hidden fields for advanced features -->
+  <div class="hidden">
+    <select name="weapon" onchange="parseWeapon()"><option value="Bare">Bare</option><option value="Axe">Axe</option><option value="Bow">Bow</option><option value="Club">Club</option><option value="Shield">Shield</option><option value="Staff">Staff</option><option value="Sword">Sword</option></select>
+    <select name="slvl" onchange="parseSlvl()"><script>for(var i=0;i<=20;i++)document.write('<option value="'+i+'">'+i+'</option>');</script></select>
+    <input name="str_fld" value="" onchange="parseStrength()" type="text">
+    <input name="mag_fld" value="" onchange="parseMagic()" type="text">
+    <input name="vit_fld" value="" onchange="parseVitality()" type="text">
+    <input name="resmagic_fld" value="" onchange="parseResMagic()" type="text">
+    <input name="resfire_fld" value="" onchange="parseResFire()" type="text">
+    <input name="reslightning_fld" value="" onchange="parseResLightning()" type="text">
+    <select name="special" onchange="parseSpecial()"><option value="Plain Monsters">Plain Monsters</option><option value="Boss Monsters">Boss Monsters</option><option value="Special Monsters">Special Monsters</option><option value="Player vs Player">Player vs Player</option><option value="Golem vs Monster">Golem vs Monster</option><option value="Trap Encounters">Trap Encounters</option><option value="Item Drops">Item Drops</option><option value="Assorted Stats">Assorted Stats</option></select>
+    <select name="duelclvl" onchange="parseDuelClvl()"><script>for(var i=1;i<=50;i++)document.write('<option value="'+i+'">'+i+'</option>');</script></select>
+    <input name="duelstr_fld" value="" onchange="parseDuelStrength()" type="text">
+    <input name="duelmag_fld" value="" onchange="parseDuelMagic()" type="text">
+    <input name="dueldex_fld" value="" onchange="parseDuelDexterity()" type="text">
+    <input name="duelarmor_fld" value="" onchange="parseDuelArmor()" type="text">
+    <input name="dueltohit_fld" value="" onchange="parseDuelTohit()" type="text">
+    <input name="duelres_fld" value="" onchange="parseResDuel()" type="text">
+    <input name="damlow_fld" value="" onchange="parseDamageLow()" type="text">
+    <input name="damhigh_fld" value="" onchange="parseDamageHigh()" type="text">
+  </div>
+</div>
 </form>
-</center>
-</body>
-</html>
+<script>
+// --------------------------------
+// These values should be Constants
+
+var maxCharLevel = 50;
+var maxDungeonLevel = 17;
+var maxHiveLevel = 4;
+var maxCryptLevel = 4;
+var maxSpellLevel = 20;
+var maxResistance = 75;
+var maxDamage = 1500;
+var autoHit = 5;
+var autoMiss = 95;
+
+
+function create_internalflags( player_flag, clvl_flag, weapon_flag, slvl_flag, strength_flag, magic_flag, dexterity_flag, vitality_flag, armor_flag, tohit_flag, damlow_flag, damhigh_flag, resmagic_flag, resfire_flag, reslightning_flag, game_flag, difficulty_flag, dlvl_flag, special_flag, extra_flag, duelclvl_flag, duelstrength_flag, duelmagic_flag, dueldexterity_flag, duelarmor_flag, dueltohit_flag, duelresistance_flag) {
+
+this.player_flag = player_flag;
+this.clvl_flag = clvl_flag;
+this.weapon_flag = weapon_flag;
+this.slvl_flag = slvl_flag;
+this.strength_flag = strength_flag;
+this.magic_flag = magic_flag;
+this.dexterity_flag = dexterity_flag;
+this.vitality_flag = vitality_flag;
+this.armor_flag = armor_flag;
+this.tohit_flag = tohit_flag;
+this.damlow_flag = damlow_flag;
+this.damhigh_flag = damhigh_flag;
+this.resmagic_flag = resmagic_flag;
+this.resfire_flag = resfire_flag;
+this.reslightning_flag = reslightning_flag;
+
+this.game_flag = game_flag;
+this.difficulty_flag = difficulty_flag;
+this.dlvl_flag = dlvl_flag;
+this.special_flag = special_flag;
+this.extra_flag = extra_flag;
+this.duelclvl_flag = duelclvl_flag;
+this.duelstrength_flag = duelstrength_flag;
+this.duelmagic_flag = duelmagic_flag;
+this.dueldexterity_flag = dueldexterity_flag;
+this.duelarmor_flag = duelarmor_flag;
+this.dueltohit_flag = dueltohit_flag;
+this.duelresistance_flag = duelresistance_flag;
+}
+
+var internalflags = new create_internalflags( false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+
+
+function create_internal( ia_player, ia_clvl, ia_weapon, ia_slvl, ia_strength, ia_magic, ia_dexterity, ia_vitality, ia_armor, ia_tohit, ia_damlow, ia_damhigh, ia_resmagic, ia_resfire, ia_reslightning, ia_game, ia_difficulty, ia_dlvl, ia_special, ia_extra, ia_duelclvl, ia_duelstrength, ia_duelmagic, ia_dueldexterity, ia_duelarmor, ia_dueltohit, ia_duelresistance) {
+
+this.ia_player = ia_player;
+this.ia_clvl = ia_clvl;
+this.ia_weapon = ia_weapon;
+this.ia_slvl = ia_slvl;
+this.ia_strength = ia_strength;
+this.ia_magic = ia_magic;
+this.ia_dexterity = ia_dexterity;
+this.ia_vitality = ia_vitality;
+this.ia_armor = ia_armor;
+this.ia_tohit = ia_tohit;
+this.ia_damlow = ia_damlow;
+this.ia_damhigh = ia_damhigh;
+this.ia_resmagic = ia_resmagic;
+this.ia_resfire = ia_resfire;
+this.ia_reslightning = ia_reslightning;
+
+this.ia_game = ia_game;
+this.ia_difficulty = ia_difficulty;
+this.ia_dlvl = ia_dlvl;
+this.ia_special = ia_special;
+this.ia_extra = ia_extra;
+this.ia_duelclvl = ia_duelclvl;
+this.ia_duelstrength = ia_duelstrength;
+this.ia_duelmagic = ia_duelmagic;
+this.ia_dueldexterity = ia_dueldexterity;
+this.ia_duelarmor = ia_duelarmor;
+this.ia_dueltohit = ia_dueltohit;
+this.ia_duelresistance = ia_duelresistance;
+}
+
+var internal = new create_internal( "Warrior", 1, "Bare", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "MP Diablo", "Normal", "1", "Plain Monsters", "Zombie", 1, 0, 0, 0, 0, 0, 0);
+
+
+
+function reset_form() {
+
+// reset the internal variables here
+with( internal) {
+  ia_player = "Warrior";
+  ia_clvl = 1;
+  ia_weapon = "Bare";
+  ia_slvl = 0;
+  ia_strength = 0;
+  ia_magic = 0;
+  ia_dexterity = 0;
+  ia_vitality = 0;
+  ia_armor = 0;
+  ia_tohit = 0;
+  ia_damlow = 0;
+  ia_damhigh = 0;
+  ia_resmagic = 0;
+  ia_resfire = 0;
+  ia_reslightning = 0;
+
+  ia_game = "MP Diablo";
+  ia_difficulty = "Normal";
+  ia_dlvl = "1";
+  ia_special = "Plain Monsters";
+  ia_extra = "Zombie";
+  ia_duelclvl = 1;
+  ia_duelstrength = 0;
+  ia_duelmagic = 0;
+  ia_dueldexterity = 0;
+  ia_duelarmor = 0;
+  ia_dueltohit = 0;
+  ia_duelresistance = 0;
+  }
+
+// reset the flags here
+with( internalflags) {
+  player_flag = false;
+  clvl_flag = false;
+  weapon_flag = false;
+  slvl_flag = false;
+  strength_flag = false;
+  magic_flag = false;
+  dexterity_flag = false;
+  vitality_flag = false;
+  armor_flag = false;
+  tohit_flag = false;
+  damlow_flag = false;
+  damhigh_flag = false;
+  resmagic_flag = false;
+  resfire_flag = false;
+  reslightning_flag = false;
+
+  game_flag = false;
+  difficulty_flag = false;
+  dlvl_flag = false;
+  special_flag = false;
+  extra_flag = false;
+  duelclvl_flag = false;
+  duelstrength_flag = false;
+  duelmagic_flag = false;
+  dueldexterity_flag = false;
+  duelarmor_flag = false;
+  dueltohit_flag = false;
+  duelresistance_flag = false;
+  }
+
+// reset the form fields
+with( document.combat) {
+  player.selectedIndex = 0;
+  clvl.selectedIndex = 0;
+  weapon.selectedIndex = 0;
+  slvl.selectedIndex = 0;
+  str_fld.value = "";
+  mag_fld.value = "";
+  dex_fld.value = "";
+  vit_fld.value = "";
+  armor_fld.value = "";
+  tohit_fld.value = "";
+  damlow_fld.value = "";
+  damhigh_fld.value = "";
+  resmagic_fld.value = "";
+  resfire_fld.value = "";
+  reslightning_fld.value = "";
+
+  game.selectedIndex = 0;
+  difficulty.selectedIndex = 0;
+  dlvl.selectedIndex = 0;
+  special.selectedIndex = 0;
+  extra.selectedIndex = 0;
+  duelclvl.selectedIndex = 0;
+  duelstr_fld.value = "";
+  duelmag_fld.value = "";
+  dueldex_fld.value = "";
+  duelarmor_fld.value = "";
+  dueltohit_fld.value = "";
+  duelres_fld.value = "";
+
+  results.value = "";
+  results2.value = "";
+  }
+}
+
+function print_flags() {
+
+var output = "";
+
+with( internalflags) {
+  output += player_flag + "\n";
+  output += clvl_flag + "\n";
+  output += weapon_flag + "\n";
+  output += slvl_flag + "\n";
+  output += strength_flag + "\n";
+  output += magic_flag + "\n";
+  output += dexterity_flag + "\n";
+  output += vitality_flag + "\n";
+  output += armor_flag + "\n";
+  output += tohit_flag + "\n";
+  output += damlow_flag + "\n";
+  output += damhigh_flag + "\n";
+  output += resmagic_flag + "\n";
+  output += resfire_flag + "\n";
+  output += reslightning_flag + "\n";
+  output += game_flag + "\n";
+  output += difficulty_flag + "\n";
+  output += dlvl_flag + "\n";
+  output += special_flag + "\n";
+  output += extra_flag + "\n";
+  output += duelclvl_flag + "\n";
+  output += duelstrength_flag + "\n";
+  output += duelmagic_flag + "\n";
+  output += dueldexterity_flag + "\n";
+  output += duelarmor_flag + "\n";
+  output += dueltohit_flag + "\n";
+  output += duelresistance_flag + "\n";
+  }
+document.combat.results.value = output;
+document.combat.results2.value = output;
+}
+
+function print_internal () {
+
+var output = "";
+
+with( internal) {
+  output += ia_player + "\n";
+  output += ia_clvl + "\n";
+  output += ia_weapon + "\n";
+  output += ia_slvl + "\n";
+  output += ia_strength + "\n";
+  output += ia_magic + "\n";
+  output += ia_dexterity + "\n";
+  output += ia_vitality + "\n";
+  output += ia_armor + "\n";
+  output += ia_tohit + "\n";
+  output += ia_damlow + "\n";
+  output += ia_damhigh + "\n";
+  output += ia_resmagic + "\n";
+  output += ia_resfire + "\n";
+  output += ia_reslightning + "\n";
+  output += ia_game + "\n";
+  output += ia_difficulty + "\n";
+  output += ia_dlvl + "\n";
+  output += ia_special + "\n";
+  output += ia_extra + "\n";
+  output += ia_duelclvl + "\n";
+  output += ia_duelstrength + "\n";
+  output += ia_duelmagic + "\n";
+  output += ia_dueldexterity + "\n";
+  output += ia_duelarmor + "\n";
+  output += ia_dueltohit + "\n";
+  output += ia_duelresistance + "\n";
+  }
+document.combat.results.value = output;
+document.combat.results2.value = output;
+}
+
+// --------------------------------
+// Monster Attributes
+
+// m_type == Monster Name
+// m_class == Monster Class
+// m_dlvllow == first occurance
+// m_dlvlhigh == last occurance
+// m_mlvl == Monster Level
+// m_hitpointslow == minimum monster hp
+// m_hitpointshigh == maximum monster hp
+// m_armor == Monster Armor
+// m_tohit == Monster To-Hit%
+// m_damagelow == Low End of Monster Damage
+// m_damagehigh == High End of Monster Damage
+// m_resm1 == Resistance to Magic on Normal and Nightmare
+// m_resf1 == Resistance to Fire on Normal and Nightmare
+// m_resl1 == Resistance to Lightning on Normal and Nightmare
+// m_resm2 == Resistance to Magic on Hell
+// m_resf2 == Resistance to Fire on Hell
+// m_resl2 == Resistance to Lightning on Hell
+// m_experience == Monster Experience Value
+
+function monster_attributes(m_type, m_class, m_dlvllow, m_dlvlhigh, m_mlvl, m_hitpointslow, m_hitpointshigh, m_armor, m_tohit, m_damagelow, m_damagehigh, m_resm1, m_resf1, m_resl1, m_resm2, m_resf2, m_resl2, m_experience) {
+
+this.m_type = m_type;
+this.m_class = m_class;
+this.m_dlvllow = m_dlvllow;
+this.m_dlvlhigh = m_dlvlhigh;
+this.m_mlvl = m_mlvl;
+this.m_hitpointslow = m_hitpointslow;
+this.m_hitpointshigh = m_hitpointshigh;
+this.m_armor = m_armor;
+this.m_tohit = m_tohit;
+this.m_damagelow = m_damagelow;
+this.m_damagehigh = m_damagehigh;
+this.m_resm1 = m_resm1;
+this.m_resf1 = m_resf1;
+this.m_resl1 = m_resl1;
+this.m_resm2 = m_resm2;
+this.m_resf2 = m_resf2;
+this.m_resl2 = m_resl2;
+this.m_experience = m_experience;
+}
+
+var monsterArray = new Array(
+
+new monster_attributes("Zombie", "Zombie", 1, 2, 1, 4, 7, 5, 10, 2, 5, "I", "-", "-", "I", "-", "-", 54), 
+new monster_attributes("Ghoul", "Zombie", 2, 3, 2, 7, 11, 10, 10, 3, 10, "I", "-", "-", "I", "-", "-", 58),
+new monster_attributes("Rotting Carcass", "Zombie", 2, 4, 4, 15, 25, 15, 25, 5, 15, "I", "-", "-", "I", "R", "-", 136),
+new monster_attributes("Black Death", "Zombie", 3, 5, 6, 25, 40, 20, 30, 6, 22, "I", "-", "-", "I", "-", "R", 240),
+
+new monster_attributes("Fallen One (spear)", "FallenSpear", 1, 3, 1, 1, 4, 0, 15, 1, 3, "-", "-", "-", "-", "-", "-", 46),
+new monster_attributes("Carver (spear)", "FallenSpear", 2, 3, 3, 4, 8, 5, 20, 2, 5, "-", "-", "-", "-", "-", "-", 80),
+new monster_attributes("Devil Kin (spear)", "FallenSpear", 2, 4, 5, 12, 24, 10, 25, 3, 7, "-", "-", "-", "-", "R", "-", 155),
+new monster_attributes("Dark One (spear)", "FallenSpear", 3, 5, 7, 20, 36, 15, 30, 4, 8, "-", "-", "-", "-", "-", "R", 255),
+
+new monster_attributes("Fallen One (sword)", "FallenSword", 1, 3, 1, 2, 5, 10, 15, 1, 4, "-", "-", "-", "-", "-", "-", 52),
+new monster_attributes("Carver (sword)", "FallenSword", 2, 3, 3, 5, 9, 15, 20, 2, 7, "-", "-", "-", "-", "-", "-", 90),
+new monster_attributes("Devil Kin (sword)", "FallenSword", 2, 4, 5, 16, 24, 20, 25, 4, 10, "-", "-", "-", "-", "R", "-", 180),
+new monster_attributes("Dark One (sword)", "FallenSword", 3, 5, 7, 24, 36, 25, 30, 4, 12, "-", "-", "-", "-", "-", "R", 280),
+
+new monster_attributes("Skeleton", "Skeleton", 1, 2, 1, 2, 4, 0, 20, 1, 4, "I", "-", "-", "I", "-", "-", 64),
+new monster_attributes("Corpse Axe", "Skeleton", 2, 3, 2, 4, 7, 0, 25, 3, 5, "I", "-", "-", "I", "-", "-", 68),
+new monster_attributes("Burning Dead", "Skeleton", 2, 4, 4, 8, 12, 5, 30, 3, 7, "I", "R", "-", "I", "I", "-", 154),
+new monster_attributes("Horror", "Skeleton", 3, 5, 6, 12, 20, 15, 35, 4, 9, "I", "-", "R", "I", "-", "R", 264),
+
+new monster_attributes("Skeleton Archer", "SkeletonArcher", 2, 3, 3, 2, 4, 0, 15, 1, 2, "I", "-", "-", "I", "-", "-", 110),
+new monster_attributes("Corpse Bow", "SkeletonArcher", 2, 4, 5, 8, 16, 0, 25, 1, 4, "I", "-", "-", "I", "-", "-", 210),
+new monster_attributes("Burning Dead Archer", "SkeletonArcher", 3, 5, 7, 10, 24, 5, 30, 1, 6, "I", "R", "-", "I", "I", "-", 364),
+new monster_attributes("Horror Archer", "SkeletonArcher", 4, 6, 9, 15, 45, 15, 35, 2, 9, "I", "-", "R", "I", "-", "R", 594),
+
+new monster_attributes("Skeleton Captain", "SkeletonCaptain", 1, 3, 2, 3, 6, 10, 20, 2, 7, "I", "-", "-", "I", "-", "-", 90),
+new monster_attributes("Corpse Captain", "SkeletonCaptain", 2, 4, 4, 12, 20, 5, 30, 3, 9, "I", "-", "-", "I", "-", "-", 200),
+new monster_attributes("Burning Dead Captain", "SkeletonCaptain", 3, 5, 6, 16, 30, 15, 35, 4, 10, "I", "R", "-", "I", "I", "-", 393),
+new monster_attributes("Horror Captain", "SkeletonCaptain", 4, 6, 8, 35, 50, 30, 40, 5, 14, "I", "-", "R", "I", "-", "R", 604),
+
+new monster_attributes("Scavenger", "Scavenger", 1, 3, 2, 3, 6, 10, 20, 1, 5, "-", "-", "-", "-", "R", "-", 80),
+new monster_attributes("Plague Eater", "Scavenger", 2, 4, 4, 12, 24, 20, 30, 1, 8, "-", "-", "-", "-", "-", "R", 188),
+new monster_attributes("Shadow Beast", "Scavenger", 3, 5, 6, 24, 36, 25, 35, 3, 12, "-", "-", "-", "-", "R", "-", 375),
+new monster_attributes("Bone Gasher", "Scavenger", 4, 6, 8, 28, 40, 30, 35, 5, 15, "R", "-", "-", "-", "-", "R", 552),
+
+new monster_attributes("Fiend", "WingedFiend", 2, 3, 3, 3, 6, 0, 35, 1, 6, "-", "-", "-", "-", "-", "-", 102),
+new monster_attributes("Blink", "WingedFiend", 3, 5, 7, 12, 28, 15, 45, 1, 8, "-", "-", "-", "-", "-", "-", 340),
+new monster_attributes("Gloom", "WingedFiend", 4, 6, 9, 28, 36, 35, 70, 4, 12, "R", "-", "-", "R", "-", "-", 509),
+new monster_attributes("Familiar", "WingedFiend", 6, 8, 13, 20, 35, 35, 50, 4, 16, "R", "-", "I", "R", "-", "I", 448),
+
+new monster_attributes("Hidden", "Hidden", 2, 5, 5, 8, 24, 25, 35, 3, 6, "-", "-", "-", "-", "-", "-", 278),
+new monster_attributes("Stalker", "Hidden", 5, 7, 9, 30, 45, 30, 40, 8, 16, "-", "-", "-", "-", "-", "-", 630),
+new monster_attributes("Unseen", "Hidden", 6, 8, 11, 35, 50, 30, 45, 12, 20, "R", "-", "-", "I", "-", "-", 935),
+new monster_attributes("Illusion Weaver", "Hidden", 8, 10, 13, 40, 60, 30, 60, 16, 24, "R", "R", "-", "I", "R", "-", 1500),
+
+new monster_attributes("Flesh Clan", "GoatMan", 4, 6, 8, 30, 45, 40, 50, 4, 10, "-", "-", "-", "-", "-", "-", 460),
+new monster_attributes("Stone Clan", "GoatMan", 5, 7, 10, 40, 55, 40, 60, 4, 12, "R", "-", "-", "I", "-", "-", 685),
+new monster_attributes("Fire Clan", "GoatMan", 6, 8, 12, 50, 65, 45, 70, 8, 16, "-", "R", "-", "-", "I", "-", 906),
+new monster_attributes("Night Clan", "GoatMan", 7, 9, 14, 55, 70, 50, 80, 10, 20, "R", "-", "-", "I", "-", "-", 1190),
+
+new monster_attributes("Flesh Clan Archer", "GoatManArcher", 4, 6, 8, 20, 35, 35, 35, 1, 7, "-", "-", "-", "-", "-", "-", 448),
+new monster_attributes("Stone Clan Archer", "GoatManArcher", 5, 7, 10, 30, 40, 35, 40, 2, 9, "R", "-", "-", "I", "-", "-", 645),
+new monster_attributes("Fire Clan Archer", "GoatManArcher", 6, 8, 12, 40, 50, 35, 45, 3, 11, "-", "R", "-", "-", "I", "-", 882),
+new monster_attributes("Night Clan Archer", "GoatManArcher", 7, 9, 14, 50, 65, 40, 50, 4, 13, "R", "-", "-", "I", "-", "-", 1092),
+
+new monster_attributes("Overlord", "Overlord", 5, 7, 10, 60, 80, 55, 55, 6, 12, "-", "-", "-", "-", "R", "-", 635),
+new monster_attributes("Mud Man", "Overlord", 7, 9, 14, 100, 125, 60, 60, 8, 16, "-", "-", "-", "-", "-", "I", 1165),
+new monster_attributes("Toad Demon", "Overlord", 8, 10, 16, 135, 160, 65, 70, 8, 16, "I", "-", "-", "I", "-", "R", 1380),
+new monster_attributes("Flayed One", "Overlord", 10, 12, 20, 160, 200, 70, 85, 10, 20, "R", "I", "-", "I", "I", "-", 2058),
+
+new monster_attributes("Winged-Demon", "Gargoyle", 5, 7, 9, 45, 60, 45, 50, 10, 16, "I", "R", "-", "I", "I", "-", 662),
+new monster_attributes("Gargoyle", "Gargoyle", 7, 9, 13, 60, 90, 45, 65, 10, 16, "I", "-", "R", "I", "-", "I", 1205),
+new monster_attributes("Blood Claw", "Gargoyle", 9, 11, 19, 75, 125, 50, 80, 14, 22, "I", "I", "-", "I", "I", "R", 1873),
+new monster_attributes("Death Wing", "Gargoyle", 10, 12, 23, 90, 150, 60, 95, 16, 28, "I", "-", "I", "I", "R", "I", 2278),
+
+new monster_attributes("Magma Demon", "MagmaDemon", 8, 9, 13, 50, 70, 45, 45, 2, 10, "I", "R", "-", "I", "I", "-", 1076),
+new monster_attributes("Blood Stone", "MagmaDemon", 8, 10, 14, 55, 75, 45, 50, 2, 12, "I", "I", "-", "I", "I", "-", 1309),
+new monster_attributes("Hell Stone", "MagmaDemon", 9, 11, 16, 60, 80, 50, 60, 2, 20, "I", "I", "-", "I", "I", "-", 1680),
+new monster_attributes("Lava Lord", "MagmaDemon", 9, 11, 18, 70, 85, 60, 75, 4, 24, "I", "I", "-", "I", "I", "-", 2124),
+
+new monster_attributes("Horned Demon", "HornedDemon", 7, 9, 13, 40, 80, 40, 60, 2, 16, "-", "-", "-", "-", "R", "-", 1172),
+new monster_attributes("Mud Runner", "HornedDemon", 8, 10, 15, 50, 90, 45, 70, 6, 18, "-", "-", "-", "-", "R", "-", 1404),
+new monster_attributes("Frost Charger", "HornedDemon", 9, 11, 17, 60, 100, 50, 80, 8, 20, "I", "-", "R", "I", "-", "R", 1720),
+new monster_attributes("Obsidian Lord", "HornedDemon", 10, 12, 19, 70, 110, 55, 90, 10, 22, "I", "-", "R", "I", "I", "I", 1809),
+
+new monster_attributes("Acid Beast", "SpittingTerror", 6, 8, 11, 40, 66, 30, 40, 4, 12, "-", "-", "-", "I", "-", "-", 846),
+new monster_attributes("Poison Spitter", "SpittingTerror", 8, 10, 15, 60, 85, 30, 45, 4, 16, "-", "-", "-", "I", "-", "-", 1248),
+new monster_attributes("Pit Beast", "SpittingTerror", 8, 12, 21, 80, 110, 35, 55, 8, 18, "R", "-", "-", "I", "-", "R", 2060),
+new monster_attributes("Lava Maw", "SpittingTerror", 12, 14, 25, 100, 150, 35, 65, 10, 20, "r", "I", "-", "I", "I", "-", 2940),
+
+new monster_attributes("Red Storm", "LightningDemon", 9, 11, 18, 55, 110, 30, 80, 8, 18, "I", "-", "R", "I", "-", "I", 2160),
+new monster_attributes("Storm Rider", "LightningDemon", 10, 12, 20, 60, 120, 30, 80, 8, 18, "R", "-", "I", "I", "-", "I", 2391),
+new monster_attributes("Storm Lord", "LightningDemon", 11, 13, 22, 75, 135, 35, 85, 12, 24, "R", "-", "I", "I", "-", "I", 2775),
+new monster_attributes("Maelstrom", "LightningDemon", 12, 14, 24, 90, 150, 40, 90, 12, 28, "R", "-", "I", "I", "-", "I", 3177),
+
+new monster_attributes("Slayer", "Balrog", 10, 12, 20, 120, 140, 60, 100, 12, 20, "R", "I", "-", "R", "I", "-", 2300),
+new monster_attributes("Guardian", "Balrog", 11, 13, 22, 140, 160, 65, 110, 14, 22, "R", "I", "-", "R", "I", "-", 2714),
+new monster_attributes("Vortex Lord", "Balrog", 12, 14, 24, 160, 180, 70, 120, 18, 24, "R", "I", "-", "R", "I", "R", 3252),
+new monster_attributes("Balrog", "Balrog", 13, 15, 26, 180, 200, 75, 130, 22, 30, "R", "I", "-", "R", "I", "R", 3643),
+
+new monster_attributes("Cave Viper", "Viper", 11, 13, 21, 100, 150, 60, 90, 8, 20, "I", "-", "-", "I", "-", "-", 2725),
+new monster_attributes("Fire Drake", "Viper", 12, 14, 23, 120, 170, 65, 105, 12, 24, "I", "R", "-", "I", "I", "-", 3139),
+new monster_attributes("Gold Viper", "Viper", 13, 14, 25, 140, 180, 70, 120, 15, 26, "I", "-", "R", "I", "-", "R", 3484),
+new monster_attributes("Azure Drake", "Viper", 15, 15, 27, 160, 200, 75, 130, 18, 30, "-", "R", "R", "I", "R", "I", 3791),
+
+new monster_attributes("Succubus", "Succubus", 12, 14, 24, 120, 150, 60, 100, 1, 20, "R", "-", "-", "I", "R", "-", 3696),
+new monster_attributes("Snow Witch", "Succubus", 13, 15, 26, 135, 175, 65, 110, 1, 24, "-", "-", "R", "I", "-", "R", 4084),
+new monster_attributes("Hell Spawn", "Succubus", 14, 15, 28, 150, 200, 75, 115, 1, 30, "R", "-", "I", "I", "I", "R", 4480),
+new monster_attributes("Soul Burner", "Succubus", 15, 15, 30, 140, 225, 85, 120, 1, 35, "R", "I", "R", "I", "I", "I", 4644),
+
+new monster_attributes("Black Knight", "Knight", 12, 14, 24, 150, 150, 75, 110, 15, 20, "R", "-", "R", "R", "-", "I", 3360),
+new monster_attributes("Doom Guard", "Knight", 13, 15, 26, 165, 165, 75, 130, 18, 25, "R", "R", "-", "R", "I", "-", 3650),
+new monster_attributes("Steel Lord", "Knight", 14, 15, 28, 180, 180, 80, 120, 20, 30, "R", "I", "R", "I", "I", "R", 4252),
+new monster_attributes("Blood Knight", "Knight", 13, 16, 30, 200, 200, 85, 130, 25, 35, "I", "R", "I", "I", "R", "I", 5130),
+
+new monster_attributes("Counselor", "Mage", 13, 14, 25, 70, 70, 0, 90, 8, 20, "R", "R", "R", "R", "R", "R", 3876),
+new monster_attributes("Magistrate", "Mage", 14, 15, 27, 85, 85, 0, 100, 10, 24, "R", "I", "R", "I", "I", "R", 4478),
+new monster_attributes("Cabalist", "Mage", 15, 15, 29, 120, 120, 0, 110, 14, 30, "R", "R", "I", "I", "R", "I", 4929),
+new monster_attributes("Advocate", "Mage", 16, 16, 30, 145, 145, 0, 120, 15, 25, "I", "R", "I", "I", "I", "I", 4968)
+
+);
+
+function parsePlayer() {
+
+var index = document.combat.player.selectedIndex;
+
+internal.ia_player = playerArray[index].p_type;
+internalflags.player_flag = true;
+
+parseStrength();
+parseMagic();
+parseDexterity();
+parseVitality();
+parseArmor();
+parseTohit();
+parseDamageLow();
+parseDamageHigh();
+parseResMagic();
+parseResFire();
+parseResLightning();
+
+checkForm( "player");
+}
+
+function parseClvl() {
+
+var index = document.combat.clvl.selectedIndex;
+
+internal.ia_clvl = document.combat.clvl[index].value;
+internalflags.clvl_flag = true;
+}
+
+function parseWeapon() {
+
+var index = document.combat.weapon.selectedIndex;
+
+internal.ia_weapon = weaponArray[index].w_type;
+internalflags.weapon_flag = true;
+
+checkForm( "weapon");
+}
+
+function parseSlvl() {
+
+var index = document.combat.slvl.selectedIndex;
+
+internal.ia_slvl = document.combat.slvl[index].value;
+internalflags.slvl_flag = true;
+}
+
+function parseStrength() {
+
+// Check for default - exit
+if( document.combat.str_fld.value == "")
+  return;
+
+var strVal = parseInt( document.combat.str_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.player.selectedIndex;
+var maxStr = 0;
+
+
+// Bad entry - exit
+if( isNaN(strVal)) {
+  if( internalflags.strength_flag)
+    alert("Not a Valid Strength Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Strength Number!\nPlease retry.");
+  document.combat.str_fld.value = internal.ia_strength;
+  return;
+  }
+
+// Negative entry - set to zero
+if( strVal < 0)
+  strVal = 0;
+
+// Check for HF max
+if( (internal.ia_game == "MP Hellfire") || (internal.ia_game == "SP Hellfire"))
+  maxStr = playerArray[player_index].p_hfstrength;
+else
+  maxStr = playerArray[player_index].p_strength;
+
+// Check for excessive entry
+if( strVal > maxStr)
+  strVal = maxStr;
+
+document.combat.str_fld.value = strVal;
+internal.ia_strength = strVal;
+internalflags.strength_flag = true;
+}
+
+function parseMagic() {
+
+// Check for default - exit
+if( document.combat.mag_fld.value == "")
+  return;
+
+var magVal = parseInt( document.combat.mag_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.player.selectedIndex;
+var maxMag = 0;
+
+// Bad entry - exit
+if( isNaN(magVal)) {
+  if( internalflags.magic_flag)
+    alert("Not a Valid Magic Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Magic Number!\nPlease retry.");
+  document.combat.mag_fld.value = internal.ia_magic;
+  return;
+  }
+
+// Negative entry - set to zero
+if( magVal < 0)
+  magVal = 0;
+
+// Check for HF max
+if( (internal.ia_game == "MP Hellfire") || (internal.ia_game == "SP Hellfire"))
+  maxMag = playerArray[player_index].p_hfmagic;
+else
+  maxMag = playerArray[player_index].p_magic;
+
+// Check for excessive entry
+if( magVal > maxMag)
+  magVal = maxMag;
+
+document.combat.mag_fld.value = magVal;
+internal.ia_magic = magVal;
+internalflags.magic_flag = true;
+}
+
+function parseDexterity() {
+
+// Check for default - exit
+if( document.combat.dex_fld.value == "")
+  return;
+
+var dexVal = parseInt( document.combat.dex_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.player.selectedIndex;
+var maxDex = 0;
+
+// Bad entry - exit
+if( isNaN(dexVal)) {
+  if( internalflags.dexterity_flag)
+    alert("Not a Valid Dexterity Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Dexterity Number!\nPlease retry.");
+  document.combat.dex_fld.value = internal.ia_dexterity;
+  return;
+  }
+
+// Negative entry - set to zero
+if( dexVal < 0)
+  dexVal = 0;
+
+// Check for HF max
+if( (internal.ia_game == "MP Hellfire") || (internal.ia_game == "SP Hellfire"))
+  maxDex = playerArray[player_index].p_hfdexterity;
+else
+  maxDex = playerArray[player_index].p_dexterity;
+
+// Check for excessive entry
+if( dexVal > maxDex)
+  dexVal = maxDex;
+
+document.combat.dex_fld.value = dexVal;
+internal.ia_dexterity = dexVal;
+internalflags.dexterity_flag = true;
+}
+
+function parseVitality() {
+
+// Check for default - exit
+if( document.combat.vit_fld.value == "")
+  return;
+
+var vitVal = parseInt( document.combat.vit_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.player.selectedIndex;
+var maxVit = 0;
+
+// Bad entry - exit
+if( isNaN(vitVal)) {
+  if( internalflags.vitality_flag)
+    alert("Not a Valid Vitality Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Vitality Number!\nPlease retry.");
+  document.combat.vit_fld.value = internal.ia_vitality;
+  return;
+  }
+
+// Negative entry - set to zero
+if( vitVal < 0)
+  vitVal = 0;
+
+// Check for HF max
+if( (internal.ia_game == "MP Hellfire") || (internal.ia_game == "SP Hellfire"))
+  maxVit = playerArray[player_index].p_hfvitality;
+else
+  maxVit = playerArray[player_index].p_vitality;
+
+// Check for excessive entry
+if( vitVal > maxVit)
+  vitVal = maxVit;
+
+document.combat.vit_fld.value = vitVal;
+internal.ia_vitality = vitVal;
+internalflags.vitality_flag = true;
+}
+
+function parseArmor() {
+
+// Check for default - exit
+if( document.combat.armor_fld.value == "")
+  return;
+
+var armorVal = parseInt( document.combat.armor_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.player.selectedIndex;
+var maxArmor = 0;
+
+// Bad entry - exit
+if( isNaN(armorVal)) {
+  if( internalflags.armor_flag)
+    alert("Not a Valid Armor Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Armor Number!\nPlease retry.");
+  document.combat.armor_fld.value = internal.ia_armor;
+  return;
+  }
+
+// Negative entry - set to zero
+if( armorVal < 0)
+  armorVal = 0;
+
+// Check for HF max
+if( (internal.ia_game == "MP Hellfire") || (internal.ia_game == "SP Hellfire"))
+  maxArmor = playerArray[player_index].p_hfarmor;
+else
+  maxArmor = playerArray[player_index].p_armor;
+
+// Check for excessive entry
+if( armorVal > maxArmor)
+  armorVal = maxArmor;
+
+document.combat.armor_fld.value = armorVal;
+internal.ia_armor = armorVal;
+internalflags.armor_flag = true;
+}
+
+function parseTohit() {
+
+// Check for default - exit
+if( document.combat.tohit_fld.value == "")
+  return;
+
+var tohitVal = parseInt( document.combat.tohit_fld.value);
+var maxTohit = playerArray[document.combat.player.selectedIndex].p_tohit;
+
+// Bad entry - exit
+if( isNaN(tohitVal)) {
+  if( internalflags.tohit_flag)
+    alert("Not a Valid To-Hit% Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid To-Hit% Number!\nPlease retry.");
+  document.combat.tohit_fld.value = internal.ia_tohit;
+  return;
+  }
+
+// Negative entry - set to zero
+if( tohitVal < 0)
+  tohitVal = 0;
+
+// Check for excessive entry
+if( tohitVal > maxTohit)
+  tohitVal = maxTohit;
+
+document.combat.tohit_fld.value = tohitVal;
+internal.ia_tohit = tohitVal;
+internalflags.tohit_flag = true;
+}
+
+function parseDamageLow() {
+
+// Check for default - exit
+if( document.combat.damlow_fld.value == "")
+  return;
+
+var damVal = parseInt( document.combat.damlow_fld.value);
+
+// Bad entry - exit
+if( isNaN(damVal)) {
+  if( internalflags.damlow_flag)
+    alert("Not a Valid Low Damage Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Low Damage Number!\nPlease retry.");
+  document.combat.damlow_fld.value = internal.ia_damlow;
+  return;
+  }
+
+// Negative entry - set to zero
+if( damVal < 0)
+  damVal = 0;
+
+// Check for excessive entry
+if( damVal > maxDamage)
+  damVal = maxDamage;
+
+// Low damage cannot exceed high damage
+if( internalflags.damhigh_flag)
+  if( damVal > internal.ia_damhigh)
+    damVal = internal.ia_damhigh;
+
+document.combat.damlow_fld.value = damVal;
+internal.ia_damlow = damVal;
+internalflags.damlow_flag = true;
+}
+
+function parseDamageHigh() {
+
+// Check for default - exit
+if( document.combat.damhigh_fld.value == "")
+  return;
+
+var damVal = parseInt( document.combat.damhigh_fld.value);
+
+// Bad entry - exit
+if( isNaN(damVal)) {
+  if( internalflags.damhigh_flag)
+    alert("Not a Valid High Damage Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid High Damage Number!\nPlease retry.");
+  document.combat.damhigh_fld.value = internal.ia_damhigh;
+  return;
+  }
+
+// Negative entry - set to zero
+if( damVal < 0)
+  damVal = 0;
+
+// Check for excessive entry
+if( damVal > maxDamage)
+  damVal = maxDamage;
+
+// High damage cannot be less than low damage
+if( internalflags.damlow_flag)
+  if( damVal < internal.ia_damlow)
+    damVal = internal.ia_damlow;
+
+document.combat.damhigh_fld.value = damVal;
+internal.ia_damhigh = damVal;
+internalflags.damhigh_flag = true;
+}
+
+function parseResMagic() {
+
+// Check for default - exit
+if( document.combat.resmagic_fld.value == "")
+  return;
+
+var resVal = parseInt( document.combat.resmagic_fld.value);
+
+// Bad entry - exit
+if( isNaN(resVal)) {
+  if( internalflags.resmagic_flag)
+    alert("Not a Valid Magic Resistance Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Magic Resistance Number!\nPlease retry.");
+  document.combat.resmagic_fld.value = internal.ia_resmagic;
+  return;
+  }
+
+// Negative entry - set to zero
+if( resVal < 0)
+  resVal = 0;
+
+// Check for excessive entry
+if( resVal > maxResistance)
+  resVal = maxResistance;
+
+document.combat.resmagic_fld.value = resVal;
+internal.ia_resmagic = resVal;
+internalflags.resmagic_flag = true;
+}
+
+function parseResFire() {
+
+// Check for default - exit
+if( document.combat.resfire_fld.value == "")
+  return;
+
+var resVal = parseInt( document.combat.resfire_fld.value);
+
+// Bad entry - exit
+if( isNaN(resVal)) {
+  if( internalflags.resfire_flag)
+    alert("Not a Valid Fire Resistance Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Fire Resistance Number!\nPlease retry.");
+  document.combat.resfire_fld.value = internal.ia_resfire;
+  return;
+  }
+
+// Negative entry - set to zero
+if( resVal < 0)
+  resVal = 0;
+
+// Check for excessive entry
+if( resVal > maxResistance)
+  resVal = maxResistance;
+
+document.combat.resfire_fld.value = resVal;
+internal.ia_resfire = resVal;
+internalflags.resfire_flag = true;
+}
+
+function parseResLightning() {
+
+// Check for default - exit
+if( document.combat.reslightning_fld.value == "")
+  return;
+
+var resVal = parseInt( document.combat.reslightning_fld.value);
+
+// Bad entry - exit
+if( isNaN(resVal)) {
+  if( internalflags.reslightning_flag)
+    alert("Not a Valid Lightning Resistance Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Lightning Resistance Number!\nPlease retry.");
+  document.combat.reslightning_fld.value = internal.ia_reslightning;
+  return;
+  }
+
+// Negative entry - set to zero
+if( resVal < 0)
+  resVal = 0;
+
+// Check for excessive entry
+if( resVal > maxResistance)
+  resVal = maxResistance;
+
+document.combat.reslightning_fld.value = resVal;
+internal.ia_reslightning = resVal;
+internalflags.reslightning_flag = true;
+}
+
+function parseGame() {
+
+var index = document.combat.game.selectedIndex;
+var prevEntry = internal.ia_game;
+
+internal.ia_game = gameArray[index].g_type;
+internalflags.game_flag = true;
+
+// Check for deselecting Hellfire -> Diablo
+if( (prevEntry == "MP Hellfire") || (prevEntry == "SP Hellfire") )
+  if( (internal.ia_game == "MP Diablo") || (internal.ia_game == "SP Diablo") )
+    checkForm( "game");
+}
+
+function parseDifficulty() {
+
+var index = document.combat.difficulty.selectedIndex;
+
+internal.ia_difficulty = difficultyArray[index].d_type;
+internalflags.difficulty_flag = true;
+}
+
+function parseDlvl() {
+
+var index = document.combat.dlvl.selectedIndex;
+
+internal.ia_dlvl = dlvlArray[index].dlvl_type;
+internalflags.dlvl_flag = true;
+
+checkForm( "dlvl");
+}
+
+function helpGame() {
+alert("This will provide a rundown on the various game options.\nDoes nothing right now.\n");
+}
+
+function parseSpecial() {
+
+var index = document.combat.special.selectedIndex;
+
+// if the right array is already set in the "extra" field,
+// then just reset the action flags.
+
+// if the "extra" array needs to be rebuild,
+// then delete the existing array first,
+// then rebuild the required array in the appropriate switch
+
+// Query the "special" value
+switch( specialArray[index].s_type) {
+
+// Rebuild the "extra" dropbox with monsters
+  case "Plain Monsters" :
+alert("Default option.\nAlready implemented.\nCarry on.\n");
+    index = document.combat.extra.selectedIndex;
+    break;
+
+// Extra => boss monsters
+// Rebuilt this with the "bossmonsterArray[]"
+  case "Boss Monsters" :
+alert("Selectable option.\nNot yet implemented.\nCarry on.\n");
+    break;
+
+// Extras => special monsters
+// Rebuild this with the "specialmonsterArray[]"
+  case "Special Monsters" :
+alert("Selectable option.\nCould be a while before this is implemented.\nCarry on.\n");
+    break;
+
+// Rebuild this with the "playerArray[]",
+// then invoke the other fields
+  case "Player vs Player" :
+alert("You must be joking if you think this works.\nI have way too much to implement before I can get around to this section.\nCarry on.\n");
+    break;
+
+// Query the player's stats 
+  case "Golem vs Monster" :
+alert("You must be joking if you think this works.\nGonna take a long long time.\nCarry on.\n");
+    internalflags.extra_flag = true;
+    break;
+
+// Just need dlvl + player stats
+  case "Trap Encounters" :
+alert("Selectable option.\nCould be a while before this is implemented.\nCarry on.\n");
+    break;
+
+// Need monster stats
+  case "Item Drops" :
+alert("Sorry, but this is wishful thinking.\nIt will be one of the last features to be put into this form.\nCarry on.\n");
+    break;
+
+// to be decided later on
+  case "Assorted Stats" :
+alert("I had an idea once what to put in here.\nIt will come back to me if Jarulf updates his guide again and I see a table with obscure data...\nCarry on.\n");
+    break;
+
+  default :
+    break;
+  }  
+
+internal.ia_special = specialArray[index].s_type;
+internalflags.special_flag = true;
+
+checkForm( "special");
+}
+
+function parseExtra() {
+// This func needs to select from diff. arrays
+// depending on the selection from the "Special Array" dropbox
+// As for now, I'll just set the flag.
+
+var index = document.combat.extra.selectedIndex;
+
+// Query the "special" value
+switch( internal.ia_special) {
+
+  case "Plain Monsters" :
+    internal.ia_extra = monsterArray[index].m_type;
+    internalflags.extra_flag = true;
+    break;
+
+  case "Boss Monsters" :
+    index = document.combat.extra.selectedIndex;
+//    internal.ia_extra = bossmonsterArray[index].m_type;
+    internalflags.extra_flag = true;
+    break;
+
+  case "Special Monsters" :
+    index = document.combat.extra.selectedIndex;
+//    internal.ia_extra = specialmonsterArray[index].m_type;
+    internalflags.extra_flag = true;
+    break;
+
+  case "Player vs Player" :
+    internalflags.extra_flag = true;
+    break;
+
+  case "Golem vs Monster" :
+    internal.ia_extra = monsterArray[index].m_type;
+    internalflags.extra_flag = true;
+    break;
+
+  case "Trap Encounters" :
+    break;
+
+  case "Item Drops" :
+    index = document.combat.extra.selectedIndex;
+    internal.ia_extra = monsterArray[index].m_type;
+    internalflags.extra_flag = true;
+    break;
+
+  case "Assorted Stats" :
+    break;
+
+  default :
+    break;
+  }  
+
+internalflags.extra_flag = true;
+
+checkForm( "extra");
+}
+
+function parseDuelClvl() {
+
+var index = document.combat.duelclvl.selectedIndex;
+
+internal.ia_duelclvl = document.combat.duelclvl[index].value;
+internalflags.duelcvl_flag = true;
+}
+
+function helpSpecial() {
+alert("Another specific help box.\n");
+}
+
+function parseDuelStrength() {
+
+var strVal = parseInt( document.combat.duelstr_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.extra.selectedIndex;
+var maxStr = 0;
+
+// Bad entry - exit
+if( isNaN(strVal)) {
+  if( internalflags.duelstrength_flag)
+    alert("Not a Valid Strength Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Strength Number!\nPlease retry.");
+  document.combat.duelstr_fld.value = internal.ia_duelstrength;
+  return;
+  }
+
+// Negative entry - set to zero
+if( strVal < 0)
+  strVal = 0;
+
+// Check for HF max
+if( (internal.ia_game == "MP Hellfire") || (internal.ia_game == "SP Hellfire"))
+  maxStr = playerArray[player_index].p_hfstrength;
+else
+  maxStr = playerArray[player_index].p_strength;
+
+// Check for excessive entry
+if( strVal > maxStr)
+  strVal = maxStr;
+
+document.combat.duelstr_fld.value = strVal;
+internal.ia_duelstrength = strVal;
+internalflags.duelstrength_flag = true;
+}
+
+function parseDuelMagic() {
+
+var magVal = parseInt( document.combat.duelmag_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.extra.selectedIndex;
+var maxMag = 0;
+
+// Bad entry - exit
+if( isNaN(magVal)) {
+  if( internalflags.duelmagic_flag)
+    alert("Not a Valid Magic Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Magic Number!\nPlease retry.");
+  document.combat.duelmag_fld.value = internal.ia_duelmagic;
+  return;
+  }
+
+// Negative entry - set to zero
+if( magVal < 0)
+  magVal = 0;
+
+// Check for HF max
+if( (internal.ia_game == "MP Hellfire") || (internal.ia_game == "SP Hellfire"))
+  maxMag = playerArray[player_index].p_hfmagic;
+else
+  maxMag = playerArray[player_index].p_magic;
+
+// Check for excessive entry
+if( magVal > maxMag)
+  magVal = maxMag;
+
+document.combat.duelmag_fld.value = magVal;
+internal.ia_duelmagic = magVal;
+internalflags.duelmagic_flag = true;
+}
+
+function parseDuelDexterity() {
+
+var dexVal = parseInt( document.combat.dueldex_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.extra.selectedIndex;
+var maxDex = 0;
+
+// Bad entry - exit
+if( isNaN(dexVal)) {
+  if( internalflags.dueldex_flag)
+    alert("Not a Valid Dexterity Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Dexterity Number!\nPlease retry.");
+  document.combat.dueldex_fld.value = internal.ia_dueldexterity;
+  return;
+  }
+
+// Negative entry - set to zero
+if( dexVal < 0)
+  dexVal = 0;
+
+// Check for HF max
+if( (internal.ia_game == "MP Hellfire") || (internal.ia_game == "SP Hellfire"))
+  maxDex = playerArray[player_index].p_hfdexterity;
+else
+  maxDex = playerArray[player_index].p_dexterity;
+
+// Check for excessive entry
+if( dexVal > maxDex)
+  dexVal = maxDex;
+
+document.combat.dueldex_fld.value = dexVal;
+internal.ia_dueldexterity = dexVal;
+internalflags.dueldexterity_flag = true;
+}
+
+function parseDuelArmor() {
+
+var armorVal = parseInt( document.combat.duelarmor_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.extra.selectedIndex;
+var maxArmor = 0;
+
+// Bad entry - exit
+if( isNaN(armorVal)) {
+  if( internalflags.duelarmor_flag)
+    alert("Not a Valid Armor Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Armor Number!\nPlease retry.");
+  document.combat.duelarmor_fld.value = internal.ia_duelarmor;
+  return;
+  }
+
+// Negative entry - set to zero
+if( armorVal < 0)
+  armorVal = 0;
+
+// Check for HF max
+if( (internal.ia_game == "MP Hellfire") || (internal.ia_game == "SP Hellfire"))
+  maxArmor = playerArray[player_index].p_hfarmor;
+else
+  maxDex = playerArray[player_index].p_armor;
+
+// Check for excessive entry
+if( armorVal > maxArmor)
+  armorrVal = maxArmor;
+
+document.combat.duelarmor_fld.value = armorVal;
+internal.ia_duelarmor = armorVal;
+internalflags.duelarmor_flag = true;
+}
+
+function parseDuelTohit() {
+
+var tohitVal = parseInt( document.combat.dueltohit_fld.value);
+var game_index = document.combat.game.selectedIndex;
+var player_index = document.combat.player.selectedIndex;
+var maxTohit = 0;
+
+// Bad entry - exit
+if( isNaN(tohitVal)) {
+  if( internalflags.dueltohit_flag)
+    alert("Not a Valid To-Hit% Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid To-Hit% Number!\nPlease retry.");
+  document.combat.dueltohit_fld.value = internal.ia_dueltohit;
+  return;
+  }
+
+// Negative entry - set to zero
+if( tohitVal < 0)
+  tohitVal = 0;
+
+// Check for excessive entry
+if( tohitVal > maxTohit)
+  tohitVal = maxTohit;
+
+document.combat.dueltohit_fld.value = strVal;
+internal.ia_dueltohit = tohitVal;
+internalflags.dueltohit_flag = true;
+}
+
+function parseResDuel() {
+
+var resVal = parseInt( document.combat.duelres_fld.value);
+
+// Bad entry - exit
+if( isNaN(resVal)) {
+  if( internalflags.duelresistance_flag)
+    alert("Not a Valid Resistance Number!\nUsing previous number instead.\n");
+  else
+    alert("Not a Valid Resistance Number!\nPlease retry.");
+  document.combat.duelres_fld.value = internal.ia_duelresistance;
+  return;
+  }
+
+// Negative entry - set to zero
+if( resVal < 0)
+  resVal = 0;
+
+// Check for excessive entry
+if( resVal > maxResistance)
+  resVal = maxResistance;
+
+document.combat.duelres_fld.value = resVal;
+internal.ia_duelresistance = resVal;
+internalflags.duelresistance_flag = true;
+}
+
+function encounterMonsters() {
+
+// This needs a full set of player stats.
+
+var output = "";
+
+var pIndex = document.combat.player.selectedIndex;
+var wIndex = document.combat.weapon.selectedIndex;
+var mIndex = document.combat.extra.selectedIndex;
+var diffIndex = document.combat.difficulty.selectedIndex;
+var dlvlIndex = document.combat.dlvl.selectedIndex;
+
+var playerLevel = document.combat.clvl.selectedIndex + 1;
+var weaponBonusTohit = playerArray[pIndex].p_bwtohit;
+var bowBonusTohit = playerArray[pIndex].p_bbtohit;
+var magicBonusTohit = playerArray[pIndex].p_bmtohit;
+var blockingBonus = playerArray[pIndex].p_bblock;
+
+var monsterArmor = monsterArray[mIndex].m_armor + difficultyArray[diffIndex].d_armor;
+var monsterLevel = monsterArray[mIndex].m_mlvl + difficultyArray[diffIndex].d_mlvl;
+var monsterTohit = monsterArray[mIndex].m_tohit + difficultyArray[diffIndex].d_tohit;
+var monsterExperience = monsterArray[mIndex].m_experience * difficultyArray[diffIndex].d_experience1 + difficultyArray[diffIndex].d_experience2;
+
+var dlvlAutohit = dlvlArray[dlvlIndex].dlvl_autohit;
+var weaponMode = weaponArray[wIndex].w_mode;
+var tohitVal = internal.ia_tohit;
+var armorVal = internal.ia_armor;
+var finalTohit = 0;
+var finalArmor = 0;
+var blockingChance = 0;
+
+
+// Decide what weapon was chosen
+switch( weaponMode) {
+
+  case "Melee" :
+    finalTohit = tohitVal + playerLevel + weaponBonusTohit - monsterArmor;
+    break;
+
+  case "Bow" :
+    finalTohit = tohitVal + internal.ia_dexterity/2 + playerLevel + bowBonusTohit - monsterArmor;
+    break;
+
+  case "Spell" :
+    finalTohit = 50 + internal.ia_magic + magicBonusTohit - monsterLevel - monsterLevel;
+    break;
+
+  default :
+    alert("This should never see the light of day.");
+    break;
+  }
+
+
+// Check for attack mode
+// if "Weapon" or "Arrow", then list AC
+// if "Spell", then list resistances
+
+// Assume Weapon for now, add others later
+
+finalArmor = 30 + monsterTohit + monsterLevel + monsterLevel - playerLevel - playerLevel - armorVal;
+
+if( finalArmor < dlvlAutohit)
+  finalArmor = dlvlAutohit;
+
+
+// Blocking for players
+
+// Need to check to see if blocking can actually occur
+
+blockingChance = internal.ia_dexterity - monsterLevel - monsterLevel + playerLevel + playerLevel + blockingBonus;
+
+
+
+// Output for the Encounter
+
+
+output += "Your final To-Hit%        = ";
+output += finalTohit;
+output += ".\n";
+
+output += "The monster's To-Hit%     = ";
+output += finalArmor;
+output += ".\n";
+
+output += "Your chance for blocking  = ";
+output += blockingChance;
+output += ".\n";
+
+
+document.combat.results2.value = output;
+}
+
+
+
+function calcExp( baseExp, mLevel, pLevel) {
+
+var mExp = 0;
+
+// Checking for valid player level
+if( (pLevel - mLevel) < 10)
+  mExp = Math.floor( baseExp * (1.0 + (mLevel - pLevel)/10));
+
+// Max for SP games experience is monster's base experience
+if( (internal.ia_game == "SP Diablo") || (internal.ia_game == "SP Hellfire") )
+  if( mExp > baseExp)
+    mExp = baseExp;
+
+// Max for MP games depends on clvl
+if( (internal.ia_game == "MP Diablo") || (internal.ia_game == "MP Hellfire") ) {
+
+  if( pLevel == 1)
+    if( mExp > 100)
+      mExp = 100;
+
+  if( pLevel == 2)
+    if( mExp > 231)
+      mExp = 231;
+
+  if( pLevel == 3)
+    if( mExp > 402)
+      mExp = 402;
+
+  if( pLevel == 4)
+    if( mExp > 624)
+      mExp = 624;
+
+  if( pLevel == 5)
+    if( mExp > 912)
+      mExp = 912;
+
+  if( pLevel > 5)
+    if( mExp > (200 * pLevel))
+      mExp = 200 * pLevel;
+  }
+
+return mExp;
+}
+
+
+
+
+// --------------------------------
+// More constants
+
+var autoHit = 5;
+var autoMiss = 95;
+
+
+// --------------------------------
+// Player Attributes
+
+// p_type == type of player's character class
+// p_strength == Diablo Max Strength Attribute
+// p_hfstrength == Hellfire Max Strength Attribute
+// p_magic == Diablo Max Magic Attribute
+// p_hfmagic == Hellfire Max Magic Attribute
+// p_dexterity == Diablo Max Dexterity Attribute
+// p_hfdexterity == Hellfire Max Dexterity Attribute
+// p_vitality == Diablo Max Vitality Attribute
+// p_hfvitality == Hellfire Max Vitality Attribute
+// p_armor == Max AC rating
+// p_hfarmor == Max Hellfire AC rating
+// p_tohit == Max To-Hit%
+// p_damage == Max Damage
+// p_bwtohit == Bonus to Melee (Weapon) To-Hit%
+// p_bbtohit == Bonus to Bow To-Hit%
+// p_bmtohit == Bonus to Magic To-Hit%
+// p_bblock == Bonus to Blocking
+// p_blocking == Number of frames in blocking anim
+// p_recovery == Number of frames in recovery anim
+
+function player_attributes(p_type, p_strength, p_hfstrength, p_magic, p_hfmagic, p_dexterity, p_hfdexterity, p_vitality, p_hfvitality, p_armor, p_hfarmor, p_tohit, p_damage, p_bwtohit, p_bbtohit, p_bmtohit, p_bblock, p_blocking, p_recovery) {
+
+this.p_type = p_type;
+this.p_strength = p_strength;
+this.p_hfstrength = p_hfstrength;
+this.p_magic = p_magic;
+this.p_hfmagic = p_hfmagic;
+this.p_dexterity = p_dexterity;
+this.p_hfdexterity = p_hfdexterity;
+this.p_vitality = p_vitality;
+this.p_hfvitality = p_hfvitality;
+this.p_armor = p_armor;
+this.p_hfarmor = p_hfarmor;
+this.p_tohit = p_tohit;
+this.p_damage = p_damage;
+this.p_bwtohit = p_bwtohit;
+this.p_bbtohit = p_bbtohit;
+this.p_bmtohit = p_bmtohit;
+this.p_bblock = p_bblock;
+this.p_blocking = p_blocking;
+this.p_recovery = p_recovery;
+}
+
+var playerArray = new Array(
+
+new player_attributes("Warrior", 425, 485, 225, 285, 225, 285, 265, 325, 349, 401, 392, 0, 20, 10, 0, 30, 2, 6),
+new player_attributes("Rogue", 230, 290, 245, 305, 415, 475, 245, 305, 385, 425, 487, 0, 0, 20, 0, 20, 4, 7),
+new player_attributes("Sorceror", 220, 280, 425, 485, 250, 310, 245, 305, 350, 390, 405, 0, 0, 0, 20, 10, 6, 8),
+new player_attributes("Monk", 0, 385, 0, 315, 0, 375, 0, 305, 0, 419, 437, 0, 0, 0, 0, 25, 3, 6),
+new player_attributes("Bard", 0, 370, 0, 360, 0, 360, 0, 340, 0, 413, 565, 0, 0, 10, 10, 25, 4, 7),
+new player_attributes("Barbarian", 0, 490, 0, 235, 0, 280, 0, 375, 0, 370, 390, 0, 0, 0, 0, 30, 2, 6)
+);
+
+
+// --------------------------------
+// Weapon Attributes
+
+// w_type == Name of the Weapon Type
+// w_mode == Mode of attack (melee, arrow, spell)
+// w_warrior == Weapon speed in frames
+// w_rogue == ditto
+// w_sorceror == ditto
+// w_monk == ditto
+// w_bard == ditto
+// w_barbarian == ditto
+
+function weapon_attributes(w_type, w_mode, w_warrior, w_rogue, w_sorceror, w_monk, w_bard, w_barbarian) {
+
+this.w_type = w_type;
+this.w_mode = w_mode;
+this.w_warrior = w_warrior;
+this.w_rogue = w_rogue;
+this.w_sorceror = w_sorceror;
+this.w_monk = w_monk;
+this.w_bard = w_bard;
+this.w_barbarian = w_barbarian;
+}
+
+var weaponArray = new Array(
+new weapon_attributes("Bare", "Melee", 9, 10, 12, 7, 10, 9),
+new weapon_attributes("Axe", "Melee", 10, 13, 16, 14, 13, 8),
+new weapon_attributes("Bow", "Arrow", 11, 7, 16, 14, 11, 11),
+new weapon_attributes("Club", "Melee", 9, 10, 12, 12, 10, 8),
+new weapon_attributes("Shield", "Melee", 9, 10, 9, 9, 10, 9),
+new weapon_attributes("Staff", "Melee", 11, 11, 12, 8, 11, 11),
+new weapon_attributes("Sword", "Melee", 9, 10, 12, 12, 10, 9)
+);
+
+
+
+// --------------------------------
+// Game Attributes
+
+// g_type == Name of the Game
+
+function game_attributes(g_type) {
+this.g_type = g_type;
+}
+
+var gameArray = new Array(
+new game_attributes("MP Diablo"),
+new game_attributes("SP Diablo"),
+new game_attributes("MP Hellfire"),
+new game_attributes("SP Hellfire")
+);
+
+
+// --------------------------------
+// Difficulty Attributes
+
+// d_type == Level of the Difficulty
+// d_mlvl == Adjustment for Monster Level
+// d_hitpoints1 == Hit Point Multiplier to normal Difficulty
+// d_hitpoints2 == Hit Point Adder after hp Multiplication
+// d_hfhitpoints == Extra for (SP) Hellfire NM or Hell
+// d_armor == Adjustment for Monster Armor
+// d_tohit == Adjustment for Monster To-Hit%
+// d_damage1 == Damage Multiplier to Normal Difficulty
+// d_damage2 == Damage Adder after Damage Multiplication
+// d_experience1 == Experience Multiplier to Normal Difficulty
+// d_experience2 == Exp Adder after Experience Multiplication
+
+function difficulty_attributes(d_type, d_mlvl, d_hitpoints1, d_hitpoints2, d_hfhitpoints, d_armor, d_tohit, d_damage1, d_damage2, d_experience1, d_experience2) {
+
+this.d_type = d_type;
+this.d_mlvl = d_mlvl;
+this.d_hitpoints1 = d_hitpoints1;
+this.d_hitpoints2 = d_hitpoints2;
+this.d_hfhitpoints = d_hfhitpoints;
+this.d_armor = d_armor;
+this.d_tohit = d_tohit;
+this.d_damage1 = d_damage1;
+this.d_damage2 = d_damage2;
+this.d_experience1 = d_experience1;
+this.d_experience2 = d_experience2;
+}
+
+var difficultyArray = new Array(
+
+new difficulty_attributes("Normal", 0, 0, 0, 0, 0, 0, 0, 0, 1, 0),
+new difficulty_attributes("Nightmare", 15, 3, 1, 49, 50, 85, 2, 4, 2, 2000),
+new difficulty_attributes("Hell", 30, 4, 3, 97, 80, 120, 4, 6, 4, 4000)
+);
+
+
+// --------------------------------
+// Dlvl Attributes
+
+// dlvl_type == Name of the Desired Game Object
+// dlvl_section == Section of the game (4 levels)
+// dlvl_game == Game where this dlvl can happen
+// dlvl_number == Value of the dlvl for calculations
+// dlvl_autohit == Value of the monster's autohit on the dlvl
+
+function dlvl_attributes( dlvl_type, dlvl_section, dlvl_game, dlvl_number, dlvl_autohit) {
+this.dlvl_type = dlvl_type;
+this.dlvl_section = dlvl_section;
+this.dlvl_game = dlvl_game;
+this.dlvl_number = dlvl_number;
+this.dlvl_autohit = dlvl_autohit;
+}
+
+var dlvlArray = new Array(
+new dlvl_attributes("1", "Church", "Diablo", 1, 15),
+new dlvl_attributes("2", "Church", "Diablo", 2, 15),
+new dlvl_attributes("3", "Church", "Diablo", 3, 15),
+new dlvl_attributes("4", "Church", "Diablo", 4, 15),
+new dlvl_attributes("5", "Catacombs", "Diablo", 5, 15),
+new dlvl_attributes("6", "Catacombs", "Diablo", 6, 15),
+new dlvl_attributes("7", "Catacombs", "Diablo", 7, 15),
+new dlvl_attributes("8", "Catacombs", "Diablo", 8, 15),
+new dlvl_attributes("9", "Caves", "Diablo", 9, 15),
+new dlvl_attributes("10", "Caves", "Diablo",10, 15),
+new dlvl_attributes("11", "Caves", "Diablo", 11, 15),
+new dlvl_attributes("12", "Caves", "Diablo", 12, 15),
+new dlvl_attributes("13", "Hell", "Diablo", 13, 15),
+new dlvl_attributes("14", "Hell", "Diablo", 14, 20),
+new dlvl_attributes("15", "Hell", "Diablo", 15, 25),
+new dlvl_attributes("16", "Hell", "Diablo", 16, 30),
+new dlvl_attributes("Hive 1", "Hive", "Hellfire", 9, 15),
+new dlvl_attributes("Hive 2", "Hive", "Hellfire", 10, 15),
+new dlvl_attributes("Hive 3", "Hive", "Hellfire", 11, 15),
+new dlvl_attributes("Hive 4", "Hive", "Hellfire", 12, 15),
+new dlvl_attributes("Crypt 1", "Crypt", "Hellfire", 14, 20),
+new dlvl_attributes("Crypt 2", "Crypt", "Hellfire", 15, 25),
+new dlvl_attributes("Crypt 3", "Crypt", "Hellfire", 16, 30),
+new dlvl_attributes("Crypt 4", "Crypt", "Hellfire", 17, 30)
+);
+
+
+// --------------------------------
+// Option Attributes
+
+// s_type == Name of the Desired Game Object
+
+function special_attributes( s_type) {
+this.s_type = s_type;
+}
+
+var specialArray = new Array(
+new special_attributes("Plain Monsters"),
+new special_attributes("Boss Monsters"),
+new special_attributes("Special Monsters"),
+new special_attributes("Player vs Player"),
+new special_attributes("Golem vs Monster"),
+new special_attributes("Trap Encounters"),
+new special_attributes("Item Drops"),
+new special_attributes("Assorted Stats")
+);
+
+
+
+// --------------------------------
+// Monster Group Attributes
+
+// mg_type == Set of 4 monsters
+// mg_class == One of Undead, Animal or Demon
+// mg_game == Diablo or Hellfire
+// mg_attack == One of "Weapon", "Arrow" or "Magic"
+// mg_attack2 == Second attack, as above or "None"
+// mg_attack2tohit == 2nd attack To-Hit modifier (L. Demons)
+// mg_attack2damage == 2nd attack Damage modifier (M. Demons)
+// mg_attack3 == Third attack, as above or "None"
+// mg_speed == Walking speed in frames
+// mg_recovery == Hit-recovery time in frames
+// mg_swing == Swinging time for attacks in frames
+
+function monstergroup_attributes( mg_type, mg_class, mg_game, mg_attack, mg_attack2, mg_attack2tohit, mg_attack2damage, mg_attack3, mg_speed, mg_recovery, mg_swing) {
+
+this.mg_type = mg_type;
+this.mg_class = mg_class;
+this.mg_game = mg_game;
+this.mg_attack = mg_attack;
+this.mg_attack2 = mg_attack2;
+this.mg_attack2tohit = mg_attack2tohit;
+this.mg_attack2damage = mg_attack2damage;
+this.mg_attack3 = mg_attack3;
+this.mg_speed = mg_speed;
+this.mg_recovery = mg_recovery;
+this.mg_swing = mg_swing;
+}
+
+
+function changeGame() {
+
+if( (internal.ia_game == "MP Diablo") || (internal.ia_game == "SP Diablo") ) {
+  document.combat.results.value = "The selected option requires a change to Hellfire!\nEnabling the Single Player Hellfire settings.\n";
+  internal.ia_game = "SP Hellfire";
+  internalflags.game_flag = true;
+  document.combat.game.selectedIndex = 3;
+  }
+}
+
+function checkForm( theField) {
+
+// If any HF-only feature was added, set to SP HF
+// If HF was deselected, reset HF features to MP D
+switch( theField) {
+
+  case "player" :
+    if( internalflags.player_flag)
+      if( (internal.ia_player == "Monk") || (internal.ia_player == "Bard") || (internal.ia_player == "Barbarian") )
+      changeGame();
+    break;
+
+  case "weapon" :
+    if( internalflags.weapon_flag)
+      if( false)
+// add HF spells here, do nothing for now
+        changeGame();
+    break;
+
+  case "dlvl" :
+    if( internalflags.dlvl_flag)
+      if( document.combat.dlvl.selectedIndex > 15)
+        changeGame();
+    break;
+
+  case "extra" :
+// The "Extra" array will depend on the "Special" array
+// This will be slightly harder ...
+// Could check for monster class ...
+    if( internalflags.extra_flag)
+      if( false)
+        changeGame();
+    break;
+
+// This one goes the other way, HF -> D
+  case "game" :
+// Player selection
+    if( (internal.ia_player == "Monk") || (internal.ia_player == "Bard") || (internal.ia_player == "Barbarian") ) {
+      internal.ia_player = "Warrior";
+      internalflags.player_flag = true;
+      document.combat.player.selectedIndex = 0;
+      }
+    parseStrength();
+    parseMagic();
+    parseDexterity();
+    parseVitality();
+    parseArmor();
+    parseTohit();
+    parseDamageLow();
+    parseDamageHigh();
+    parseResMagic();
+    parseResFire();
+    parseResLightning();
+
+// Weapon selection (HF spell)
+    if( internalflags.weapon_flag)
+      var mydummy = "0";
+
+// Dlvl selection - take out Hive and Crypt
+    if( internalflags.dlvl_flag)
+      if( document.combat.dlvl.selectedIndex > 15) {
+        document.combat.dlvl.selectedIndex = 0;
+        internal.ia_dlvl = dlvlArray[document.combat.dlvl.selectedIndex].dlvl_type;
+        }
+
+// Reset the "Extra" array to default
+// Can't currently do so :*(
+
+    break;
+
+  default :
+    break;
+  }
+}
+
+function helpPlayer() {
+alert("This will provide a rundown on the various player options.\nDoes nothing right now.\n");
+}
+
+//// GhastMaster ////
+function bothatonce() {
+    encounterMonsters();
+    overviewSpecial();
+}
+
+function encounterSpecial() {
+
+// Need to test the "Special" array
+// and decide what info to report on
+switch( internal.ia_special) {
+
+  case "Plain Monsters" :
+    encounterMonsters();
+    break;
+
+  case "Boss Monsters" :
+alert("Not implemented yet, but will be soon.");
+    break;
+
+  case "Special Monsters" :
+alert("A small list with good interest, I'm working on it.");
+    break;
+
+  case "Player vs Player" :
+alert("Special effort will be made for the Highlander Tournament.\nPlease have a little patience.");
+    break;
+
+  case "Golem vs Monster" :
+alert("This will only work once spells are added as weapons.");
+    break;
+
+  case "Trap Encounters" :
+alert("Basically only done for interest, most traps can be ignored anyway.");
+    break;
+
+  case "Item Drops" :
+alert("This is to answer the DSF questions regarding item generation.\nBest used in conjunction with an item price generator.");
+    break;
+
+  case "Assorted Stats" :
+alert("I'll work on these sometime during D2.");
+    break;
+
+  default :
+alert("This should never see the light of day.");
+    break;
+  }
+}
+
+
+function overviewMonsters() {
+
+var output = "";
+
+var pIndex = document.combat.player.selectedIndex;
+var mIndex = document.combat.extra.selectedIndex;
+var diffIndex = document.combat.difficulty.selectedIndex;
+var dlvlIndex = document.combat.dlvl.selectedIndex;
+
+var meleeTohit = 0;
+var bowTohit = 0;
+var spellTohit = 0;
+var blockingDexterity = 0;
+var experience = 0;
+
+var playerLevel = document.combat.clvl.selectedIndex + 1;
+var weaponBonusTohit = playerArray[pIndex].p_bwtohit;
+var bowBonusTohit = playerArray[pIndex].p_bbtohit;
+var magicBonusTohit = playerArray[pIndex].p_bmtohit;
+var blockingBonus = playerArray[pIndex].p_bblock;
+
+var monsterArmor = monsterArray[mIndex].m_armor + difficultyArray[diffIndex].d_armor;
+var monsterLevel = monsterArray[mIndex].m_mlvl + difficultyArray[diffIndex].d_mlvl;
+var monsterTohit = monsterArray[mIndex].m_tohit + difficultyArray[diffIndex].d_tohit;
+var monsterExperience = monsterArray[mIndex].m_experience * difficultyArray[diffIndex].d_experience1 + difficultyArray[diffIndex].d_experience2;
+
+var dlvlAutohit = dlvlArray[dlvlIndex].dlvl_autohit;
+
+
+output += "You have chosen a Clvl ";
+output += internal.ia_clvl;
+output += " ";
+output += internal.ia_player;
+output += " in ";
+output += internal.ia_game;
+output += " on ";
+output += internal.ia_difficulty;
+output += " difficulty.\n";
+
+output += "You are up against a ";
+output += internal.ia_extra;
+output += ".\n\n";
+
+
+// Melee To-Hit%
+
+meleeTohit = autoHit - playerLevel - weaponBonusTohit + monsterArmor;
+
+output += "Your effective melee To-Hit% range is ";
+output += meleeTohit;
+output += " to ";
+output += meleeTohit + 90;
+output += ".\n";
+
+
+// Bow To-Hit%
+
+bowTohit = autoHit - playerLevel - bowBonusTohit + monsterArmor;
+
+output += "Your effective bow   To-Hit% range is ";
+output += bowTohit;
+output += " to ";
+output += bowTohit + 90;
+output += ".\n";
+
+
+// Spell To-Hit%
+
+spellTohit = autoHit - 50 - magicBonusTohit + monsterLevel + monsterLevel;
+
+output += "Your effective spell To-Hit% range is ";
+output += spellTohit;
+output += " to ";
+output += spellTohit + 90;
+output += ".\n\n";
+
+
+// AC
+
+// monster melee To-Hit%
+// future -> need to check for dlvls monsters appear on
+meleeTohit = 30 + monsterTohit + monsterLevel + monsterLevel - playerLevel - playerLevel;
+
+output += "Your effective Armor Class rating range is ";
+output += meleeTohit - 100;
+output += " to ";
+output += meleeTohit - dlvlAutohit;
+output += ".\n";
+
+
+// Blocking
+
+// Take out this line when blocking bonus bug is fixed
+blockingBonus = 0;
+blockingDexterity = monsterLevel + monsterLevel - playerLevel - playerLevel - blockingBonus;
+
+output += "Your effective Blocking Dexterity range is ";
+output += blockingDexterity;
+output += " to ";
+output += blockingDexterity + 100;
+output += ".\n";
+
+
+// Stunning Damage
+
+output += "You will need a minimum of ";
+output += monsterLevel + 3;
+output += " damage to stun this monster.\n";
+
+
+// Experience
+
+experience = calcExp( monsterExperience, monsterLevel, playerLevel);
+
+output += "You can earn ";
+output += experience;
+output += " experience points from this monster.\n";
+
+document.combat.results.value = output;
+}
+
+
+function overviewSpecial() {
+
+// Need to test the "Special" array
+// and decide what info to report on
+switch( internal.ia_special) {
+
+  case "Plain Monsters" :
+    overviewMonsters();
+    break;
+
+  case "Boss Monsters" :
+alert("Not implemented yet, but will be soon.");
+    break;
+
+  case "Special Monsters" :
+alert("A small list with good interest, I'm working on it.");
+    break;
+
+  case "Player vs Player" :
+alert("Special effort will be made for the Highlander Tournament.\nPlease have a little patience.");
+    break;
+
+  case "Golem vs Monster" :
+alert("This will only work once spells are added as weapons.");
+    break;
+
+  case "Trap Encounters" :
+alert("Basically only done for interest, most traps can be ignored anyway.");
+    break;
+
+  case "Item Drops" :
+alert("This is to answer the DSF questions regarding item generation.\nBest used in conjunction with an item price generator.");
+    break;
+
+  case "Assorted Stats" :
+alert("I'll work on these sometime during D2.");
+    break;
+
+  default :
+alert("This should never see the light of day.");
+    break;
+  }
+}
+
+
+
+
+function reset_form() {
+
+// reset the internal variables here
+with( internal) {
+  ia_player = "Warrior";
+  ia_clvl = 1;
+  ia_weapon = "Bare";
+  ia_slvl = 0;
+  ia_strength = 0;
+  ia_magic = 0;
+  ia_dexterity = 0;
+  ia_vitality = 0;
+  ia_armor = 0;
+  ia_tohit = 0;
+  ia_damlow = 0;
+  ia_damhigh = 0;
+  ia_resmagic = 0;
+  ia_resfire = 0;
+  ia_reslightning = 0;
+
+  ia_game = "MP Diablo";
+  ia_difficulty = "Normal";
+  ia_dlvl = "1";
+  ia_special = "Plain Monsters";
+  ia_extra = "Zombie";
+  ia_duelclvl = 1;
+  ia_duelstrength = 0;
+  ia_duelmagic = 0;
+  ia_dueldexterity = 0;
+  ia_duelarmor = 0;
+  ia_dueltohit = 0;
+  ia_duelresistance = 0;
+  }
+
+// reset the flags here
+with( internalflags) {
+  player_flag = false;
+  clvl_flag = false;
+  weapon_flag = false;
+  slvl_flag = false;
+  strength_flag = false;
+  magic_flag = false;
+  dexterity_flag = false;
+  vitality_flag = false;
+  armor_flag = false;
+  tohit_flag = false;
+  damlow_flag = false;
+  damhigh_flag = false;
+  resmagic_flag = false;
+  resfire_flag = false;
+  reslightning_flag = false;
+
+  game_flag = false;
+  difficulty_flag = false;
+  dlvl_flag = false;
+  special_flag = false;
+  extra_flag = false;
+  duelclvl_flag = false;
+  duelstrength_flag = false;
+  duelmagic_flag = false;
+  dueldexterity_flag = false;
+  duelarmor_flag = false;
+  dueltohit_flag = false;
+  duelresistance_flag = false;
+  }
+
+// reset the form fields
+with( document.combat) {
+  player.selectedIndex = 0;
+  clvl.selectedIndex = 0;
+  weapon.selectedIndex = 0;
+  slvl.selectedIndex = 0;
+  str_fld.value = "";
+  mag_fld.value = "";
+  dex_fld.value = "";
+  vit_fld.value = "";
+  armor_fld.value = "";
+  tohit_fld.value = "";
+  damlow_fld.value = "";
+  damhigh_fld.value = "";
+  resmagic_fld.value = "";
+  resfire_fld.value = "";
+  reslightning_fld.value = "";
+
+  game.selectedIndex = 0;
+  difficulty.selectedIndex = 0;
+  dlvl.selectedIndex = 0;
+  special.selectedIndex = 0;
+  extra.selectedIndex = 0;
+  duelclvl.selectedIndex = 0;
+  duelstr_fld.value = "";
+  duelmag_fld.value = "";
+  dueldex_fld.value = "";
+  duelarmor_fld.value = "";
+  dueltohit_fld.value = "";
+  duelres_fld.value = "";
+
+  results.value = "";
+  results2.value = "";
+  }
+}
+
+function print_flags() {
+
+var output = "";
+
+with( internalflags) {
+  output += player_flag + "\n";
+  output += clvl_flag + "\n";
+  output += weapon_flag + "\n";
+  output += slvl_flag + "\n";
+  output += strength_flag + "\n";
+  output += magic_flag + "\n";
+  output += dexterity_flag + "\n";
+  output += vitality_flag + "\n";
+  output += armor_flag + "\n";
+  output += tohit_flag + "\n";
+  output += damlow_flag + "\n";
+  output += damhigh_flag + "\n";
+  output += resmagic_flag + "\n";
+  output += resfire_flag + "\n";
+  output += reslightning_flag + "\n";
+  output += game_flag + "\n";
+  output += difficulty_flag + "\n";
+  output += dlvl_flag + "\n";
+  output += special_flag + "\n";
+  output += extra_flag + "\n";
+  output += duelclvl_flag + "\n";
+  output += duelstrength_flag + "\n";
+  output += duelmagic_flag + "\n";
+  output += dueldexterity_flag + "\n";
+  output += duelarmor_flag + "\n";
+  output += dueltohit_flag + "\n";
+  output += duelresistance_flag + "\n";
+  }
+document.combat.results.value = output;
+document.combat.results2.value = output;
+}
+
+function print_internal () {
+
+var output = "";
+
+with( internal) {
+  output += ia_player + "\n";
+  output += ia_clvl + "\n";
+  output += ia_weapon + "\n";
+  output += ia_slvl + "\n";
+  output += ia_strength + "\n";
+  output += ia_magic + "\n";
+  output += ia_dexterity + "\n";
+  output += ia_vitality + "\n";
+  output += ia_armor + "\n";
+  output += ia_tohit + "\n";
+  output += ia_damlow + "\n";
+  output += ia_damhigh + "\n";
+  output += ia_resmagic + "\n";
+  output += ia_resfire + "\n";
+  output += ia_reslightning + "\n";
+  output += ia_game + "\n";
+  output += ia_difficulty + "\n";
+  output += ia_dlvl + "\n";
+  output += ia_special + "\n";
+  output += ia_extra + "\n";
+  output += ia_duelclvl + "\n";
+  output += ia_duelstrength + "\n";
+  output += ia_duelmagic + "\n";
+  output += ia_dueldexterity + "\n";
+  output += ia_duelarmor + "\n";
+  output += ia_dueltohit + "\n";
+  output += ia_duelresistance + "\n";
+  }
+document.combat.results.value = output;
+document.combat.results2.value = output;
+}
+
+</script></body></html>

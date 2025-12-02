@@ -1,349 +1,451 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Stats Calculator - Diablo Calculator</title>
-    <link rel="stylesheet" href="calc-styles.css">
-    <style>
-        /* Additional styles for stone background */
-        table.char {
-            background: #333333;
-            color: #ffffff;
-            border-collapse: collapse;
-        }
-    </style>
-    <script type="text/javascript" src="js/char.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Stats Calculator - Diablo I</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root { --gold: #c7a44a; --gold-dim: #8b7355; --bg: #1a1a1a; --panel: #252525; --text: #d4c4a0; --input-bg: #0d0d0d; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: clamp(0.5rem, 2vw, 1rem); font-size: clamp(0.7rem, 1.6vw, 0.85rem); }
+    .blog { max-width: 80rem; margin-inline: auto; background: var(--panel); border: 2px solid var(--gold-dim); border-radius: 0.5rem; padding: clamp(0.5rem, 2vw, 1rem); }
+    .title { font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--gold); }
+    .title2 { color: var(--gold); font-weight: 600; font-size: clamp(0.8rem, 1.8vw, 0.95rem); border-bottom: 1px solid var(--gold-dim); padding-bottom: 0.25rem; margin-bottom: 0.5rem; }
+    .grid { display: grid; gap: 0.75rem; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+    .section { background: rgba(0,0,0,0.2); border: 1px solid var(--gold-dim); border-radius: 0.4rem; padding: 0.5rem; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-bottom: 0.35rem; }
+    .row label { min-width: 2.5rem; color: var(--gold-dim); font-size: 0.85em; }
+    input, select { background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.25rem 0.35rem; border-radius: 0.2rem; font-size: inherit; }
+    input { width: 4rem; }
+    input.wide { width: 8rem; }
+    input.narrow { width: 3rem; }
+    input[readonly] { background: #1a1a1a; color: #6688ff; }
+    select { min-width: 6rem; }
+    button, input[type="button"], input[type="reset"] { background: var(--gold-dim); border: 1px solid var(--gold); color: #000; padding: 0.25rem 0.5rem; border-radius: 0.2rem; cursor: pointer; font-size: 0.85em; font-weight: 600; white-space: nowrap; }
+    button:hover, input[type="button"]:hover, input[type="reset"]:hover { background: var(--gold); }
+    .magic { color: #6688ff; }
+    .fire { color: #ff6644; }
+    .norm { color: #ffff88; }
+    .char-panel { background: #333; border: 2px solid var(--gold); }
+    .char-panel .title2 { text-align: center; }
+    .stat-grid { display: grid; grid-template-columns: auto 1fr 1fr; gap: 0.2rem 0.5rem; align-items: center; }
+    .stat-grid label { text-align: right; }
+    .res-grid { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.5rem; align-items: center; margin-top: 0.5rem; }
+    .eq-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    @media (max-width: 400px) { .eq-cols { grid-template-columns: 1fr; } }
+    .eq-row { display: flex; flex-wrap: wrap; gap: 0.25rem; align-items: center; margin-bottom: 0.25rem; }
+    .eq-row input { width: 3.5rem; }
+    .eq-row span { font-size: 0.8em; color: var(--gold-dim); }
+  </style>
 </head>
 <body>
-<center>
-<!-- Character Stats Calculator by King aka Red-Wolf -->
 <form name="myChar">
-<table class="blog">
-    <tr>
-        <td colspan="2"><span class="title">Character Stats Calculator </span><i>By: <a href="https://web.archive.org/web/20120125084741/http://www.red-wolf.sakura.ne.jp/dia/statuschk.html">King aka Red-Wolf</a></i></td>
-    </tr>
-    <tr>
-        <td>
-        <table class="sub">
-            <tr>
-                <td class="title2">Base Stats</td>
-            </tr>
-        </table>
-        <table class="sub">
-            <tr>
-                <td>Name</td>
-                <td><input type="text" name="mycharname" size="20" maxlength="20"></td>
-                <td>Class</td>
-                <td>
-                <select name="myclass" size="1">
-                <option selected>Warrior</option>
-                <option>Rogue</option>
-                <option>Sorcerer</option>
-                </select></td>
-            </tr>
-        </table>
-        <table class="sub">
-            <tr>
-                <td>Level</td>
-                <td><input type="text" name="mylevel" size="5" maxlength="2"></td>
-                <td>Exp</td>
-                <td><input type="text" name="myexp" size="15" maxlength="10"></td>
-                <td><input type="button" name="expset" value="Set Exp" onclick="myexpset(this.form)"></td>
-            </tr>
-        </table>
-        <table class="sub">
-            <tr>
-                <td>Str</td>
-                <td><input type="text" name="mystrbase" size="5" maxlength="3"></td>
-                <td>Mag</td>
-                <td><input type="text" name="mymagbase" size="5" maxlength="3"></td>
-                <td>Dex</td>
-                <td><input type="text" name="mydexbase" size="5" maxlength="3"></td>
-                <td>Vit</td>
-                <td><input type="text" name="myvitbase" size="5" maxlength="3"></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type="button" name="attriinit" value="Set Min" onclick="attriinitset(this.form)"></td>
-                <td colspan="2"><input type="button" name="attrimax" value="Set Max" onclick="attrimaxset(this.form)"></td>
-                <td colspan="2"><input type="reset" name="reset" value="Reset"></td>
-                <td colspan="2"><input type="button" name="calc" value="Calculate" onclick="calcall(this.form)"></td>
-            </tr>
-        </table><br>
-<input type="hidden" name="enphisicallevel" size="5" maxlength="2">
-<input type="hidden" name="enac" size="5" maxlength="3">
-<input type="hidden" name="enmagiclevel" size="5" maxlength="2">
-<input type="hidden" name="enacmax" value="Set Max" onclick="enacmaxset(this.form)">
-        <table class="sub">
-            <tr>
-                <td class="title2">Helm</td>
-            </tr>
-            <tr>
-                <td><input type="text" name="helmac" size="5" maxlength="3"> AC<br>
-                <input type="text" name="helmrate" size="5" maxlength="4"> + % AC<br>
-                <input type="text" name="helmall" size="5" maxlength="3"> + to All
-                <input type="button" name="helmset" value="Set" onclick="allsethelm(this.form)"><br>
-                <input type="text" name="helmstr" size="5" maxlength="3"> Str<br>
-                <input type="text" name="helmmag" size="5" maxlength="3"> Mag<br>
-                <input type="text" name="helmdex" size="5" maxlength="3"> Dex<br>
-                <input type="text" name="helmvit" size="5" maxlength="3"> Vit</td>
-                <td style="vertical-align:top;"><input type="text" name="helmmana" size="5" maxlength="3"> Mana<br>
-                <input type="text" name="helmlife" size="5" maxlength="3"> Life<br>
-                <input type="text" name="helmresall" size="5" maxlength="2"> + % Res All
-                <input type="button" name="helmresset" value="Set" onclick="resallsethelm(this.form)"><br>
-                <input type="text" name="helmresmag" size="5" maxlength="2"> % Res <span class="magic">Magic</span><br>
-                <input type="text" name="helmresfire" size="5" maxlength="2"> % Res <span class="fire">Fire</span><br>
-                <input type="text" name="helmreslight" size="5" maxlength="2"> % Res <span class="norm">Lightning</span></td>
-            </tr>
-        </table>
-        </td>
-        <td style="vertical-align:top;">
-        <table class="char">
-            <tr>
-                <td colspan="5" class="title2">Character</td>
-            </tr>
-            <tr>
-                <td colspan="3"><input class="magic" type="text" name="charname" size="20" readonly></td>
-                <td colspan="1">Class</td>
-                <td colspan="1"><input class="magic" type="text" name="myclass2" size="10" readonly></td>
-            </tr>
-            <tr>
-                <td>Level</td>
-                <td><input class="magic" type="text" name="level" size="5" maxlength="2" readonly></td>
-                <td colspan="1"><br></td>
-                <td>Exp</td>
-                <td colspan="1"><input class="magic" type="text" name="exp" size="10" readonly></td>
-            </tr>
-            <tr>
-                <td colspan="1"><br></td>
-                <td>Base</td>
-                <td>Now</td>
-                <td>Next</td>
-                <td colspan="1"><input class="magic" type="text" name="nextexp" size="10" readonly></td>
-            </tr>
-            <tr>
-                <td>Str</td>
-                <td><input class="magic" type="text" name="strbase" size="5" maxlength="3" readonly></td>
-                <td><input class="magic" type="text" name="strnow" size="5" maxlength="3" readonly></td>
-                <td>to Next Lvl</td>
-                <td colspan="1"><input class="magic" type="text" name="tonextlv" size="10" readonly></td>
-            </tr>
-            <tr>
-                <td>Mag</td>
-                <td><input class="magic" type="text" name="magbase" size="5" maxlength="3" readonly></td>
-                <td><input class="magic" type="text" name="magnow" size="5" maxlength="3" readonly></td>
-                <td>Armor Class</td>
-                <td><input class="magic" type="text" name="ac" size="5" maxlength="3" readonly></td>
-            </tr>
-            <tr>
-                <td>Dex</td>
-                <td><input class="magic" type="text" name="dexbase" size="5" maxlength="3" readonly></td>
-                <td><input class="magic" type="text" name="dexnow" size="5" maxlength="3" readonly></td>
-                <td>to Hit</td>
-                <td><input class="magic" type="text" name="tohit" size="5" maxlength="3" readonly></td>
-            </tr>
-            <tr>
-                <td>Vit</td>
-                <td><input class="magic" type="text" name="vitbase" size="5" maxlength="3" readonly></td>
-                <td><input class="magic" type="text" name="vitnow" size="5" maxlength="3" readonly></td>
-                <td>Damage</td>
-                <td><input class="magic" type="text" name="dammin" size="10" readonly></td>
-            </tr>
-            <tr>
-                <td colspan="5"><br></td>
-            </tr>
-            <tr>
-                <td colspan="3"><br></td>
-                <td colspan="1">Res <span class="magic">Magic</span></td>
-                <td><input class="magic" type="text" name="resmag" size="5" maxlength="3" readonly></td>
-            </tr>
-            <tr>
-                <td>Life</td>
-                <td><input class="magic" type="text" name="lifebase" size="5" maxlength="4" readonly></td>
-                <td><input class="magic" type="text" name="lifenow" size="5" maxlength="4" readonly></td>
-                <td colspan="1">Res <span class="fire">Fire</span></td>
-                <td><input class="magic" type="text" name="resfire" size="5" maxlength="3" readonly></td>
-            </tr>
-            <tr>
-                <td>Mana</td>
-                <td><input class="magic" type="text" name="manabase" size="5" maxlength="4" readonly></td>
-                <td><input class="magic" type="text" name="mananow" size="5" maxlength="4" readonly></td>
-                <td colspan="1">Res <span class="norm">Lightning</span></td>
-                <td><input class="magic" type="text" name="reslight" size="5" maxlength="3" readonly></td>
-            </tr>
-<input type="hidden" name="enphslevel2" size="5" maxlength="2">
-<input type="hidden" name="block" size="5" maxlength="4">
-<input type="hidden" name="enmaglevel2" size="5" maxlength="2">
-<input type="hidden" name="maghit" size="5" maxlength="4">
-<input type="hidden" name="enac2" size="5" maxlength="3">
-<input type="hidden" name="atkhit" size="5" maxlength="4">
-        </table>
-        </td>
-    </tr>
-    <tr>
-        <td>
-        <table class="sub">
-            <tr>
-                <td class="title2">Armor</td>
-            </tr>
-            <tr>
-                <td><input type="text" name="armorac" size="5" maxlength="3"> AC<br>
-                <input type="text" name="armorrate" size="5" maxlength="4"> + % AC<br>
-                <input type="text" name="armorall" size="5" maxlength="3"> + to All
-                <input type="button" name="armorset" value="Set" onclick="allsetarmor(this.form)"><br>
-                <input type="text" name="armorstr" size="5" maxlength="3"> Str<br>
-                <input type="text" name="armormag" size="5" maxlength="3"> Mag<br>
-                <input type="text" name="armordex" size="5" maxlength="3"> Dex<br>
-                <input type="text" name="armorvit" size="5" maxlength="3"> Vit</td>
-                <td style="vertical-align:top;"><input type="text" name="armormana" size="5" maxlength="3"> Mana<br>
-                <input type="text" name="armorlife" size="5" maxlength="3"> Life<br>
-                <input type="text" name="armorresall" size="5" maxlength="2"> + % Res All
-                <input type="button" name="armorresset" value="Set" onclick="resallsetarmor(this.form)"><br>
-                <input type="text" name="armorresmag" size="5" maxlength="2"> % Res <span class="magic">Magic</span><br>
-                <input type="text" name="armorresfire" size="5" maxlength="2"> % Res <span class="fire">Fire</span><br>
-                <input type="text" name="armorreslight" size="5" maxlength="2"> % Res <span class="norm">Lightning</span></td>
-            </tr>
-        </table>
-        </td>
-        <td>
-        <table class="sub">
-            <tr>
-                <td class="title2">Shield</td>
-            </tr>
-            <tr>
-                <td><input type="text" name="shieldac" size="5" maxlength="3"> AC<br>
-                <input type="text" name="shieldrate" size="5" maxlength="4"> + % AC<br>
-                <input type="text" name="shieldall" size="5" maxlength="3"> + to All
-                <input type="button" name="shieldset" value="Set" onclick="allsetshield(this.form)"><br>
-                <input type="text" name="shieldstr" size="5" maxlength="3"> Str<br>
-                <input type="text" name="shieldmag" size="5" maxlength="3"> Mag<br>
-                <input type="text" name="shielddex" size="5" maxlength="3"> Dex<br>
-                <input type="text" name="shieldvit" size="5" maxlength="3"> Vit</td>
-                <td style="vertical-align:top;"><input type="text" name="shieldmana" size="5" maxlength="3"> Mana<br>
-                <input type="text" name="shieldlife" size="5" maxlength="3"> Life<br>
-                <input type="text" name="shieldresall" size="5" maxlength="2"> + % Res All
-                <input type="button" name="shieldresset" value="Set" onclick="resallsetshield(this.form)"><br>
-                <input type="text" name="shieldresmag" size="5" maxlength="2"> % Res <span class="magic">Magic</span><br>
-                <input type="text" name="shieldresfire" size="5" maxlength="2"> % Res <span class="fire">Fire</span><br>
-                <input type="text" name="shieldreslight" size="5" maxlength="2"> % Res <span class="norm">Lightning</span></td>
-            </tr>
-        </table>
-        </td>
-    </tr>
-    <tr>
-        <td>
-        <table class="sub">
-            <tr>
-                <td class="title2">Weapon</td>
-            </tr>
-            <tr>
-                <td><select name="weapontype" size="1">
-                <option selected>Bare Knuckle</option>
-                <option>Sword</option>
-                <option>Bow</option>
-                <option>Mace(Hammer,Maul)</option>
-                <option>Axe</option>
-                <option>Staff</option>
-                <option>Shield</option>
-                </select> Type<br>
-                <input type="text" name="weapondammin" size="5" maxlength="2"> - <input type="text" name="weapondammax" size="5" maxlength="2"> Damage<br>
-                <input type="text" name="weaponrate" size="5" maxlength="4"> + % Damage<br>
-                <input type="text" name="weaponadd" size="5" maxlength="2"> + Damage<br>
-                <input type="text" name="weaponall" size="5" maxlength="3"> + to All
-                <input type="button" name="weaponset" value="Set" onclick="allsetweapon(this.form)"><br>
-                <input type="text" name="weaponstr" size="5" maxlength="3"> Str<br>
-                <input type="text" name="weaponmag" size="5" maxlength="3"> Mag<br>
-                <input type="text" name="weapondex" size="5" maxlength="3"> Dex<br>
-                <input type="text" name="weaponvit" size="5" maxlength="3"> Vit</td>
-                <td style="vertical-align:top;"><input type="type" name="weapontohit" size="5" maxlength="3"> + % to Hit<br>
-                <input type="text" name="weaponac" size="5" maxlength="2"> AC<br>
-                <input type="text" name="weaponmana" size="5" maxlength="3"> Mana<br>
-                <input type="text" name="weaponlife" size="5" maxlength="3"> Life<br>
-                <input type="text" name="weaponresall" size="5" maxlength="2"> + % Res All
-                <input type="button" name="weaponresset" value="Set" onclick="resallsetweapon(this.form)"><br>
-                <input type="text" name="weaponresmag" size="3" maxlength="2"> % Res <span class="magic">Magic</span><br>
-                <input type="text" name="weaponresfire" size="3" maxlength="2"> % Res <span class="fire">Fire</span><br>
-                <input type="text" name="weaponreslight" size="3" maxlength="2"> % Res <span class="norm">Lightning</span></td>
-            </tr>
-        </table>
-        </td>
-        <td style="vertical-align:top;">
-        <table class="sub">
-            <tr>
-                <td class="title2">Amulet</td>
-            </tr>
-            <tr>
-                <td><input type="text" name="amuletac" size="5" maxlength="3"> AC<br>
-                <input type="text" name="amulettohit" size="5" maxlength="4"> + % to Hit<br>
-                <input type="text" name="amuletall" size="5" maxlength="3"> + to All
-                <input type="button" name="amuletset" value="Set" onclick="allsetamulet(this.form)"><br>
-                <input type="text" name="amuletstr" size="5" maxlength="3"> Str<br>
-                <input type="text" name="amuletmag" size="5" maxlength="3"> Mag<br>
-                <input type="text" name="amuletdex" size="5" maxlength="3"> Dex<br>
-                <input type="text" name="amuletvit" size="5" maxlength="3"> Vit</td>
-                <td style="vertical-align:top;"><input type="text" name="amuletmana" size="5" maxlength="3"> Mana<br>
-                <input type="text" name="amuletlife" size="5" maxlength="3"> Life<br>
-                <input type="text" name="amuletresall" size="5" maxlength="2"> + % Res All
-                <input type="button" name="amuletresset" value="Set" onclick="resallsetamulet(this.form)"><br>
-                <input type="text" name="amuletresmag" size="5" maxlength="2"> % Res <span class="magic">Magic</span><br>
-                <input type="text" name="amuletresfire" size="5" maxlength="2"> % Res <span class="fire">Fire</span><br>
-                <input type="text" name="amuletreslight" size="5" maxlength="2"> % Res <span class="norm">Lightning</span></td>
-            </tr>
-        </table>
-        </td>
-    </tr>
-    <tr>
-        <td>
-        <table class="sub">
-            <tr>
-                <td class="title2">Left Ring</td>
-            </tr>
-            <tr>
-                <td><input type="text" name="ring1ac" size="5" maxlength="3"> AC<br>
-                <input type="text" name="ring1tohit" size="5" maxlength="4"> + % to Hit<br>
-                <input type="text" name="ring1all" size="5" maxlength="3"> + to All
-                <input type="button" name="ring1set" value="Set" onclick="allsetring1(this.form)"><br>
-                <input type="text" name="ring1str" size="5" maxlength="3"> Str<br>
-                <input type="text" name="ring1mag" size="5" maxlength="3"> Mag<br>
-                <input type="text" name="ring1dex" size="5" maxlength="3"> Dex<br>
-                <input type="text" name="ring1vit" size="5" maxlength="3"> Vit</td>
-                <td style="vertical-align:top;"><input type="text" name="ring1mana" size="5" maxlength="3"> Mana<br>
-                <input type="text" name="ring1life" size="5" maxlength="3"> Life<br>
-                <input type="text" name="ring1resall" size="5" maxlength="2"> + % Res All
-                <input type="button" name="ring1resset" value="Set" onclick="resallsetring1(this.form)"><br>
-                <input type="text" name="ring1resmag" size="5" maxlength="2"> % Res <span class="magic">Magic</span><br>
-                <input type="text" name="ring1resfire" size="5" maxlength="2"> % Res <span class="fire">Fire</span><br>
-                <input type="text" name="ring1reslight" size="5" maxlength="2"> % Res <span class="norm">Lightning</span></td>
-            </tr>
-        </table>
-        </td>
-        <td>
-        <table class="sub">
-            <tr>
-                <td class="title2">Right Ring</td>
-            </tr>
-            <tr>
-                <td><input type="text" name="ring2ac" size="5" maxlength="3"> AC<br>
-                <input type="text" name="ring2tohit" size="5" maxlength="4"> + % to Hit<br>
-                <input type="text" name="ring2all" size="5" maxlength="3"> + to All
-                <input type="button" name="ring2set" value="Set" onclick="allsetring2(this.form)"><br>
-                <input type="text" name="ring2str" size="5" maxlength="3"> Str<br>
-                <input type="text" name="ring2mag" size="5" maxlength="3"> Mag<br>
-                <input type="text" name="ring2dex" size="5" maxlength="3"> Dex<br>
-                <input type="text" name="ring2vit" size="5" maxlength="3"> Vit</td>
-                <td style="vertical-align:top;"><input type="text" name="ring2mana" size="5" maxlength="3"> Mana<br>
-                <input type="text" name="ring2life" size="5" maxlength="3"> Life<br>
-                <input type="text" name="ring2resall" size="5" maxlength="2"> + % Res All
-                <input type="button" name="ring2resset" value="Set" onclick="resallsetring2(this.form)"><br>
-                <input type="text" name="ring2resmag" size="5" maxlength="2"> % Res <span class="magic">Magic</span><br>
-                <input type="text" name="ring2resfire" size="5" maxlength="2"> % Res <span class="fire">Fire</span><br>
-                <input type="text" name="ring2reslight" size="5" maxlength="2"> % Res <span class="norm">Lightning</span></td>
-            </tr>
-        </table>
-        </td>
-    </tr>
-</table>
+<div class="blog">
+  <div style="margin-bottom:0.75rem;">
+    <span class="title">Character Stats Calculator</span>
+    <i style="font-size:0.8em;"> By: <a href="https://web.archive.org/web/20120125084741/http://www.red-wolf.sakura.ne.jp/dia/statuschk.html">King aka Red-Wolf</a></i>
+  </div>
+
+  <div class="grid grid-2">
+    <!-- LEFT COLUMN: Base Stats + Equipment -->
+    <div>
+      <!-- Base Stats -->
+      <div class="section" style="margin-bottom:0.75rem;">
+        <div class="title2">Base Stats</div>
+        <div class="row">
+          <label>Name</label><input type="text" name="mycharname" class="wide" maxlength="20">
+          <label>Class</label><select name="myclass"><option selected>Warrior</option><option>Rogue</option><option>Sorcerer</option></select>
+        </div>
+        <div class="row">
+          <label>Level</label><input type="text" name="mylevel" class="narrow" maxlength="2">
+          <label>Exp</label><input type="text" name="myexp" class="wide" maxlength="10">
+          <input type="button" value="Set Exp" onclick="myexpset(this.form)">
+        </div>
+        <div class="row">
+          <label>Str</label><input type="text" name="mystrbase" class="narrow" maxlength="3">
+          <label>Mag</label><input type="text" name="mymagbase" class="narrow" maxlength="3">
+          <label>Dex</label><input type="text" name="mydexbase" class="narrow" maxlength="3">
+          <label>Vit</label><input type="text" name="myvitbase" class="narrow" maxlength="3">
+        </div>
+        <div class="row">
+          <input type="button" value="Set Min" onclick="attriinitset(this.form)">
+          <input type="button" value="Set Max" onclick="attrimaxset(this.form)">
+          <input type="reset" value="Reset">
+          <input type="button" value="Calculate" onclick="calcall(this.form)">
+        </div>
+      </div>
+
+      <!-- Equipment Grid -->
+      <div class="grid grid-2" style="gap:0.5rem;">
+        <!-- Helm -->
+        <div class="section">
+          <div class="title2">Helm</div>
+          <div class="eq-cols">
+            <div>
+              <div class="eq-row"><input type="text" name="helmac" maxlength="3"><span>AC</span></div>
+              <div class="eq-row"><input type="text" name="helmrate" maxlength="4"><span>+% AC</span></div>
+              <div class="eq-row"><input type="text" name="helmall" maxlength="3"><span>+All</span><input type="button" value="Set" onclick="allsethelm(this.form)"></div>
+              <div class="eq-row"><input type="text" name="helmstr" maxlength="3"><span>Str</span></div>
+              <div class="eq-row"><input type="text" name="helmmag" maxlength="3"><span>Mag</span></div>
+              <div class="eq-row"><input type="text" name="helmdex" maxlength="3"><span>Dex</span></div>
+              <div class="eq-row"><input type="text" name="helmvit" maxlength="3"><span>Vit</span></div>
+            </div>
+            <div>
+              <div class="eq-row"><input type="text" name="helmmana" maxlength="3"><span>Mana</span></div>
+              <div class="eq-row"><input type="text" name="helmlife" maxlength="3"><span>Life</span></div>
+              <div class="eq-row"><input type="text" name="helmresall" maxlength="2"><span>+%Res</span><input type="button" value="Set" onclick="resallsethelm(this.form)"></div>
+              <div class="eq-row"><input type="text" name="helmresmag" maxlength="2"><span class="magic">Mag</span></div>
+              <div class="eq-row"><input type="text" name="helmresfire" maxlength="2"><span class="fire">Fire</span></div>
+              <div class="eq-row"><input type="text" name="helmreslight" maxlength="2"><span class="norm">Lit</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Armor -->
+        <div class="section">
+          <div class="title2">Armor</div>
+          <div class="eq-cols">
+            <div>
+              <div class="eq-row"><input type="text" name="armorac" maxlength="3"><span>AC</span></div>
+              <div class="eq-row"><input type="text" name="armorrate" maxlength="4"><span>+% AC</span></div>
+              <div class="eq-row"><input type="text" name="armorall" maxlength="3"><span>+All</span><input type="button" value="Set" onclick="allsetarmor(this.form)"></div>
+              <div class="eq-row"><input type="text" name="armorstr" maxlength="3"><span>Str</span></div>
+              <div class="eq-row"><input type="text" name="armormag" maxlength="3"><span>Mag</span></div>
+              <div class="eq-row"><input type="text" name="armordex" maxlength="3"><span>Dex</span></div>
+              <div class="eq-row"><input type="text" name="armorvit" maxlength="3"><span>Vit</span></div>
+            </div>
+            <div>
+              <div class="eq-row"><input type="text" name="armormana" maxlength="3"><span>Mana</span></div>
+              <div class="eq-row"><input type="text" name="armorlife" maxlength="3"><span>Life</span></div>
+              <div class="eq-row"><input type="text" name="armorresall" maxlength="2"><span>+%Res</span><input type="button" value="Set" onclick="resallsetarmor(this.form)"></div>
+              <div class="eq-row"><input type="text" name="armorresmag" maxlength="2"><span class="magic">Mag</span></div>
+              <div class="eq-row"><input type="text" name="armorresfire" maxlength="2"><span class="fire">Fire</span></div>
+              <div class="eq-row"><input type="text" name="armorreslight" maxlength="2"><span class="norm">Lit</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shield -->
+        <div class="section">
+          <div class="title2">Shield</div>
+          <div class="eq-cols">
+            <div>
+              <div class="eq-row"><input type="text" name="shieldac" maxlength="3"><span>AC</span></div>
+              <div class="eq-row"><input type="text" name="shieldrate" maxlength="4"><span>+% AC</span></div>
+              <div class="eq-row"><input type="text" name="shieldall" maxlength="3"><span>+All</span><input type="button" value="Set" onclick="allsetshield(this.form)"></div>
+              <div class="eq-row"><input type="text" name="shieldstr" maxlength="3"><span>Str</span></div>
+              <div class="eq-row"><input type="text" name="shieldmag" maxlength="3"><span>Mag</span></div>
+              <div class="eq-row"><input type="text" name="shielddex" maxlength="3"><span>Dex</span></div>
+              <div class="eq-row"><input type="text" name="shieldvit" maxlength="3"><span>Vit</span></div>
+            </div>
+            <div>
+              <div class="eq-row"><input type="text" name="shieldmana" maxlength="3"><span>Mana</span></div>
+              <div class="eq-row"><input type="text" name="shieldlife" maxlength="3"><span>Life</span></div>
+              <div class="eq-row"><input type="text" name="shieldresall" maxlength="2"><span>+%Res</span><input type="button" value="Set" onclick="resallsetshield(this.form)"></div>
+              <div class="eq-row"><input type="text" name="shieldresmag" maxlength="2"><span class="magic">Mag</span></div>
+              <div class="eq-row"><input type="text" name="shieldresfire" maxlength="2"><span class="fire">Fire</span></div>
+              <div class="eq-row"><input type="text" name="shieldreslight" maxlength="2"><span class="norm">Lit</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weapon -->
+        <div class="section">
+          <div class="title2">Weapon</div>
+          <div class="eq-cols">
+            <div>
+              <div class="eq-row"><select name="weapontype" style="width:100%;"><option selected>Bare Knuckle</option><option>Sword</option><option>Bow</option><option>Mace</option><option>Axe</option><option>Staff</option><option>Shield</option></select></div>
+              <div class="eq-row"><input type="text" name="weapondammin" class="narrow" maxlength="2">-<input type="text" name="weapondammax" class="narrow" maxlength="2"><span>Dmg</span></div>
+              <div class="eq-row"><input type="text" name="weaponrate" maxlength="4"><span>+% Dmg</span></div>
+              <div class="eq-row"><input type="text" name="weaponadd" maxlength="2"><span>+Dmg</span></div>
+              <div class="eq-row"><input type="text" name="weaponall" maxlength="3"><span>+All</span><input type="button" value="Set" onclick="allsetweapon(this.form)"></div>
+              <div class="eq-row"><input type="text" name="weaponstr" maxlength="3"><span>Str</span></div>
+              <div class="eq-row"><input type="text" name="weaponmag" maxlength="3"><span>Mag</span></div>
+              <div class="eq-row"><input type="text" name="weapondex" maxlength="3"><span>Dex</span></div>
+              <div class="eq-row"><input type="text" name="weaponvit" maxlength="3"><span>Vit</span></div>
+            </div>
+            <div>
+              <div class="eq-row"><input type="text" name="weapontohit" maxlength="3"><span>+% Hit</span></div>
+              <div class="eq-row"><input type="text" name="weaponac" maxlength="2"><span>AC</span></div>
+              <div class="eq-row"><input type="text" name="weaponmana" maxlength="3"><span>Mana</span></div>
+              <div class="eq-row"><input type="text" name="weaponlife" maxlength="3"><span>Life</span></div>
+              <div class="eq-row"><input type="text" name="weaponresall" maxlength="2"><span>+%Res</span><input type="button" value="Set" onclick="resallsetweapon(this.form)"></div>
+              <div class="eq-row"><input type="text" name="weaponresmag" maxlength="2"><span class="magic">Mag</span></div>
+              <div class="eq-row"><input type="text" name="weaponresfire" maxlength="2"><span class="fire">Fire</span></div>
+              <div class="eq-row"><input type="text" name="weaponreslight" maxlength="2"><span class="norm">Lit</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Amulet -->
+        <div class="section">
+          <div class="title2">Amulet</div>
+          <div class="eq-cols">
+            <div>
+              <div class="eq-row"><input type="text" name="amulettohit" maxlength="4"><span>+% Hit</span></div>
+              <div class="eq-row"><input type="text" name="amuletall" maxlength="3"><span>+All</span><input type="button" value="Set" onclick="allsetamulet(this.form)"></div>
+              <div class="eq-row"><input type="text" name="amuletstr" maxlength="3"><span>Str</span></div>
+              <div class="eq-row"><input type="text" name="amuletmag" maxlength="3"><span>Mag</span></div>
+              <div class="eq-row"><input type="text" name="amuletdex" maxlength="3"><span>Dex</span></div>
+              <div class="eq-row"><input type="text" name="amuletvit" maxlength="3"><span>Vit</span></div>
+            </div>
+            <div>
+              <div class="eq-row"><input type="text" name="amuletmana" maxlength="3"><span>Mana</span></div>
+              <div class="eq-row"><input type="text" name="amuletlife" maxlength="3"><span>Life</span></div>
+              <div class="eq-row"><input type="text" name="amuletresall" maxlength="2"><span>+%Res</span><input type="button" value="Set" onclick="resallsetamulet(this.form)"></div>
+              <div class="eq-row"><input type="text" name="amuletresmag" maxlength="2"><span class="magic">Mag</span></div>
+              <div class="eq-row"><input type="text" name="amuletresfire" maxlength="2"><span class="fire">Fire</span></div>
+              <div class="eq-row"><input type="text" name="amuletreslight" maxlength="2"><span class="norm">Lit</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Left Ring -->
+        <div class="section">
+          <div class="title2">Left Ring</div>
+          <div class="eq-cols">
+            <div>
+              <div class="eq-row"><input type="text" name="ring1ac" maxlength="3"><span>AC</span></div>
+              <div class="eq-row"><input type="text" name="ring1tohit" maxlength="4"><span>+% Hit</span></div>
+              <div class="eq-row"><input type="text" name="ring1all" maxlength="3"><span>+All</span><input type="button" value="Set" onclick="allsetring1(this.form)"></div>
+              <div class="eq-row"><input type="text" name="ring1str" maxlength="3"><span>Str</span></div>
+              <div class="eq-row"><input type="text" name="ring1mag" maxlength="3"><span>Mag</span></div>
+              <div class="eq-row"><input type="text" name="ring1dex" maxlength="3"><span>Dex</span></div>
+              <div class="eq-row"><input type="text" name="ring1vit" maxlength="3"><span>Vit</span></div>
+            </div>
+            <div>
+              <div class="eq-row"><input type="text" name="ring1mana" maxlength="3"><span>Mana</span></div>
+              <div class="eq-row"><input type="text" name="ring1life" maxlength="3"><span>Life</span></div>
+              <div class="eq-row"><input type="text" name="ring1resall" maxlength="2"><span>+%Res</span><input type="button" value="Set" onclick="resallsetring1(this.form)"></div>
+              <div class="eq-row"><input type="text" name="ring1resmag" maxlength="2"><span class="magic">Mag</span></div>
+              <div class="eq-row"><input type="text" name="ring1resfire" maxlength="2"><span class="fire">Fire</span></div>
+              <div class="eq-row"><input type="text" name="ring1reslight" maxlength="2"><span class="norm">Lit</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Ring -->
+        <div class="section">
+          <div class="title2">Right Ring</div>
+          <div class="eq-cols">
+            <div>
+              <div class="eq-row"><input type="text" name="ring2ac" maxlength="3"><span>AC</span></div>
+              <div class="eq-row"><input type="text" name="ring2tohit" maxlength="4"><span>+% Hit</span></div>
+              <div class="eq-row"><input type="text" name="ring2all" maxlength="3"><span>+All</span><input type="button" value="Set" onclick="allsetring2(this.form)"></div>
+              <div class="eq-row"><input type="text" name="ring2str" maxlength="3"><span>Str</span></div>
+              <div class="eq-row"><input type="text" name="ring2mag" maxlength="3"><span>Mag</span></div>
+              <div class="eq-row"><input type="text" name="ring2dex" maxlength="3"><span>Dex</span></div>
+              <div class="eq-row"><input type="text" name="ring2vit" maxlength="3"><span>Vit</span></div>
+            </div>
+            <div>
+              <div class="eq-row"><input type="text" name="ring2mana" maxlength="3"><span>Mana</span></div>
+              <div class="eq-row"><input type="text" name="ring2life" maxlength="3"><span>Life</span></div>
+              <div class="eq-row"><input type="text" name="ring2resall" maxlength="2"><span>+%Res</span><input type="button" value="Set" onclick="resallsetring2(this.form)"></div>
+              <div class="eq-row"><input type="text" name="ring2resmag" maxlength="2"><span class="magic">Mag</span></div>
+              <div class="eq-row"><input type="text" name="ring2resfire" maxlength="2"><span class="fire">Fire</span></div>
+              <div class="eq-row"><input type="text" name="ring2reslight" maxlength="2"><span class="norm">Lit</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Character Results Panel -->
+    <div class="section char-panel">
+      <div class="title2">Character</div>
+      <div class="row" style="justify-content:space-between;">
+        <div><input type="text" name="charname" class="wide" readonly></div>
+        <div><span style="color:var(--gold-dim);">Class:</span> <input type="text" name="myclass2" style="width:5rem;" readonly></div>
+      </div>
+      <div class="row" style="justify-content:space-between;">
+        <div><span style="color:var(--gold-dim);">Level:</span> <input type="text" name="level" class="narrow" readonly></div>
+        <div><span style="color:var(--gold-dim);">Exp:</span> <input type="text" name="exp" style="width:6rem;" readonly></div>
+      </div>
+      <div class="row" style="justify-content:space-between;">
+        <div><span style="color:var(--gold-dim);">Next:</span> <input type="text" name="nextexp" style="width:6rem;" readonly></div>
+        <div><span style="color:var(--gold-dim);">To Next:</span> <input type="text" name="tonextlv" style="width:6rem;" readonly></div>
+      </div>
+      
+      <div style="margin-top:0.75rem;">
+        <div class="stat-grid">
+          <span></span><span style="color:var(--gold-dim);font-size:0.8em;">Base</span><span style="color:var(--gold-dim);font-size:0.8em;">Now</span>
+          <label>Str</label><input type="text" name="strbase" class="narrow" readonly><input type="text" name="strnow" class="narrow" readonly>
+          <label>Mag</label><input type="text" name="magbase" class="narrow" readonly><input type="text" name="magnow" class="narrow" readonly>
+          <label>Dex</label><input type="text" name="dexbase" class="narrow" readonly><input type="text" name="dexnow" class="narrow" readonly>
+          <label>Vit</label><input type="text" name="vitbase" class="narrow" readonly><input type="text" name="vitnow" class="narrow" readonly>
+          <label>Life</label><input type="text" name="lifebase" readonly><input type="text" name="lifenow" readonly>
+          <label>Mana</label><input type="text" name="manabase" readonly><input type="text" name="mananow" readonly>
+        </div>
+      </div>
+
+      <div style="margin-top:0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+        <div>
+          <div class="eq-row"><span style="color:var(--gold-dim);">AC:</span><input type="text" name="ac" class="narrow" readonly></div>
+          <div class="eq-row"><span style="color:var(--gold-dim);">To Hit:</span><input type="text" name="tohit" readonly></div>
+          <div class="eq-row"><span style="color:var(--gold-dim);">Damage:</span><input type="text" name="dammin" style="width:5rem;" readonly></div>
+        </div>
+        <div>
+          <div class="eq-row"><span class="magic">Res Mag:</span><input type="text" name="resmag" class="narrow" readonly></div>
+          <div class="eq-row"><span class="fire">Res Fire:</span><input type="text" name="resfire" class="narrow" readonly></div>
+          <div class="eq-row"><span class="norm">Res Lit:</span><input type="text" name="reslight" class="narrow" readonly></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden fields -->
+  <input type="hidden" name="enphisicallevel"><input type="hidden" name="enac"><input type="hidden" name="enmagiclevel">
+  <input type="hidden" name="enphslevel2"><input type="hidden" name="block"><input type="hidden" name="enmaglevel2">
+  <input type="hidden" name="maghit"><input type="hidden" name="enac2"><input type="hidden" name="atkhit">
+  <input type="hidden" name="amuletac">
+</div>
 </form>
-</center>
+
+<script>
+// Experience table
+var nxtExp = [];
+nxtExp[0]=0;nxtExp[10]=83419;nxtExp[20]=1366227;nxtExp[30]=20066092;nxtExp[40]=210720231;
+nxtExp[1]=2000;nxtExp[11]=108879;nxtExp[21]=1814568;nxtExp[31]=25774405;nxtExp[41]=261657253;
+nxtExp[2]=4620;nxtExp[12]=141086;nxtExp[22]=2401895;nxtExp[32]=32994399;nxtExp[42]=323800420;
+nxtExp[3]=8040;nxtExp[13]=181683;nxtExp[23]=3168651;nxtExp[33]=42095202;nxtExp[43]=399335440;
+nxtExp[4]=12489;nxtExp[14]=231075;nxtExp[24]=4166200;nxtExp[34]=53525811;nxtExp[44]=490808349;
+nxtExp[5]=18258;nxtExp[15]=313658;nxtExp[25]=5459523;nxtExp[35]=67831218;nxtExp[45]=601170414;
+nxtExp[6]=25712;nxtExp[16]=424067;nxtExp[26]=7130496;nxtExp[36]=85670061;nxtExp[46]=733825617;
+nxtExp[7]=35309;nxtExp[17]=571190;nxtExp[27]=9281874;nxtExp[37]=107834823;nxtExp[47]=892680222;
+nxtExp[8]=47622;nxtExp[18]=766569;nxtExp[28]=12042092;nxtExp[38]=135274799;nxtExp[48]=1082908612;
+nxtExp[9]=63364;nxtExp[19]=1025154;nxtExp[29]=15571031;nxtExp[39]=169122009;nxtExp[49]=1310707109;
+nxtExp[50]=1583495809;
+
+function calcall(f){
+ var myClass=f.myclass.selectedIndex;
+ var myLv=f.mylevel.value*1;
+ var myExpNow=f.myexp.value*1;
+ var myStrBase=f.mystrbase.value*1,myMagBase=f.mymagbase.value*1,myDexBase=f.mydexbase.value*1,myVitBase=f.myvitbase.value*1;
+ var helmAc=f.helmac.value*1,helmRate=1+f.helmrate.value*0.01;
+ var helmStr=f.helmstr.value*1,helmMag=f.helmmag.value*1,helmDex=f.helmdex.value*1,helmVit=f.helmvit.value*1;
+ var helmMana=f.helmmana.value*1,helmLife=f.helmlife.value*1;
+ var helmResMag=f.helmresmag.value*1,helmResFire=f.helmresfire.value*1,helmResLight=f.helmreslight.value*1;
+ var armorAc=f.armorac.value*1,armorRate=1+f.armorrate.value*0.01;
+ var armorStr=f.armorstr.value*1,armorMag=f.armormag.value*1,armorDex=f.armordex.value*1,armorVit=f.armorvit.value*1;
+ var armorMana=f.armormana.value*1,armorLife=f.armorlife.value*1;
+ var armorResMag=f.armorresmag.value*1,armorResFire=f.armorresfire.value*1,armorResLight=f.armorreslight.value*1;
+ var shieldAc=f.shieldac.value*1,shieldRate=1+f.shieldrate.value*0.01;
+ var shieldStr=f.shieldstr.value*1,shieldMag=f.shieldmag.value*1,shieldDex=f.shielddex.value*1,shieldVit=f.shieldvit.value*1;
+ var shieldMana=f.shieldmana.value*1,shieldLife=f.shieldlife.value*1;
+ var shieldResMag=f.shieldresmag.value*1,shieldResFire=f.shieldresfire.value*1,shieldResLight=f.shieldreslight.value*1;
+ var weaponDamMin=f.weapondammin.value*1,weaponDamMax=f.weapondammax.value*1,weaponRate=1+f.weaponrate.value*0.01,weaponAdd=f.weaponadd.value*1;
+ var weaponToHit=f.weapontohit.value*1;
+ var weaponStr=f.weaponstr.value*1,weaponMag=f.weaponmag.value*1,weaponDex=f.weapondex.value*1,weaponVit=f.weaponvit.value*1;
+ var weaponMana=f.weaponmana.value*1,weaponLife=f.weaponlife.value*1,weaponAc=f.weaponac.value*1;
+ var weaponResMag=f.weaponresmag.value*1,weaponResFire=f.weaponresfire.value*1,weaponResLight=f.weaponreslight.value*1;
+ var amuletStr=f.amuletstr.value*1,amuletMag=f.amuletmag.value*1,amuletDex=f.amuletdex.value*1,amuletVit=f.amuletvit.value*1;
+ var amuletToHit=f.amulettohit.value*1,amuletMana=f.amuletmana.value*1,amuletLife=f.amuletlife.value*1;
+ var amuletResMag=f.amuletresmag.value*1,amuletResFire=f.amuletresfire.value*1,amuletResLight=f.amuletreslight.value*1;
+ var ring1Str=f.ring1str.value*1,ring1Mag=f.ring1mag.value*1,ring1Dex=f.ring1dex.value*1,ring1Vit=f.ring1vit.value*1;
+ var ring1ToHit=f.ring1tohit.value*1,ring1Mana=f.ring1mana.value*1,ring1Life=f.ring1life.value*1,ring1Ac=f.ring1ac.value*1;
+ var ring1ResMag=f.ring1resmag.value*1,ring1ResFire=f.ring1resfire.value*1,ring1ResLight=f.ring1reslight.value*1;
+ var ring2Str=f.ring2str.value*1,ring2Mag=f.ring2mag.value*1,ring2Dex=f.ring2dex.value*1,ring2Vit=f.ring2vit.value*1;
+ var ring2ToHit=f.ring2tohit.value*1,ring2Mana=f.ring2mana.value*1,ring2Life=f.ring2life.value*1,ring2Ac=f.ring2ac.value*1;
+ var ring2ResMag=f.ring2resmag.value*1,ring2ResFire=f.ring2resfire.value*1,ring2ResLight=f.ring2reslight.value*1;
+
+ var myStrEqp=helmStr+armorStr+shieldStr+weaponStr+amuletStr+ring1Str+ring2Str;
+ var myMagEqp=helmMag+armorMag+shieldMag+weaponMag+amuletMag+ring1Mag+ring2Mag;
+ var myDexEqp=helmDex+armorDex+shieldDex+weaponDex+amuletDex+ring1Dex+ring2Dex;
+ var myVitEqp=helmVit+armorVit+shieldVit+weaponVit+amuletVit+ring1Vit+ring2Vit;
+ var myStrNow=myStrBase+myStrEqp,myMagNow=myMagBase+myMagEqp,myDexNow=myDexBase+myDexEqp,myVitNow=myVitBase+myVitEqp;
+ var myAcEqp=Math.floor(helmAc*helmRate)+Math.floor(armorAc*armorRate)+Math.floor(shieldAc*shieldRate)+weaponAc+ring1Ac+ring2Ac;
+ var myToHitEqp=weaponToHit+amuletToHit+ring1ToHit+ring2ToHit;
+ var myManaEqp=helmMana+armorMana+shieldMana+weaponMana+amuletMana+ring1Mana+ring2Mana;
+ var myLifeEqp=helmLife+armorLife+shieldLife+weaponLife+amuletLife+ring1Life+ring2Life;
+ var myWepType=f.weapontype.selectedIndex;
+ var enMagLv=f.enmagiclevel.value*1,enPhsLv=f.enphisicallevel.value*1,enAc=f.enac.value*1;
+ var myDamMinEqp,myDamMaxEqp;
+ var myLv2=(myLv==50)?myLv-2:myLv-1;
+
+ if(myWepType==0){myDamMinEqp=1;myDamMaxEqp=1;}
+ else if(myWepType==6){myDamMinEqp=1;myDamMaxEqp=3;}
+ else{myDamMinEqp=Math.floor(weaponDamMin*weaponRate+weaponAdd);myDamMaxEqp=Math.floor(weaponDamMax*weaponRate+weaponAdd);}
+
+ if(myClass==0){
+  f.myclass2.value="Warrior";
+  f.lifebase.value=myVitBase*2+myLv2*2+20;
+  f.lifenow.value=myVitEqp*2+myVitBase*2+myLv2*2+20+myLifeEqp;
+  f.manabase.value=myMagBase+myLv2;
+  f.mananow.value=myMagEqp+myMagBase+myLv2+myManaEqp;
+  if(myWepType!=2){f.dammin.value=(Math.floor(myStrNow*myLv*0.01)+myDamMinEqp)+"-"+(Math.floor(myStrNow*myLv*0.01)+myDamMaxEqp);f.atkhit.value=myLv+Math.floor(myDexNow*0.5)+50-enAc+20+myToHitEqp;}
+  else{f.dammin.value=(Math.floor(myStrNow*myLv*0.005)+myDamMinEqp)+"-"+(Math.floor(myStrNow*myLv*0.005)+myDamMaxEqp);f.atkhit.value=myLv+myDexNow+50-enAc+10+myToHitEqp;}
+  f.maghit.value=(25-enMagLv)*2+myMagNow;
+ }else if(myClass==1){
+  f.myclass2.value="Rogue";
+  f.lifebase.value=myVitBase+myLv2*2+25;
+  f.lifenow.value=Math.floor(myVitEqp*1.5)+myVitBase+myLv2*2+25+myLifeEqp;
+  f.manabase.value=myMagBase+myLv2*2+7;
+  f.mananow.value=Math.floor(myMagEqp*1.5)+myMagBase+myLv2*2+7+myManaEqp;
+  f.dammin.value=(Math.floor((myStrNow+myDexNow)*myLv*0.005)+myDamMinEqp)+"-"+(Math.floor((myStrNow+myDexNow)*myLv*0.005)+myDamMaxEqp);
+  if(myWepType!=2){f.atkhit.value=myLv+Math.floor(myDexNow*0.5)+50-enAc+myToHitEqp;}
+  else{f.atkhit.value=myLv+myDexNow+50-enAc+20+myToHitEqp;}
+  f.maghit.value=(25-enMagLv)*2+myMagNow;
+ }else{
+  f.myclass2.value="Sorcerer";
+  f.lifebase.value=myVitBase+myLv2+10;
+  f.lifenow.value=myVitEqp+myVitBase+myLv2+10+myLifeEqp;
+  f.manabase.value=myMagBase*2+myLv2*2;
+  f.mananow.value=myMagEqp*2+myMagBase*2+myLv2*2+myManaEqp;
+  if(myWepType!=2){f.dammin.value=(Math.floor(myStrNow*myLv*0.01)+myDamMinEqp)+"-"+(Math.floor(myStrNow*myLv*0.01)+myDamMaxEqp);f.atkhit.value=myLv+Math.floor(myDexNow*0.5)+50-enAc+myToHitEqp;}
+  else{f.dammin.value=(Math.floor(myStrNow*myLv*0.005)+myDamMinEqp)+"-"+(Math.floor(myStrNow*myLv*0.005)+myDamMaxEqp);f.atkhit.value=myLv+myDexNow+50-enAc+myToHitEqp;}
+  f.maghit.value=(25-enMagLv)*2+myMagNow+20;
+ }
+
+ f.exp.value=myExpNow;
+ if(myExpNow>=nxtExp[myLv]){f.tonextlv.value="None";f.nextexp.value=(myLv==50)?"None":nxtExp[myLv];}
+ else{f.tonextlv.value=nxtExp[myLv]-myExpNow;f.nextexp.value=nxtExp[myLv];}
+
+ f.charname.value=f.mycharname.value;
+ f.level.value=f.mylevel.value;
+ f.strbase.value=myStrBase;f.magbase.value=myMagBase;f.dexbase.value=myDexBase;f.vitbase.value=myVitBase;
+ f.strnow.value=myStrNow;f.magnow.value=myMagNow;f.dexnow.value=myDexNow;f.vitnow.value=myVitNow;
+ f.tohit.value=Math.floor(myDexNow*0.5)+50+myToHitEqp;
+ f.ac.value=Math.floor(myDexNow*0.2)+myAcEqp;
+ f.block.value=(myLv-enPhsLv)*2+myDexNow;
+ var rM=helmResMag+armorResMag+shieldResMag+weaponResMag+amuletResMag+ring1ResMag+ring2ResMag;
+ var rF=helmResFire+armorResFire+shieldResFire+weaponResFire+amuletResFire+ring1ResFire+ring2ResFire;
+ var rL=helmResLight+armorResLight+shieldResLight+weaponResLight+amuletResLight+ring1ResLight+ring2ResLight;
+ f.resmag.value=(rM>=75)?"MAX":rM+"%";
+ f.resfire.value=(rF>=75)?"MAX":rF+"%";
+ f.reslight.value=(rL>=75)?"MAX":rL+"%";
+}
+
+function myexpset(f){var myLv=f.mylevel.value*1;if(myLv>0)f.myexp.value=nxtExp[myLv-1];}
+function attrimaxset(f){
+ var c=f.myclass.selectedIndex;
+ f.mylevel.value=50;f.myexp.value=1583495809;
+ if(c==0){f.mystrbase.value=250;f.mymagbase.value=50;f.mydexbase.value=60;f.myvitbase.value=100;}
+ else if(c==1){f.mystrbase.value=55;f.mymagbase.value=70;f.mydexbase.value=250;f.myvitbase.value=80;}
+ else{f.mystrbase.value=45;f.mymagbase.value=250;f.mydexbase.value=85;f.myvitbase.value=80;}
+}
+function attriinitset(f){
+ var c=f.myclass.selectedIndex;
+ f.mylevel.value=1;f.myexp.value=0;
+ if(c==0){f.mystrbase.value=30;f.mymagbase.value=10;f.mydexbase.value=20;f.myvitbase.value=25;}
+ else if(c==1){f.mystrbase.value=20;f.mymagbase.value=15;f.mydexbase.value=30;f.myvitbase.value=20;}
+ else{f.mystrbase.value=15;f.mymagbase.value=35;f.mydexbase.value=15;f.myvitbase.value=20;}
+}
+function allsethelm(f){f.helmstr.value=f.helmall.value;f.helmmag.value=f.helmall.value;f.helmdex.value=f.helmall.value;f.helmvit.value=f.helmall.value;}
+function allsetarmor(f){f.armorstr.value=f.armorall.value;f.armormag.value=f.armorall.value;f.armordex.value=f.armorall.value;f.armorvit.value=f.armorall.value;}
+function allsetshield(f){f.shieldstr.value=f.shieldall.value;f.shieldmag.value=f.shieldall.value;f.shielddex.value=f.shieldall.value;f.shieldvit.value=f.shieldall.value;}
+function allsetweapon(f){f.weaponstr.value=f.weaponall.value;f.weaponmag.value=f.weaponall.value;f.weapondex.value=f.weaponall.value;f.weaponvit.value=f.weaponall.value;}
+function allsetamulet(f){f.amuletstr.value=f.amuletall.value;f.amuletmag.value=f.amuletall.value;f.amuletdex.value=f.amuletall.value;f.amuletvit.value=f.amuletall.value;}
+function allsetring1(f){f.ring1str.value=f.ring1all.value;f.ring1mag.value=f.ring1all.value;f.ring1dex.value=f.ring1all.value;f.ring1vit.value=f.ring1all.value;}
+function allsetring2(f){f.ring2str.value=f.ring2all.value;f.ring2mag.value=f.ring2all.value;f.ring2dex.value=f.ring2all.value;f.ring2vit.value=f.ring2all.value;}
+function resallsethelm(f){f.helmresmag.value=f.helmresall.value;f.helmresfire.value=f.helmresall.value;f.helmreslight.value=f.helmresall.value;}
+function resallsetarmor(f){f.armorresmag.value=f.armorresall.value;f.armorresfire.value=f.armorresall.value;f.armorreslight.value=f.armorresall.value;}
+function resallsetshield(f){f.shieldresmag.value=f.shieldresall.value;f.shieldresfire.value=f.shieldresall.value;f.shieldreslight.value=f.shieldresall.value;}
+function resallsetweapon(f){f.weaponresmag.value=f.weaponresall.value;f.weaponresfire.value=f.weaponresall.value;f.weaponreslight.value=f.weaponresall.value;}
+function resallsetamulet(f){f.amuletresmag.value=f.amuletresall.value;f.amuletresfire.value=f.amuletresall.value;f.amuletreslight.value=f.amuletresall.value;}
+function resallsetring1(f){f.ring1resmag.value=f.ring1resall.value;f.ring1resfire.value=f.ring1resall.value;f.ring1reslight.value=f.ring1resall.value;}
+function resallsetring2(f){f.ring2resmag.value=f.ring2resall.value;f.ring2resfire.value=f.ring2resall.value;f.ring2reslight.value=f.ring2resall.value;}
+</script>
 </body>
 </html>

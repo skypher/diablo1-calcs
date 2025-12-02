@@ -1,265 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chance to Hit Calculator - Diablo Calculator</title>
-    <link rel="stylesheet" href="calc-styles.css">
-    <script type="text/javascript" src="js/cth.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chance to Hit Calculator - Diablo I</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root { --gold: #c7a44a; --gold-dim: #8b7355; --bg: #1a1a1a; --panel: #252525; --text: #d4c4a0; --input-bg: #0d0d0d; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: clamp(0.5rem, 2vw, 1rem); font-size: clamp(0.75rem, 1.8vw, 0.9rem); }
+    .blog { max-width: 50rem; margin-inline: auto; background: var(--panel); border: 2px solid var(--gold-dim); border-radius: 0.5rem; padding: clamp(0.5rem, 2vw, 1rem); }
+    .title { font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--gold); display: block; margin-bottom: 0.25rem; }
+    .sub { margin-bottom: 0.75rem; }
+    .sub td { padding: 0.25rem 0.5rem; }
+    select { background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.3rem; border-radius: 0.25rem; font-size: inherit; }
+    table { width: 100%; border-collapse: collapse; font-size: clamp(0.65rem, 1.5vw, 0.8rem); }
+    #MaxCS td, #EnemyCS td { padding: 0.3rem 0.4rem; text-align: center; border-bottom: 1px solid #333; }
+    .magic { color: #6688ff; }
+  </style>
 </head>
 <body>
-<center>
-<!-- Chance to Hit Calculator by Eso aka the_Langolier -->
 <form name="SelectStats">
-<table class="blog">
-    <tr>
-        <td><span class="title">Chance to Hit Calculator</span><br><i>By: <a href="https://web.archive.org/web/20120530084958/http://www.dpsyche.com/cth.html">Eso aka the_Langolier</a></i></td>
-    </tr>
-    <tr>
-        <td>
-        <table class="sub">
-            <tr>
-                <td>Difficulty:<br><select name="Diff" onchange="update();">
-                <option value="0">Normal</option>
-                <option value="50">Nightmare</option>
-                <option value="80" selected>Hell</option>
-                </select></td>
-                <td>Final to-Hit:<br><select name="Percent" onchange="update();">
-                <option value="95" selected>auto-miss</option>
-                <option value="75">75%</option>
-                <option value="66">66%</option>
-                <option value="50">50%</option>
-                <option value="33">33%</option>
-                <option value="25">25%</option>
-                </select></td>
-            </tr>
-            <tr>
-                <td>Class:<br><select name="cClass" onchange="update();">
-                <option value="60">Warrior</option>
-                <option value="250">Rogue</option>
-                <option value="85">Sorcerer</option>
-                </select></td>
-                <td>Attack:<br><select name="Attack" onchange="update();">
-                <option value="melee">melee</option>
-                <option value="arrow">arrow</option></select></td>
-            </tr>
-        </table>
-        <br>
-        <table id="MaxCS">
-            <tr>
-                <td style="text-align: center">Clvl:</td>
-                <td style="text-align: center">30</td>
-                <td style="text-align: center">40</td>
-                <td style="text-align: center">50</td>
-                <td align="center">
-                <select name="Clvl" onchange="update();">
-                <script type="text/javascript">
-                for(var i=17; i<=50; i++) {
-                    var sel = (i==45) ? ' selected' : '';
-                    document.write('<option value="'+i+'"'+sel+'>'+i+'</option>');
-                }
-                </script>
-                </select></td>
-            </tr>
-            <tr>
-                <td>Max useful<br>to-hit (BK's):</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-        </table>
-        <br>
-        <table width="100%">
-            <tr>
-                <td>Max useful to-hit per enemy type:</td>
-            </tr>
-        </table>
-        <br>
-        <table id="EnemyCS" width="100%">
-            <tr>
-                <td style="text-align: center">Clvl:</td>
-                <td style="text-align: center">30</td>
-                <td style="text-align: center">40</td>
-                <td style="text-align: center">50</td>
-                <td style="text-align: center">Your<br>clvl:</td>
-            </tr>
-            <tr>
-                <td>Lava Maw</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Storm Lord</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Maelstorm</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Guardian</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Vortex Lord</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Balrog</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Cave Viper</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Fire Drake</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Gold Viper</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Azure Drake</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Succubus</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Snow Witch</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Hell Spawn</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Soul Burner</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Black Knight</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Doom Guard</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Steel Lord</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Blood Knight</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Counselor</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Magistrate</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Cabalist</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>Advocate</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-            <tr>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-            </tr>
-            <tr>
-                <td>Average<br>Useful to-hit:</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td class="magic">--</td>
-            </tr>
-        </table>
-        </td>
-    </tr>
-<script type="text/javascript">
+<div class="blog">
+  <span class="title">Chance to Hit Calculator</span><br>
+  <i>By: <a href="https://web.archive.org/web/20120530084958/http://www.dpsyche.com/cth.html">Eso aka the_Langolier</a></i>
+
+  <table class="sub">
+    <tr><td>Difficulty:<br><select name="Diff" onchange="update();"><option value="0">Normal</option><option value="50">Nightmare</option><option value="80" selected>Hell</option></select></td>
+        <td>Final to-Hit:<br><select name="Percent" onchange="update();"><option value="95" selected>auto-miss</option><option value="75">75%</option><option value="66">66%</option><option value="50">50%</option><option value="33">33%</option><option value="25">25%</option></select></td></tr>
+    <tr><td>Class:<br><select name="cClass" onchange="update();"><option value="60">Warrior</option><option value="250">Rogue</option><option value="85">Sorcerer</option></select></td>
+        <td>Attack:<br><select name="Attack" onchange="update();"><option value="melee">melee</option><option value="arrow">arrow</option></select></td></tr>
+  </table>
+
+  <table id="MaxCS">
+    <tr><td>Clvl:</td><td>30</td><td>40</td><td>50</td><td><select name="Clvl" onchange="update();"><script>for(var i=17;i<=50;i++){var sel=(i==45)?' selected':'';document.write('<option value="'+i+'"'+sel+'>'+i+'</option>');}</script></select></td></tr>
+    <tr><td>Max useful to-hit (BK's):</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+  </table>
+
+  <p style="margin:0.75rem 0 0.5rem;color:var(--gold-dim);">Max useful to-hit per enemy type:</p>
+
+  <table id="EnemyCS">
+    <tr><td>Clvl:</td><td>30</td><td>40</td><td>50</td><td>Your clvl:</td></tr>
+    <tr><td>Lava Maw</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Storm Lord</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Maelstorm</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Guardian</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Vortex Lord</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Balrog</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Cave Viper</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Fire Drake</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Gold Viper</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Azure Drake</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Succubus</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Snow Witch</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Hell Spawn</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Soul Burner</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Black Knight</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Doom Guard</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Steel Lord</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Blood Knight</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Counselor</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Magistrate</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Cabalist</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>Advocate</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+    <tr><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+    <tr><td>Average Useful to-hit:</td><td>--</td><td>--</td><td>--</td><td class="magic">--</td></tr>
+  </table>
+</div>
+</form>
+<script>
+function update(){calcMax();calcEnemy();}
+function calcMax(){
+  var clvl=parseInt(document.SelectStats.Clvl.options[document.SelectStats.Clvl.selectedIndex].value);
+  var diff=parseInt(document.SelectStats.Diff.options[document.SelectStats.Diff.selectedIndex].value);
+  var cClass=document.SelectStats.cClass.options[document.SelectStats.cClass.selectedIndex].text;
+  var dex=parseInt(document.SelectStats.cClass.options[document.SelectStats.cClass.selectedIndex].value);
+  var attack=document.SelectStats.Attack.options[document.SelectStats.Attack.selectedIndex].value;
+  var bonus=0;
+  if(cClass=="Warrior"){bonus=(attack=="melee")?20:(attack=="arrow")?10:0;}
+  else if(cClass=="Rogue"){bonus=(attack=="arrow")?20:0;}
+  var percent=parseInt(document.SelectStats.Percent.options[document.SelectStats.Percent.selectedIndex].value);
+  var TD=document.getElementById("MaxCS").getElementsByTagName("td");
+  var arrAdj=(attack=="arrow")?25-dex/2:0;
+  var cs;
+  cs=Math.floor(percent+(85+diff)-30-bonus+arrAdj);TD[6].firstChild.nodeValue=(cs<0?0:cs)+"%";
+  cs=Math.floor(percent+(85+diff)-40-bonus+arrAdj);TD[7].firstChild.nodeValue=(cs<0?0:cs)+"%";
+  cs=Math.floor(percent+(85+diff)-50-bonus+arrAdj);TD[8].firstChild.nodeValue=(cs<0?0:cs)+"%";
+  cs=Math.floor(percent+(85+diff)-clvl-bonus+arrAdj);TD[9].firstChild.nodeValue=(cs<0?0:cs)+"%";
+}
+function calcEnemy(){
+  var clvl=parseInt(document.SelectStats.Clvl.options[document.SelectStats.Clvl.selectedIndex].value);
+  var diff=parseInt(document.SelectStats.Diff.options[document.SelectStats.Diff.selectedIndex].value);
+  var cClass=document.SelectStats.cClass.options[document.SelectStats.cClass.selectedIndex].text;
+  var dex=parseInt(document.SelectStats.cClass.options[document.SelectStats.cClass.selectedIndex].value);
+  var attack=document.SelectStats.Attack.options[document.SelectStats.Attack.selectedIndex].value;
+  var bonus=0;
+  if(cClass=="Warrior"){bonus=(attack=="melee")?20:(attack=="arrow")?10:0;}
+  else if(cClass=="Rogue"){bonus=(attack=="arrow")?20:0;}
+  var percent=parseInt(document.SelectStats.Percent.options[document.SelectStats.Percent.selectedIndex].value);
+  var TD=document.getElementById("EnemyCS").getElementsByTagName("td");
+  var arrAdj=(attack=="arrow")?25-dex/2:0;
+  // AC values for each enemy
+  var enemies=[35,35,40,65,70,75,60,65,70,75,60,65,75,85,75,75,80,85,0,0,0,0];
+  for(var e=0;e<22;e++){
+    var ac=enemies[e];
+    var idx=6+e*5;
+    var cs;
+    cs=Math.floor(percent+(ac+diff)-30-bonus+arrAdj);TD[idx].firstChild.nodeValue=(cs<0?0:cs)+"%";
+    cs=Math.floor(percent+(ac+diff)-40-bonus+arrAdj);TD[idx+1].firstChild.nodeValue=(cs<0?0:cs)+"%";
+    cs=Math.floor(percent+(ac+diff)-50-bonus+arrAdj);TD[idx+2].firstChild.nodeValue=(cs<0?0:cs)+"%";
+    cs=Math.floor(percent+(ac+diff)-clvl-bonus+arrAdj);TD[idx+3].firstChild.nodeValue=(cs<0?0:cs)+"%";
+  }
+  var ave1=0,ave2=0,ave3=0,ave4=0;
+  for(var i=6;i<=111;i+=5){
+    var v1=parseInt(TD[i].firstChild.nodeValue);var v2=parseInt(TD[i+1].firstChild.nodeValue);
+    var v3=parseInt(TD[i+2].firstChild.nodeValue);var v4=parseInt(TD[i+3].firstChild.nodeValue);
+    if(!isNaN(v1)){ave1+=v1;ave2+=v2;ave3+=v3;ave4+=v4;}
+  }
+  TD[121].firstChild.nodeValue=Math.floor(ave1/22)+"%";TD[122].firstChild.nodeValue=Math.floor(ave2/22)+"%";
+  TD[123].firstChild.nodeValue=Math.floor(ave3/22)+"%";TD[124].firstChild.nodeValue=Math.floor(ave4/22)+"%";
+}
 update();
 </script>
-</table>
-</form>
-</center>
 </body>
 </html>
