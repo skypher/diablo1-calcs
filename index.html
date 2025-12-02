@@ -17,6 +17,12 @@
     .calc.visible { display: block; }
     .calc h2 { font-size: clamp(0.9rem, 2.2vw, 1.1rem); color: var(--gold); margin: 0 0 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--gold-dim); }
     .calc h2 a { color: var(--gold-dim); font-size: 0.7em; text-decoration: none; margin-left: 0.5rem; font-weight: normal; font-style: italic; }
+    .calc-frame { width: 100%; border: 0; background: transparent; min-height: 1000px; border-radius: 0.35rem; }
+    .meta { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; font-size: clamp(0.6rem, 1.5vw, 0.72rem); color: var(--gold-dim); margin: 0.25rem 0 0.65rem; }
+    .meta .embed-label { font-weight: 600; }
+    .meta input.embed-input { flex: 1 1 16rem; min-width: 12rem; max-width: 100%; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.3rem 0.4rem; border-radius: 0.25rem; font-family: 'Consolas', monospace; font-size: clamp(0.65rem, 1.5vw, 0.75rem); }
+    .meta a.guide { color: var(--gold); text-decoration: none; font-weight: 600; }
+    .meta a.guide:hover { text-decoration: underline; }
     .row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end; }
     .field { display: flex; flex-direction: column; gap: 0.15rem; flex: 1 1 auto; min-width: 5rem; }
     .field.full { flex: 1 1 100%; }
@@ -48,12 +54,15 @@
     <button class="tab" data-calc="weapdam">Weapon Damage</button>
     <button class="tab" data-calc="dps">DPS</button>
     <button class="tab" data-calc="armor">Armor</button>
+    <button class="tab" data-calc="actohit">AC & To-Hit</button>
     <button class="tab" data-calc="acmax">Max AC</button>
     <button class="tab" data-calc="block">Block</button>
     <button class="tab" data-calc="cth">To-Hit</button>
+    <button class="tab" data-calc="char">Character</button>
     <button class="tab" data-calc="price">Item Price</button>
     <button class="tab" data-calc="orkin">Orkin Price</button>
     <button class="tab" data-calc="rarity">Item Rarity</button>
+    <button class="tab" data-calc="premium">Premium Checker</button>
   </div>
 
   <!-- LIFE/MANA CALCULATOR -->
@@ -183,38 +192,177 @@
     </form>
   </div>
 
+  <!-- AC & TO-HIT CALCULATOR -->
+  <div class="calc" id="calc-actohit">
+    <h2>AC &amp; To-Hit Calculator <a href="https://web.archive.org/web/20091024004748/http://geocities.com/TimesSquare/Maze/4747/maxmelee12.html">By: Moriah</a></h2>
+    <p data-placeholder>Complex calculator - loading...</p>
+  </div>
+
   <!-- Placeholder for complex calculators - will add next -->
   <div class="calc" id="calc-acmax">
     <h2>Max Useful AC Calculator <a href="https://web.archive.org/web/20120530084932/http://www.dpsyche.com/AC.html">By: Eso aka the_Langolier</a></h2>
-    <p>Complex calculator - loading...</p>
+    <p data-placeholder>Complex calculator - loading...</p>
   </div>
 
   <div class="calc" id="calc-block">
     <h2>Block Calculator <a href="https://web.archive.org/web/20120530084947/http://www.dpsyche.com/block.html">By: Eso aka the_Langolier</a></h2>
-    <p>Complex calculator - loading...</p>
+    <p data-placeholder>Complex calculator - loading...</p>
   </div>
 
   <div class="calc" id="calc-cth">
     <h2>Chance to Hit Calculator <a href="https://web.archive.org/web/20120530084958/http://www.dpsyche.com/cth.html">By: Eso aka the_Langolier</a></h2>
-    <p>Complex calculator - loading...</p>
+    <p data-placeholder>Complex calculator - loading...</p>
+  </div>
+
+  <div class="calc" id="calc-char">
+    <h2>Character Calculator <a href="https://mgpat-gm.github.io/calcs.html">By: GhastMaster</a></h2>
+    <p data-placeholder>Complex calculator - loading...</p>
   </div>
 
   <div class="calc" id="calc-price">
     <h2>Item Price Calculator <a href="https://web.archive.org/web/20120530085023/http://www.dpsyche.com/price.html">By: Eso aka the_Langolier</a></h2>
-    <p>Complex calculator - loading...</p>
+    <p data-placeholder>Complex calculator - loading...</p>
   </div>
 
   <div class="calc" id="calc-orkin">
     <h2>Orkin Price Calculator <a href="https://web.archive.org/web/20080405195055/http://www.angelsofhell.com/prices.html">By: OrkinMan</a></h2>
-    <p>Complex calculator - loading...</p>
+    <p data-placeholder>Complex calculator - loading...</p>
   </div>
 
   <div class="calc" id="calc-rarity">
     <h2>Item Rarity Calculator <a href="https://web.archive.org/web/20120530085029/http://www.dpsyche.com/rarity.html">By: Eso aka the_Langolier</a></h2>
-    <p>Complex calculator - loading...</p>
+    <p data-placeholder>Complex calculator - loading...</p>
+  </div>
+
+  <div class="calc" id="calc-premium">
+    <h2>Premium Item Checker <a href="https://web.archive.org/web/20120125114431/http://www.red-wolf.sakura.ne.jp/dia/premiumchk.html">By: King aka Red-Wolf</a></h2>
+    <p data-placeholder>Complex calculator - loading...</p>
   </div>
 
 <script>
+// Map complex calculators to standalone pages for lazy loading
+const complexCalcs = {
+  acmax: { src: 'ac-calculator.html', title: 'Max Useful AC Calculator' },
+  block: { src: 'block-calculator.html', title: 'Block Calculator' },
+  cth: { src: 'cth-calculator.html', title: 'Chance to Hit Calculator' },
+  price: { src: 'item-price-calculator.html', title: 'Item Price Calculator' },
+  orkin: { src: 'orkin-price-calculator.html', title: 'Orkin Price Calculator' },
+  rarity: { src: 'item-rarity-calculator.html', title: 'Item Rarity Calculator' },
+  premium: { src: 'premium-item-checker.html', title: 'Premium Item Checker' },
+  char: { src: 'character-stats-calculator.html', title: 'Character Calculator' },
+  actohit: { src: 'ac-tohit-calculator.html', title: 'AC & To-Hit Calculator' }
+};
+
+const calcPages = {
+  lifemana: 'life-mana-calculator.html',
+  shopqlvl: 'shop-qlvl-calculator.html',
+  weapdam: 'weapon-damage-calculator.html',
+  dps: 'dps-calculator.html',
+  armor: 'armor-calculator.html',
+  actohit: 'ac-tohit-calculator.html',
+  acmax: 'ac-calculator.html',
+  block: 'block-calculator.html',
+  cth: 'cth-calculator.html',
+  char: 'character-stats-calculator.html',
+  price: 'item-price-calculator.html',
+  orkin: 'orkin-price-calculator.html',
+  rarity: 'item-rarity-calculator.html',
+  premium: 'premium-item-checker.html'
+};
+const jarulfGuide = 'https://wheybags.gitlab.io/jarulfs-guide/';
+const jarulfLinks = {
+  lifemana: 'https://wheybags.gitlab.io/jarulfs-guide/#213-life-and-mana',
+  shopqlvl: 'https://wheybags.gitlab.io/jarulfs-guide/#38-generation-of-items',
+  weapdam: 'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
+  dps: 'https://wheybags.gitlab.io/jarulfs-guide/#223-weapon-speed',
+  armor: 'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
+  actohit: 'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
+  acmax: 'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
+  block: 'https://wheybags.gitlab.io/jarulfs-guide/#221-getting-hit',
+  cth: 'https://wheybags.gitlab.io/jarulfs-guide/#214-armor-class-and-to-hit',
+  char: 'https://wheybags.gitlab.io/jarulfs-guide/#21-characters',
+  price: 'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
+  orkin: 'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry',
+  rarity: 'https://wheybags.gitlab.io/jarulfs-guide/#36-prefixes-and-suffixes',
+  premium: 'https://wheybags.gitlab.io/jarulfs-guide/#31-armor-weapons-and-jewelry'
+};
+const loadedComplexCalcs = new Set();
+
+function loadComplexCalc(key) {
+  const cfg = complexCalcs[key];
+  if (!cfg || loadedComplexCalcs.has(key)) return;
+
+  const container = document.getElementById('calc-' + key);
+  if (!container) return;
+
+  const iframe = document.createElement('iframe');
+  iframe.src = cfg.src;
+  iframe.title = cfg.title;
+  iframe.loading = 'lazy';
+  iframe.className = 'calc-frame';
+  iframe.addEventListener('load', () => {
+    try {
+      const innerHeight = iframe.contentDocument?.body?.scrollHeight;
+      if (innerHeight) {
+        iframe.style.height = Math.max(innerHeight + 20, 900) + 'px';
+      }
+    } catch (err) {
+      iframe.style.height = '1200px';
+    }
+  });
+
+  const placeholder = container.querySelector('[data-placeholder]');
+  if (placeholder) {
+    placeholder.replaceWith(iframe);
+  } else {
+    container.appendChild(iframe);
+  }
+
+  loadedComplexCalcs.add(key);
+}
+
+// Add embed codes + Jarulf's Guide links
+function injectMetaBars() {
+  Object.keys(calcPages).forEach(key => {
+    const page = calcPages[key];
+    const container = document.getElementById('calc-' + key);
+    if (!container) return;
+    const title = container.querySelector('h2');
+    if (!title) return;
+
+    let meta = container.querySelector('.meta');
+    if (!meta) {
+      meta = document.createElement('div');
+      meta.className = 'meta';
+      title.insertAdjacentElement('afterend', meta);
+    } else {
+      meta.innerHTML = '';
+    }
+
+    const label = document.createElement('span');
+    label.className = 'embed-label';
+    label.textContent = 'Embed';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.readOnly = true;
+    input.className = 'embed-input';
+    const embedUrl = `${window.location.origin}/${page}`;
+    const titleText = title.textContent?.trim() || 'Diablo I Calculator';
+    input.value = `<iframe src="${embedUrl}" width="960" height="900" style="border:0;" title="${titleText}"></iframe>`;
+    input.addEventListener('click', () => input.select());
+
+    const guide = document.createElement('a');
+    guide.className = 'guide';
+    guide.href = jarulfLinks[key] || jarulfGuide;
+    guide.target = '_blank';
+    guide.rel = 'noopener noreferrer';
+    guide.textContent = "Jarulf's Guide";
+
+    meta.append(label, input, guide);
+  });
+}
+
 // Tab switching
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -222,6 +370,9 @@ document.querySelectorAll('.tab').forEach(tab => {
     tab.classList.add('active');
     document.querySelectorAll('.calc').forEach(c => c.classList.remove('visible'));
     document.getElementById('calc-' + tab.dataset.calc).classList.add('visible');
+
+    // Lazy-load complex calculators when their tab is opened
+    loadComplexCalc(tab.dataset.calc);
   });
 });
 
@@ -551,6 +702,8 @@ function AcCalc(theForm) {
 
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', function() {
+  injectMetaBars();
+
   // Populate weapon dropdown
   var sel = document.DamCheck.base;
   for (var i = 0; i <= basmax; i++) {
