@@ -16,13 +16,20 @@
     input[type="radio"] { margin-right: 0.25rem; }
     #Price { font-size: clamp(1.2rem, 3vw, 1.5rem); color: var(--gold); margin-top: 0.5rem; }
     .magic { color: #6688ff; }
+    .page-header { margin-bottom: 0.5rem; }
+    body.in-iframe { padding: 0; margin: 0; }
+    body.in-iframe .page-header { display: none; }
+    body.in-iframe .blog { border: none; padding: 0; background: transparent; }
   </style>
 </head>
 <body>
+<script>if (window.self !== window.top) document.body.classList.add('in-iframe');</script>
 <form Name="SelectItm">
 <div class="blog">
-  <span class="title">Item Price Calculator</span>
-  <i>By: <a href="https://web.archive.org/web/20120530085023/http://www.dpsyche.com/price.html">Eso aka the_Langolier</a></i>
+  <div class="page-header">
+    <span class="title">Item Price Calculator</span>
+    <i>By: <a href="https://web.archive.org/web/20120530085023/http://www.dpsyche.com/price.html">Eso aka the_Langolier</a></i>
+  </div>
   
   <div class="sub">
     <div>Item Class:<br><select name="Clas" onChange="updateClas();calcPrice();"></select></div>
@@ -1749,4 +1756,5 @@ function calcPrice()
 	return;
 }
 reset();
-</script></body></html>
+</script>  <script src="js/embed-height.js"></script>
+</body></html>

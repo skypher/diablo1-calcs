@@ -38,12 +38,17 @@
     .eq-row { display: flex; flex-wrap: wrap; gap: 0.25rem; align-items: center; margin-bottom: 0.25rem; }
     .eq-row input { width: 3.5rem; }
     .eq-row span { font-size: 0.8em; color: var(--gold-dim); }
+    .page-header { margin-bottom: 0.75rem; }
+    body.in-iframe { padding: 0; margin: 0; }
+    body.in-iframe .page-header { display: none; }
+    body.in-iframe .blog { border: none; padding: 0; background: transparent; }
   </style>
 </head>
 <body>
+<script>if (window.self !== window.top) document.body.classList.add('in-iframe');</script>
 <form name="myChar">
 <div class="blog">
-  <div style="margin-bottom:0.75rem;">
+  <div class="page-header">
     <span class="title">Character Stats Calculator</span>
     <i style="font-size:0.8em;"> By: <a href="https://web.archive.org/web/20120125084741/http://www.red-wolf.sakura.ne.jp/dia/statuschk.html">King aka Red-Wolf</a></i>
   </div>
@@ -447,5 +452,6 @@ function resallsetamulet(f){f.amuletresmag.value=f.amuletresall.value;f.amuletre
 function resallsetring1(f){f.ring1resmag.value=f.ring1resall.value;f.ring1resfire.value=f.ring1resall.value;f.ring1reslight.value=f.ring1resall.value;}
 function resallsetring2(f){f.ring2resmag.value=f.ring2resall.value;f.ring2resfire.value=f.ring2resall.value;f.ring2reslight.value=f.ring2resall.value;}
 </script>
+  <script src="js/embed-height.js"></script>
 </body>
 </html>

@@ -1,100 +1,310 @@
-/* Shared styles for Diablo calculators */
-/* Original styling from Ghast's Grotto */
+/* Shared styles for Diablo I calculators */
+/* Modern redesign with Diablo-inspired dark theme */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --gold: #d4a84b;
+    --gold-bright: #f0c75e;
+    --gold-dim: #8b7355;
+    --gold-glow: rgba(212, 168, 75, 0.4);
+    --bg: #0f0f0f;
+    --bg-gradient: linear-gradient(180deg, #0f0f0f 0%, #1a1510 100%);
+    --panel: #1a1814;
+    --panel-border: #2a2520;
+    --panel-hover: #221f1a;
+    --text: #e8dcc8;
+    --text-dim: #a09080;
+    --input-bg: #0a0908;
+    --input-border: #3a3530;
+    --shadow: 0 4px 20px rgba(0,0,0,0.5);
+    --radius: 8px;
+    --radius-lg: 12px;
+}
 
 body {
-    background-color: #2d2d2d;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', system-ui, Arial, sans-serif;
+    background: var(--bg);
+    background-image: var(--bg-gradient);
+    color: var(--text);
+    margin: 0;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    line-height: 1.5;
+    font-size: clamp(0.875rem, 1.5vw, 1rem);
+    min-height: 100vh;
 }
 
-a:link {
+/* Links */
+a:link, a:visited {
+    color: var(--gold-dim);
     text-decoration: none;
-    color: #ffffff;
+    transition: color 0.2s;
 }
-a:visited {
-    text-decoration: none;
-    color: #ffffff;
-}
+
 a:hover {
+    color: var(--gold);
     background: none;
-    color: #ff8000;
 }
 
+/* Legacy table support */
 table.blog {
-    background-color: #111111;
-    padding: .3em;
-    color: #bca86c;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    color: var(--text);
+    box-shadow: var(--shadow);
+    max-width: 64rem;
+    margin: 0 auto;
 }
+
 table.char {
-    background: url("images/stone.webp") repeat fixed top;
-    color: #ffffff;
+    background: var(--panel);
+    color: var(--text);
     border-collapse: collapse;
+    border-radius: var(--radius);
+    overflow: hidden;
 }
+
 table.char input {
-    background-color: #111111;
-    color: #ffffff;
-    border-color: #bca86c;
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    padding: 0.5rem 0.75rem;
 }
+
 table.hidden {
     display: none;
 }
+
 table.sub {
     border-collapse: collapse;
+    width: 100%;
 }
 
+/* Text styles */
 .magic {
-    color: #a0a5c8
+    color: #8b9fd4;
 }
+
 .norm {
-    color: #ffffff;
+    color: var(--text);
 }
+
 .fire {
-    color: #e16c6c;
+    color: #d47b5c;
 }
+
 .title {
+    font-family: 'Cinzel', serif;
     font-size: 1.5em;
     text-align: left;
-    color: #ffffff;
+    color: var(--gold);
+    letter-spacing: 0.03em;
 }
+
 .title2 {
-    color: #a0a5c8;
-    font-size: 1.2em;
+    color: var(--gold-dim);
+    font-size: 1.1em;
+    font-weight: 500;
 }
+
 .warn {
-    font-size: .8em;
+    font-size: 0.85em;
     font-style: italic;
-    color: #bca86c;
+    color: #d4884b;
+    padding: 0.5rem 0.75rem;
+    background: rgba(212, 136, 75, 0.1);
+    border-radius: var(--radius);
+    border-left: 3px solid #d4884b;
+    display: inline-block;
 }
 
+/* Form elements */
 textarea {
-    background-color: #111111;
-    border-color: #5f5f5f;
-    color: #a0a5c8;
-    border: none;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text);
+    border-radius: var(--radius);
+    padding: 0.75rem;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
     overflow: auto;
-    resize: none;
-}
-input {
-    background-color: #111111;
-    color: #ffffff;
-}
-select {
-    background-color: #111111;
-    color: #a0a5c8;
-}
-button {
-    background-color: #111111;
-    color: #ffffff;
+    resize: vertical;
+    line-height: 1.5;
 }
 
+textarea:focus {
+    outline: none;
+    border-color: var(--gold-dim);
+}
+
+input {
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    padding: 0.5rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--gold-dim);
+    box-shadow: 0 0 0 3px rgba(212, 168, 75, 0.1);
+}
+
+select {
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    padding: 0.5rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b7355' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--gold-dim);
+}
+
+button,
+input[type="button"],
+input[type="reset"] {
+    background: linear-gradient(180deg, var(--gold-dim) 0%, #6a5a45 100%);
+    border: 1px solid var(--gold);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    width: auto;
+    min-width: 0;
+}
+
+button:hover,
+input[type="button"]:hover {
+    background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dim) 100%);
+    box-shadow: 0 4px 15px var(--gold-glow);
+    transform: translateY(-1px);
+}
+
+button:active,
+input[type="button"]:active {
+    transform: translateY(0);
+}
+
+input[type="reset"] {
+    background: var(--panel);
+    border-color: var(--panel-border);
+    color: var(--text-dim);
+}
+
+input[type="reset"]:hover {
+    background: var(--panel-hover);
+    border-color: var(--gold-dim);
+    color: var(--text);
+    box-shadow: none;
+}
+
+/* Field labels */
 .field-label {
     display: inline-block;
-    margin-right: 6px;
-    color: #bca86c;
-    font-size: 0.9em;
+    margin-right: 8px;
+    color: var(--gold-dim);
+    font-size: 0.85em;
+    font-weight: 500;
     vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
-/* Premium item checker: wrap the first control row cleanly on narrow widths */
+/* Meta footer styling */
+.meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-top: 1px solid var(--panel-border);
+    background: rgba(0,0,0,0.2);
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.meta .embed-label,
+.meta .resource-label {
+    font-weight: 600;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.65rem;
+}
+
+.meta input.embed-input {
+    flex: 1 1 20rem;
+    min-width: 12rem;
+    max-width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-dim);
+    padding: 0.4rem 0.6rem;
+    border-radius: var(--radius);
+    font-family: 'Consolas', monospace;
+    font-size: 0.7rem;
+}
+
+.jg-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.meta a.guide {
+    color: var(--gold-dim);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    background: rgba(139, 115, 85, 0.1);
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.meta a.guide:hover {
+    color: var(--gold);
+    background: rgba(139, 115, 85, 0.2);
+}
+
+/* Premium item checker responsive */
 @media (max-width: 900px) {
     body.premium-checker table.sub .control-row {
         display: flex;
@@ -124,16 +334,17 @@ button {
     }
 }
 
-/* Mobile / tablet responsive styles */
+/* Mobile / tablet responsive */
 @media (max-width: 800px) {
     body {
-        padding: 8px 6px;
+        padding: 1rem 0.75rem;
         margin: 0;
     }
 
     table.blog {
         width: 100%;
         box-sizing: border-box;
+        padding: 1rem;
     }
 
     table.blog > tbody > tr > td {
@@ -145,7 +356,6 @@ button {
         padding: 10px 6px;
     }
 
-    /* Give the large result grids breathing room and allow sideways scroll instead of clipping */
     table[id^="Max"],
     table[id^="Enemy"] {
         min-width: 360px;
@@ -193,23 +403,21 @@ button {
     }
 
     .title {
-        font-size: 1.1em;
+        font-size: 1.2em;
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
     }
 
     .title2 {
         font-size: 1em;
     }
 
-    /* Stack form elements vertically */
     form {
         width: 100%;
         padding: 0 5px;
         box-sizing: border-box;
     }
 
-    /* Allow horizontal scroll for wide legacy tables instead of hiding content */
     center {
         width: 100%;
         overflow-x: auto;
@@ -219,7 +427,7 @@ button {
     }
 }
 
-/* Life/Mana calculator: grid layout on small/medium screens without jumbling */
+/* Life/Mana calculator grid */
 @media (max-width: 980px) {
     body.life-mana table.blog {
         width: 100%;
@@ -227,7 +435,6 @@ button {
         border-collapse: collapse;
     }
 
-    /* Treat each table row as a 2-column grid so label+input pairs stay together */
     body.life-mana table.blog tr {
         display: grid;
         grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr);
@@ -243,13 +450,11 @@ button {
         min-width: 0;
     }
 
-    /* Full-width cells (modifiers/results rows) */
     body.life-mana table.blog td[colspan="3"],
     body.life-mana table.blog td[colspan="4"] {
         grid-column: 1 / -1;
     }
 
-    /* Action row: drop the empty spacer cell and wrap buttons */
     body.life-mana table.blog .action-row td:first-child {
         display: none;
     }
@@ -263,9 +468,9 @@ button {
 
     body.life-mana table.blog .action-row input[type="button"],
     body.life-mana table.blog .action-row input[type="reset"] {
-        flex: 1 1 140px;
-        min-width: 120px;
-        max-width: 220px;
+        flex: 0 0 auto;
+        min-width: 0;
+        max-width: none;
     }
 
     body.life-mana table.blog input[type="text"],
@@ -277,7 +482,7 @@ button {
     }
 }
 
-/* Life/Mana: single-column stack on small/medium screens */
+/* Life/Mana single-column stack */
 @media (max-width: 850px) {
     body.life-mana table.blog {
         display: block;
@@ -327,12 +532,12 @@ button {
 
     body.life-mana table.blog .action-row input[type="button"],
     body.life-mana table.blog .action-row input[type="reset"] {
-        flex: 1 1 45%;
-        min-width: 100px;
+        flex: 0 0 auto;
+        min-width: 0;
     }
 }
 
-/* Extra small phones: stack form rows to fit ~350px */
+/* Extra small phones */
 @media (max-width: 500px) {
     table.sub {
         display: block;
@@ -362,11 +567,16 @@ button {
 
     table.sub select,
     table.sub input[type="text"],
-    table.sub input[type="button"],
-    table.sub input[type="reset"],
     table.sub textarea {
         flex: 1;
         min-width: 0;
         max-width: 100%;
+    }
+
+    table.sub input[type="button"],
+    table.sub input[type="reset"] {
+        flex: 0 0 auto;
+        min-width: 0;
+        max-width: none;
     }
 }

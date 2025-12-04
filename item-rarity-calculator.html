@@ -16,15 +16,22 @@
     input[type="button"]:hover { background: var(--gold); }
     textarea { width: 100%; min-height: 20rem; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.5rem; border-radius: 0.25rem; font-family: 'Consolas', monospace; font-size: clamp(0.65rem, 1.5vw, 0.75rem); resize: vertical; }
     #Valid { color: var(--gold); }
+    .page-header { margin-bottom: 0.5rem; }
+    body.in-iframe { padding: 0; margin: 0; }
+    body.in-iframe .page-header { display: none; }
+    body.in-iframe .blog { border: none; padding: 0; background: transparent; }
   </style>
 </head>
 <body>
+<script>if (window.self !== window.top) document.body.classList.add('in-iframe');</script>
 <form Name="SelectItem">
 <input type="hidden" name="blank1">
 <input type="hidden" name="blank2">
 <div class="blog">
-  <span class="title">Item Rarity Calculator</span>
-  <i>By: <a href="https://web.archive.org/web/20120530085029/http://www.dpsyche.com/rarity.html">Eso aka the_Langolier</a></i>
+  <div class="page-header">
+    <span class="title">Item Rarity Calculator</span>
+    <i>By: <a href="https://web.archive.org/web/20120530085029/http://www.dpsyche.com/rarity.html">Eso aka the_Langolier</a></i>
+  </div>
   
   <div class="sub">
     <div>Item Class:<br><select name="Class" onChange="updateSelectMenu();">
@@ -3337,4 +3344,5 @@ function WeaponRack(dlvl)
 
 	return rarity;
 }
-</script></body></html>
+</script>  <script src="js/embed-height.js"></script>
+</body></html>

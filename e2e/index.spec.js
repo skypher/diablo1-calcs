@@ -14,11 +14,11 @@ const complexCalcs = [
 ];
 
 const embedChecks = [
-  { key: 'lifemana', filename: 'life-mana-calculator.html', guides: ['#life-and-mana', '#character-stats'], titles: ['2.1.3 Life and mana', '2.1 Character stats'] },
-  { key: 'actohit', filename: 'ac-tohit-calculator.html', guides: ['#armor-class-and-to-hit', '#getting-hit'], titles: ['2.1.4 Armor Class & To Hit', '2.2.1 Getting hit'] },
-  { key: 'acmax', filename: 'ac-calculator.html', guides: ['#armor-class-and-to-hit', '#getting-hit'], titles: ['2.1.4 Armor Class & To Hit', '2.2.1 Getting hit'] },
-  { key: 'price', filename: 'item-price-calculator.html', guides: ['#armor-weapons-and-jewelry', '#prefixes-and-suffixes', '#prices-of-magical-items'], titles: ['3.1 Armor, weapons & jewelry', '3.4 Prefixes & suffixes', '3.6 Prices of magical items'] },
-  { key: 'premium', filename: 'premium-item-checker.html', guides: ['#armor-weapons-and-jewelry', '#prefixes-and-suffixes', '#prices-of-magical-items'], titles: ['3.1 Armor, weapons & jewelry', '3.4 Prefixes & suffixes', '3.6 Prices of magical items'] },
+  { key: 'lifemana', script: '/embed/lifemana.js', guides: ['#life-and-mana', '#character-stats'], titles: ['2.1.3 Life and mana', '2.1 Character stats'] },
+  { key: 'actohit', script: '/embed/actohit.js', guides: ['#armor-class-and-to-hit', '#getting-hit'], titles: ['2.1.4 Armor Class & To Hit', '2.2.1 Getting hit'] },
+  { key: 'acmax', script: '/embed/acmax.js', guides: ['#armor-class-and-to-hit', '#getting-hit'], titles: ['2.1.4 Armor Class & To Hit', '2.2.1 Getting hit'] },
+  { key: 'price', script: '/embed/price.js', guides: ['#armor-weapons-and-jewelry', '#prefixes-and-suffixes', '#prices-of-magical-items'], titles: ['3.1 Armor, weapons & jewelry', '3.4 Prefixes & suffixes', '3.6 Prices of magical items'] },
+  { key: 'premium', script: '/embed/premium.js', guides: ['#armor-weapons-and-jewelry', '#prefixes-and-suffixes', '#prices-of-magical-items'], titles: ['3.1 Armor, weapons & jewelry', '3.4 Prefixes & suffixes', '3.6 Prices of magical items'] },
 ];
 
 test.describe('Index embeds complex calculators', () => {
@@ -53,7 +53,7 @@ test.describe('Embed codes and Jarulf links', () => {
 
       const input = meta.locator('input.embed-input');
       await expect(input).toBeVisible();
-      await expect(input).toHaveValue(new RegExp(embed.filename.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+      await expect(input).toHaveValue(new RegExp(embed.script.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
       const guides = meta.locator('a.guide');
       const hrefs = await guides.evaluateAll((nodes) => nodes.map(n => n.getAttribute('href') || ''));

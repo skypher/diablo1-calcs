@@ -21,13 +21,20 @@
     textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.5rem; border-radius: 0.25rem; font-family: 'Consolas', monospace; font-size: clamp(0.65rem, 1.5vw, 0.75rem); resize: vertical; }
     .buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
     .hidden { display: none; }
+    .page-header { margin-bottom: 0.75rem; }
+    body.in-iframe { padding: 0; margin: 0; }
+    body.in-iframe .page-header { display: none; }
+    body.in-iframe .blog { border: none; padding: 0; background: transparent; }
   </style>
 </head>
 <body>
+<script>if (window.self !== window.top) document.body.classList.add('in-iframe');</script>
 <form name="combat">
 <div class="blog">
-  <span class="title">AC & To Hit Calculator</span>
-  <i style="font-size:0.8em;"> By: <a href="https://web.archive.org/web/20091024004748/http://geocities.com/TimesSquare/Maze/4747/maxmelee12.html">Arnold van Wakeren aka Moriah</a></i>
+  <div class="page-header">
+    <span class="title">AC & To Hit Calculator</span>
+    <i style="font-size:0.8em;"> By: <a href="https://web.archive.org/web/20091024004748/http://geocities.com/TimesSquare/Maze/4747/maxmelee12.html">Arnold van Wakeren aka Moriah</a></i>
+  </div>
 
   <div class="grid grid-3">
     <div class="field"><label>Game</label>
@@ -2255,4 +2262,5 @@ document.combat.results.value = output;
 document.combat.results2.value = output;
 }
 
-</script></body></html>
+</script>  <script src="js/embed-height.js"></script>
+</body></html>

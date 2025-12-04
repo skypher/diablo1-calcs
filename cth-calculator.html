@@ -16,13 +16,20 @@
     table { width: 100%; border-collapse: collapse; font-size: clamp(0.65rem, 1.5vw, 0.8rem); }
     #MaxCS td, #EnemyCS td { padding: 0.3rem 0.4rem; text-align: center; border-bottom: 1px solid #333; }
     .magic { color: #6688ff; }
+    .page-header { margin-bottom: 0.5rem; }
+    body.in-iframe { padding: 0; margin: 0; }
+    body.in-iframe .page-header { display: none; }
+    body.in-iframe .blog { border: none; padding: 0; background: transparent; }
   </style>
 </head>
 <body>
+<script>if (window.self !== window.top) document.body.classList.add('in-iframe');</script>
 <form name="SelectStats">
 <div class="blog">
-  <span class="title">Chance to Hit Calculator</span><br>
-  <i>By: <a href="https://web.archive.org/web/20120530084958/http://www.dpsyche.com/cth.html">Eso aka the_Langolier</a></i>
+  <div class="page-header">
+    <span class="title">Chance to Hit Calculator</span>
+    <i>By: <a href="https://web.archive.org/web/20120530084958/http://www.dpsyche.com/cth.html">Eso aka the_Langolier</a></i>
+  </div>
 
   <table class="sub">
     <tr><td>Difficulty:<br><select name="Diff" onchange="update();"><option value="0">Normal</option><option value="50">Nightmare</option><option value="80" selected>Hell</option></select></td>
@@ -121,5 +128,6 @@ function calcEnemy(){
 }
 update();
 </script>
+  <script src="js/embed-height.js"></script>
 </body>
 </html>

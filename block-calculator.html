@@ -18,13 +18,20 @@
     table { width: 100%; border-collapse: collapse; font-size: clamp(0.65rem, 1.5vw, 0.8rem); }
     #MaxDEX td, #EnemyDEX td { padding: 0.3rem 0.4rem; text-align: center; border-bottom: 1px solid #333; }
     .magic { color: #6688ff; }
+    .page-header { margin-bottom: 0.5rem; }
+    body.in-iframe { padding: 0; margin: 0; }
+    body.in-iframe .page-header { display: none; }
+    body.in-iframe .blog { border: none; padding: 0; background: transparent; }
   </style>
 </head>
 <body>
+<script>if (window.self !== window.top) document.body.classList.add('in-iframe');</script>
 <form name="SelectSta">
 <div class="blog">
-  <span class="title">Block Calculator</span><br>
-  <i>By: <a href="https://web.archive.org/web/20120530084947/http://www.dpsyche.com/block.html">Eso aka the_Langolier</a></i>
+  <div class="page-header">
+    <span class="title">Block Calculator</span>
+    <i>By: <a href="https://web.archive.org/web/20120530084947/http://www.dpsyche.com/block.html">Eso aka the_Langolier</a></i>
+  </div>
 
   <table class="sub">
     <tr><td>Difficulty:</td><td>Block %:</td></tr>
@@ -63,5 +70,6 @@
 </div>
 </form>
 <script>updated();</script>
+  <script src="js/embed-height.js"></script>
 </body>
 </html>
