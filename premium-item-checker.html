@@ -15,7 +15,8 @@
     .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 0.75rem; margin-bottom: 1rem; }
     .field { display: flex; flex-direction: column; gap: 0.25rem; }
     label { font-size: clamp(0.7rem, 1.8vw, 0.8rem); color: var(--gold-dim); }
-    select, button { width: 100%; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.5rem; border-radius: 0.25rem; font-size: clamp(0.8rem, 2vw, 0.95rem); cursor: pointer; }
+    select { width: 100%; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.5rem; border-radius: 0.25rem; font-size: clamp(0.8rem, 2vw, 0.95rem); cursor: pointer; }
+    button { background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.5rem 1rem; border-radius: 0.25rem; font-size: clamp(0.8rem, 2vw, 0.95rem); cursor: pointer; }
     select:focus, button:focus { outline: none; border-color: var(--gold); }
     button { background: var(--gold-dim); color: #000; font-weight: 600; }
     button:hover { background: var(--gold); }
@@ -24,11 +25,18 @@
     textarea { width: 100%; min-height: 12rem; background: var(--input-bg); border: 1px solid var(--gold-dim); color: var(--text); padding: 0.75rem; border-radius: 0.25rem; font-family: 'Consolas', 'Monaco', monospace; font-size: clamp(0.7rem, 1.6vw, 0.85rem); resize: vertical; line-height: 1.4; }
     textarea:focus { outline: none; border-color: var(--gold); }
     .note { margin-top: 0.75rem; font-size: clamp(0.65rem, 1.6vw, 0.75rem); color: var(--gold-dim); line-height: 1.5; }
+    .page-header { margin-bottom: 0.5rem; }
+    body.in-iframe { padding: 0; margin: 0; }
+    body.in-iframe .page-header { display: none; }
+    body.in-iframe .calc-container { border: none; padding: 0; background: transparent; }
   </style>
 </head>
 <body>
+<script>if (window.self !== window.top) document.body.classList.add('in-iframe');</script>
   <div class="calc-container">
-    <h1>Premium Item Checker <a href="https://web.archive.org/web/20120125114431/http://www.red-wolf.sakura.ne.jp/dia/premiumchk.html">By: King aka Red-Wolf</a></h1>
+    <div class="page-header">
+      <h1>Premium Item Checker <a href="https://web.archive.org/web/20120125114431/http://www.red-wolf.sakura.ne.jp/dia/premiumchk.html">By: King aka Red-Wolf</a></h1>
+    </div>
     <form name="premium">
       <div class="controls">
         <div class="field"><label for="prefixx">Prefix</label><select id="prefixx" name="prefixx" onchange="ChgPrefix(document.premium)"></select></div>
@@ -1467,5 +1475,6 @@ J = Jewelry`;
 For Wirt and resale prices, scroll down to Item Price Calculator.`;
 });
 </script>
+  <script src="js/embed-height.js"></script>
 </body>
 </html>
