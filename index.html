@@ -68,12 +68,11 @@
 
     /* Navigation Tabs */
     .tabs {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
       gap: 0.5rem;
-      justify-content: center;
       margin-bottom: 1.5rem;
-      max-width: 80rem;
+      max-width: 60rem;
       margin-inline: auto;
       padding: 0 1rem;
     }
@@ -82,15 +81,16 @@
       background: var(--panel);
       border: 1px solid var(--panel-border);
       color: var(--text-dim);
-      padding: 0.6rem 1rem;
+      padding: 0.5rem 0.75rem;
       border-radius: var(--radius);
       cursor: pointer;
-      font-size: clamp(0.7rem, 1.3vw, 0.8rem);
+      font-size: clamp(0.65rem, 1.2vw, 0.75rem);
       font-weight: 500;
       white-space: nowrap;
       transition: all 0.2s ease;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.02em;
+      text-align: center;
     }
 
     .tab:hover {
@@ -445,7 +445,7 @@
     <button class="tab" data-calc="price">Item Price</button>
     <button class="tab" data-calc="orkin">Orkin Price</button>
     <button class="tab" data-calc="rarity">Item Rarity</button>
-    <button class="tab" data-calc="premium">Premium Checker</button>
+    <button class="tab" data-calc="premium">Premium Items</button>
   </div>
 
   <!-- LIFE/MANA CALCULATOR -->
